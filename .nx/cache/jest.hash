@@ -1,5 +1,5 @@
 {
-  "17359235652200257802": {
+  "6274401421549679363": {
     "test": {
       "command": "jest",
       "options": {
@@ -20,7 +20,7 @@
       ]
     }
   },
-  "482248129216275301": {
+  "5950525965265362033": {
     "test": {
       "command": "jest",
       "options": {
@@ -41,7 +41,7 @@
       ]
     }
   },
-  "7366214504681342853": {
+  "6532866561992975590": {
     "test": {
       "command": "jest",
       "options": {
@@ -59,6 +59,69 @@
       ],
       "outputs": [
         "{workspaceRoot}/coverage/apps/backend"
+      ]
+    }
+  },
+  "4390552215029766925": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/netsuite-backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/backend"
+      ]
+    }
+  },
+  "4364460191301623687": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/netsuite-backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
+    }
+  },
+  "17354710734103104670": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/netsuite-backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
       ]
     }
   }

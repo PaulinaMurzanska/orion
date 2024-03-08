@@ -103,20 +103,40 @@
   "fileMap": {
     "nonProjectFiles": [
       {
+        "file": ".gitignore",
+        "hash": "4662988456259469729"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "16448050467312557263"
+      },
+      {
         "file": ".eslintrc.json",
         "hash": "17866138117546000433"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "16188820923721098135"
       },
       {
         "file": "package.json",
         "hash": "8197983624780080823"
       },
       {
-        "file": "nx.json",
-        "hash": "8888156798602440906"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
+        "file": "tsconfig.base.json",
+        "hash": "11049594559659387283"
       },
       {
         "file": "README.md",
@@ -127,137 +147,15 @@
         "hash": "12333515226966617182"
       },
       {
-        "file": "tsconfig.base.json",
-        "hash": "11049594559659387283"
-      },
-      {
         "file": ".eslintignore",
         "hash": "7663861978715868291"
       },
       {
-        "file": ".prettierignore",
-        "hash": "16448050467312557263"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "16188820923721098135"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "4662988456259469729"
+        "file": "nx.json",
+        "hash": "8888156798602440906"
       }
     ],
     "projectFileMap": {
-      "shared-components": [
-        {
-          "file": "packages/shared-components/.babelrc",
-          "hash": "5712476190361238632"
-        },
-        {
-          "file": "packages/shared-components/.eslintrc.json",
-          "hash": "11012487992710232822"
-        },
-        {
-          "file": "packages/shared-components/README.md",
-          "hash": "8841202003858658473"
-        },
-        {
-          "file": "packages/shared-components/package.json",
-          "hash": "12358530754298451956"
-        },
-        {
-          "file": "packages/shared-components/project.json",
-          "hash": "15290725104031588868"
-        },
-        {
-          "file": "packages/shared-components/src/components/button/Button.tsx",
-          "hash": "9469999898779053014",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "packages/shared-components/src/components/card/Card.tsx",
-          "hash": "4745328329930227863",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "packages/shared-components/src/components/index.ts",
-          "hash": "10431391233052537371"
-        },
-        {
-          "file": "packages/shared-components/src/components/input/Input.tsx",
-          "hash": "9218393014321687116",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "packages/shared-components/src/components/table/Table.tsx",
-          "hash": "1975418176164457768",
-          "deps": [
-            "npm:@tanstack/react-table"
-          ]
-        },
-        {
-          "file": "packages/shared-components/src/components/table/TableComponents.tsx",
-          "hash": "12937025988408522717",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "packages/shared-components/src/index.ts",
-          "hash": "1595832445444187531"
-        },
-        {
-          "file": "packages/shared-components/src/theme/theme.css",
-          "hash": "8331140109577324479"
-        },
-        {
-          "file": "packages/shared-components/src/utils/tailwind.ts",
-          "hash": "15456290709904554663",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "packages/shared-components/tsconfig.json",
-          "hash": "6996585143515498368"
-        },
-        {
-          "file": "packages/shared-components/tsconfig.lib.json",
-          "hash": "11908890256657676622"
-        },
-        {
-          "file": "packages/shared-components/tsconfig.spec.json",
-          "hash": "15943385144407153049"
-        },
-        {
-          "file": "packages/shared-components/vite.config.ts",
-          "hash": "4746543691090177241",
-          "deps": [
-            "npm:vite",
-            "npm:@vitejs/plugin-react",
-            "npm:vite-plugin-dts",
-            "npm:path",
-            "npm:@nx/vite"
-          ]
-        }
-      ],
       "netsuite-backend": [
         {
           "file": "apps/netsuite-backend/.eslintrc.json",
@@ -303,8 +201,11 @@
           ]
         },
         {
-          "file": "apps/netsuite-backend/jest.config.ts",
-          "hash": "13565990685219350708"
+          "file": "apps/netsuite-backend/jest.config.js",
+          "hash": "14004894041389174212",
+          "deps": [
+            "npm:@oracle/suitecloud-unit-testing"
+          ]
         },
         {
           "file": "apps/netsuite-backend/package-lock.json",
@@ -357,10 +258,6 @@
         {
           "file": "apps/netsuite-backend/suitecloud.config.js",
           "hash": "8405872550406380080"
-        },
-        {
-          "file": "apps/netsuite-backend/tsconfig.spec.json",
-          "hash": "1708549962383620655"
         }
       ],
       "frontend": [
@@ -514,6 +411,108 @@
             "npm:@vitejs/plugin-react",
             "npm:@nx/vite",
             "npm:unplugin-fonts"
+          ]
+        }
+      ],
+      "shared-components": [
+        {
+          "file": "packages/shared-components/.babelrc",
+          "hash": "5712476190361238632"
+        },
+        {
+          "file": "packages/shared-components/.eslintrc.json",
+          "hash": "11012487992710232822"
+        },
+        {
+          "file": "packages/shared-components/README.md",
+          "hash": "8841202003858658473"
+        },
+        {
+          "file": "packages/shared-components/package.json",
+          "hash": "12358530754298451956"
+        },
+        {
+          "file": "packages/shared-components/project.json",
+          "hash": "15290725104031588868"
+        },
+        {
+          "file": "packages/shared-components/src/components/button/Button.tsx",
+          "hash": "9469999898779053014",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "packages/shared-components/src/components/card/Card.tsx",
+          "hash": "4745328329930227863",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "packages/shared-components/src/components/index.ts",
+          "hash": "10431391233052537371"
+        },
+        {
+          "file": "packages/shared-components/src/components/input/Input.tsx",
+          "hash": "9218393014321687116",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "packages/shared-components/src/components/table/Table.tsx",
+          "hash": "1975418176164457768",
+          "deps": [
+            "npm:@tanstack/react-table"
+          ]
+        },
+        {
+          "file": "packages/shared-components/src/components/table/TableComponents.tsx",
+          "hash": "12937025988408522717",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "packages/shared-components/src/index.ts",
+          "hash": "1595832445444187531"
+        },
+        {
+          "file": "packages/shared-components/src/theme/theme.css",
+          "hash": "8331140109577324479"
+        },
+        {
+          "file": "packages/shared-components/src/utils/tailwind.ts",
+          "hash": "15456290709904554663",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "packages/shared-components/tsconfig.json",
+          "hash": "6996585143515498368"
+        },
+        {
+          "file": "packages/shared-components/tsconfig.lib.json",
+          "hash": "11908890256657676622"
+        },
+        {
+          "file": "packages/shared-components/tsconfig.spec.json",
+          "hash": "15943385144407153049"
+        },
+        {
+          "file": "packages/shared-components/vite.config.ts",
+          "hash": "4746543691090177241",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react",
+            "npm:vite-plugin-dts",
+            "npm:path",
+            "npm:@nx/vite"
           ]
         }
       ]

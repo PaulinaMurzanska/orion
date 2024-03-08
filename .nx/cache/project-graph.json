@@ -149,7 +149,7 @@
               }
             ],
             "outputs": [
-              "{workspaceRoot}/coverage/apps/backend"
+              "{projectRoot}/coverage"
             ],
             "executor": "nx:run-commands",
             "options": {
@@ -10452,7 +10452,13 @@
         "type": "static"
       }
     ],
-    "netsuite-backend": [],
+    "netsuite-backend": [
+      {
+        "source": "netsuite-backend",
+        "target": "npm:@oracle/suitecloud-unit-testing",
+        "type": "static"
+      }
+    ],
     "frontend": [
       {
         "source": "frontend",
