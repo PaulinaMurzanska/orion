@@ -1,18 +1,18 @@
 {
   "run": {
-    "command": "nx run backend:backend-test",
-    "startTime": "2024-03-08T17:02:55.339Z",
-    "endTime": "2024-03-08T17:03:00.104Z",
+    "command": "nx run netsuite-backend:test",
+    "startTime": "2024-03-08T17:26:39.437Z",
+    "endTime": "2024-03-08T17:26:45.074Z",
     "inner": false
   },
   "tasks": [
     {
-      "taskId": "backend:backend-test",
-      "target": "backend-test",
-      "projectName": "backend",
-      "hash": "10193982803631535385",
-      "startTime": "2024-03-08T17:02:55.347Z",
-      "endTime": "2024-03-08T17:03:00.103Z",
+      "taskId": "netsuite-backend:test",
+      "target": "test",
+      "projectName": "netsuite-backend",
+      "hash": "4674642031380802617",
+      "startTime": "2024-03-08T17:26:39.444Z",
+      "endTime": "2024-03-08T17:26:45.073Z",
       "params": "",
       "cacheStatus": "cache-miss",
       "status": 1

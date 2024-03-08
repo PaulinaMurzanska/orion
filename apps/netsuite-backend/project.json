@@ -1,11 +1,12 @@
 {
-  "name": "backend",
+  "name": "netsuite-backend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src/",
   "projectType": "library",
   "targets": {
-    "backend-test": {
-      "command": "jest"
+    "test": {
+      "command": "jest",
+      "cache": true
     } 
   },
   "tags": [],

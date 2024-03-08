@@ -111,6 +111,63 @@
         "implicitDependencies": []
       }
     },
+    "netsuite-backend": {
+      "name": "netsuite-backend",
+      "type": "lib",
+      "data": {
+        "root": "apps/netsuite-backend",
+        "targets": {
+          "lint": {
+            "cache": true,
+            "options": {
+              "cwd": "apps/netsuite-backend",
+              "command": "eslint ."
+            },
+            "inputs": [
+              "default",
+              "{workspaceRoot}/.eslintrc.json",
+              "{workspaceRoot}/apps/netsuite-backend/.eslintrc.json",
+              "{workspaceRoot}/tools/eslint-rules/**/*",
+              {
+                "externalDependencies": [
+                  "eslint"
+                ]
+              }
+            ],
+            "executor": "nx:run-commands",
+            "configurations": {}
+          },
+          "test": {
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production",
+              {
+                "externalDependencies": [
+                  "jest"
+                ]
+              }
+            ],
+            "outputs": [
+              "{workspaceRoot}/coverage/apps/backend"
+            ],
+            "executor": "nx:run-commands",
+            "options": {
+              "cwd": "apps/netsuite-backend",
+              "command": "jest"
+            },
+            "configurations": {}
+          }
+        },
+        "name": "netsuite-backend",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "apps/backend/src/",
+        "projectType": "library",
+        "tags": [],
+        "defaultAuthId": "bom-dev",
+        "implicitDependencies": []
+      }
+    },
     "frontend": {
       "name": "frontend",
       "type": "app",
@@ -211,70 +268,6 @@
         "sourceRoot": "apps/frontend/src",
         "projectType": "application",
         "tags": [],
-        "implicitDependencies": []
-      }
-    },
-    "backend": {
-      "name": "backend",
-      "type": "lib",
-      "data": {
-        "root": "apps/backend",
-        "targets": {
-          "lint": {
-            "cache": true,
-            "options": {
-              "cwd": "apps/backend",
-              "command": "eslint ."
-            },
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json",
-              "{workspaceRoot}/apps/backend/.eslintrc.json",
-              "{workspaceRoot}/tools/eslint-rules/**/*",
-              {
-                "externalDependencies": [
-                  "eslint"
-                ]
-              }
-            ],
-            "executor": "nx:run-commands",
-            "configurations": {}
-          },
-          "test": {
-            "options": {
-              "cwd": "apps/backend",
-              "command": "jest"
-            },
-            "cache": true,
-            "inputs": [
-              "default",
-              "^production",
-              {
-                "externalDependencies": [
-                  "jest"
-                ]
-              }
-            ],
-            "outputs": [
-              "{workspaceRoot}/coverage/apps/backend"
-            ],
-            "executor": "nx:run-commands",
-            "configurations": {}
-          },
-          "backend-test": {
-            "executor": "nx:run-commands",
-            "options": {
-              "command": "jest"
-            },
-            "configurations": {}
-          }
-        },
-        "name": "backend",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "sourceRoot": "apps/backend/src/",
-        "projectType": "library",
-        "tags": [],
-        "defaultAuthId": "bom-dev",
         "implicitDependencies": []
       }
     }
@@ -10459,6 +10452,7 @@
         "type": "static"
       }
     ],
+    "netsuite-backend": [],
     "frontend": [
       {
         "source": "frontend",
@@ -10536,7 +10530,6 @@
         "type": "static"
       }
     ],
-    "backend": [],
     "npm:@ampproject/remapping": [
       {
         "source": "npm:@ampproject/remapping",
