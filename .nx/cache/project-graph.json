@@ -157,6 +157,14 @@
               "command": "jest"
             },
             "configurations": {}
+          },
+          "deploy": {
+            "cache": false,
+            "executor": "nx:run-commands",
+            "options": {
+              "command": "source ~/.zshrc && cd apps/netsuite-backend && suitecloud project:deploy"
+            },
+            "configurations": {}
           }
         },
         "name": "netsuite-backend",

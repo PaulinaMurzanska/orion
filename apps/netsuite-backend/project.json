@@ -7,6 +7,10 @@
     "test": {
       "command": "jest",
       "cache": true
+    },
+    "deploy": {
+      "command": "source ~/.zshrc && cd apps/netsuite-backend && suitecloud project:deploy",
+      "cache": false
     } 
   },
   "tags": [],
