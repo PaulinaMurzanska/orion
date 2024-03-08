@@ -1,8 +1,13 @@
 {
   "name": "backend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/backend/src",
+  "sourceRoot": "apps/backend/",
   "projectType": "library",
-  "targets": {},
-  "tags": []
+  "targets": {
+    "backend-test": {
+      "command": "jest"
+    } 
+  },
+  "tags": [],
+  "defaultAuthId": "bom-dev"
 }
