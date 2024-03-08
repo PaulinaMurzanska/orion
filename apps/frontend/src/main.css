@@ -1,6 +1,13 @@
+@import '../../../packages/shared-components/src/theme/theme.css';
+
 html,
 body,
 #app,
 #app > div {
   height: 100%;
+}
+
+body {
+  font-family: 'Raleway', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
