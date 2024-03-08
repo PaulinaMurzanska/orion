@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@orionsuite/backend": ["apps/backend/src/index.ts"],
       "@orionsuite/shared-components": [
         "packages/shared-components/src/index.ts"
       ]
