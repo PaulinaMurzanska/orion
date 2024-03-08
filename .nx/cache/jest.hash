@@ -124,5 +124,47 @@
         "{projectRoot}/coverage"
       ]
     }
+  },
+  "12430920464377818736": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/netsuite-backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
+    }
+  },
+  "7868987299378775805": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/netsuite-backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
+      ]
+    }
   }
 }

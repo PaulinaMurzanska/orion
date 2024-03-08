@@ -103,12 +103,40 @@
   "fileMap": {
     "nonProjectFiles": [
       {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
+      },
+      {
+        "file": "README.md",
+        "hash": "11227976877703499191"
+      },
+      {
+        "file": "package.json",
+        "hash": "8197983624780080823"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "12333515226966617182"
+      },
+      {
+        "file": "nx.json",
+        "hash": "8888156798602440906"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "16188820923721098135"
+      },
+      {
         "file": ".gitignore",
         "hash": "4662988456259469729"
       },
       {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
+        "file": ".prettierignore",
+        "hash": "16448050467312557263"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "11049594559659387283"
       },
       {
         "file": "jest.preset.js",
@@ -119,40 +147,12 @@
         "hash": "5443105041930014821"
       },
       {
-        "file": ".prettierignore",
-        "hash": "16448050467312557263"
-      },
-      {
-        "file": ".eslintrc.json",
-        "hash": "17866138117546000433"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "16188820923721098135"
-      },
-      {
-        "file": "package.json",
-        "hash": "8197983624780080823"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "11049594559659387283"
-      },
-      {
-        "file": "README.md",
-        "hash": "11227976877703499191"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "12333515226966617182"
-      },
-      {
         "file": ".eslintignore",
         "hash": "7663861978715868291"
       },
       {
-        "file": "nx.json",
-        "hash": "8888156798602440906"
+        "file": ".eslintrc.json",
+        "hash": "17866138117546000433"
       }
     ],
     "projectFileMap": {
@@ -190,14 +190,6 @@
             "npm:SuiteScripts/orion/dataToJSON/lib/orionHelperLib",
             "npm:SuiteScripts/orion/dataToJSON/fileDefinitions.json",
             "npm:SuiteScripts/orion/dataToJSON/jsonOutputDefinition.json"
-          ]
-        },
-        {
-          "file": "apps/netsuite-backend/gulpfile.js",
-          "hash": "8307605266391500883",
-          "deps": [
-            "npm:gulp",
-            "npm:child_process"
           ]
         },
         {
@@ -257,7 +249,10 @@
         },
         {
           "file": "apps/netsuite-backend/suitecloud.config.js",
-          "hash": "8405872550406380080"
+          "hash": "15806357585773285918",
+          "deps": [
+            "npm:@oracle/suitecloud-unit-testing"
+          ]
         }
       ],
       "frontend": [
