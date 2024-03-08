@@ -292,5 +292,68 @@
         "{workspaceRoot}/coverage/apps/backend"
       ]
     }
+  },
+  "5663528119798177087": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/backend"
+      ]
+    }
+  },
+  "5075623215754702605": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/backend"
+      ]
+    }
+  },
+  "11043210983770760286": {
+    "test": {
+      "command": "jest",
+      "options": {
+        "cwd": "apps/backend"
+      },
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": [
+            "jest"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/backend"
+      ]
+    }
   }
 }

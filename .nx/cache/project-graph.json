@@ -271,7 +271,7 @@
         },
         "name": "backend",
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "sourceRoot": "apps/backend/",
+        "sourceRoot": "apps/backend/src/",
         "projectType": "library",
         "tags": [],
         "defaultAuthId": "bom-dev",
