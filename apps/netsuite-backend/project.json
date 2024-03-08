@@ -11,8 +11,8 @@
     "deploy": {
       "command": "source ~/.zshrc && cd apps/netsuite-backend && suitecloud project:deploy",
       "cache": false
-    } 
+    }
   },
   "tags": [],
-  "defaultAuthId": "bom-dev"
+  "defaultAuthId": "suitecentric-dev"
 }
