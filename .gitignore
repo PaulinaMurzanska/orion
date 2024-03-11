@@ -50,3 +50,6 @@ Thumbs.db
 
 #Visual Studio Code
 .vscode/
+
+#nx cache
+.nx/cache
