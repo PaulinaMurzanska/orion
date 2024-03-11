@@ -27,15 +27,29 @@
         "item": {
           "type": "item",
           "return_field": "id",
-          "field": ["itemid"],
+          "field": [
+            {
+            "field": "itemid",
+            "soundex": true
+            }
+          ],
           "map_field": null,
           "field_join": "AND"
         },
         "povendor": {
           "type": "customrecord_orion_cat_code",
           "return_field": "custrecord_orion_catcode_vendor",
-          "field": ["custrecord_orion_catcode_vendor", "custrecord_orion_codecat", "custrecord_orion_catcode_mancode"],
-          "map_field": ["povendor", "custcol_pintel_entcode", "custcol_pintel_mancode"],
+          "field": [
+            {
+              "field": "custrecord_orion_codecat",
+              "soundex": false
+            },
+            {
+              "field": "custrecord_orion_catcode_mancode"],
+              "soundex": false
+            }
+          ],
+          "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
           "field_join": "AND"
         }
       }

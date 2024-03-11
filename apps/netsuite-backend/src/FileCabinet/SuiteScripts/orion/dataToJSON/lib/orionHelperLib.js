@@ -48,11 +48,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
         whereStringBlock += ` ${idMaps.field_join} `
       }
       if (!idMaps.map_field) {
-        whereStringBlock += `(${field} = '${keyResults.value}' OR SOUNDEX(${field}) = SOUNDEX('${keyResults.value}'))`
+        whereStringBlock += isServiceValue(keyResults.value) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
       } else {
         let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
         if (fieldValue) {
-          whereStringBlock += `(${field} = '${fieldValue}' OR SOUNDEX(${field}) = SOUNDEX('${fieldValue}'))`
+          whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field}) = SOUNDEX('${fieldValue}'))` : `(${field} = '${fieldValue}')`
         }  
       }
     }
