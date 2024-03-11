@@ -24,10 +24,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
       whereKeyResults[idMapKey] = []
       for (let [idx, itemObj] of itemList[idMapKey].entries()) {
         const keyResults = itemObj
-        if (idx > 0) {
+        if (idx > 0 && !/OR\s$/.test(whereString)) {
           whereString += ' OR '
         }
-        whereString += buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+        let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+        whereString += whereString.indexOf(returnedString) === -1 ? returnedString : ''
         if (idx === lineLimit - 1 || idx === itemList[idMapKey].length - 1) {
           whereKeyResults[idMapKey] = whereKeyResults[idMapKey].concat([whereString])
           whereString = ''
@@ -68,7 +69,8 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     for (let idMapKey in idMaps) {
       let headerString = `SELECT ${idMaps[idMapKey].return_field} FROM ${idMaps[idMapKey].type} WHERE `
       for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
-        whereKeyResults[idMapKey] = headerString + whereResults.replace(/^\s+OR\s/, '')
+        let fullString = headerString + whereResults.replace(/^\s+OR\s/, '')
+        whereKeyResults[idMapKey] = fullString.replace(/\sOR\s$/, '')
       }
     }
 
