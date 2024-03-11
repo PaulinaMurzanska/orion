@@ -20,21 +20,23 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     let lineLimit = 250
 
     const idMaps = fileDef.id_maps
-    console.log('idMaps', idMaps)
     for (let idMapKey in idMaps) {
       whereKeyResults[idMapKey] = []
       for (let [idx, itemObj] of itemList[idMapKey].entries()) {
         const keyResults = itemObj
-        if (idx > 0) {
+        if (idx > 0 && !/OR\s$/.test(whereString)) {
           whereString += ' OR '
         }
-        whereString += buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+        let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+        whereString += whereString.indexOf(returnedString) === -1 ? returnedString : ''
         if (idx === lineLimit - 1 || idx === itemList[idMapKey].length - 1) {
           whereKeyResults[idMapKey] = whereKeyResults[idMapKey].concat([whereString])
           whereString = ''
         }
       }
     }
+
+    whereKeyResults = buildHeaderString(idMaps, whereKeyResults)
     console.log('whereKeyResults', whereKeyResults)
   }
 
@@ -52,23 +54,34 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
       } else {
         let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
         if (fieldValue) {
-          whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field}) = SOUNDEX('${fieldValue}'))` : `(${field} = '${fieldValue}')`
+          whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
         }  
       }
     }
     whereStringBlock += ')'
 
-    // const suiteQL = `
-    //   SELECT ${idMaps[field].return_field}
-    //   FROM ${idMaps[field].type}
-    //   WHERE ${whereString}
-    // `
-
-    // log.debug(loggerTitle, `suiteQL: ${suiteQL}`)
-    // const queryResults = query.runSuiteQL(suiteQL).asMappedResults()
-    // return queryResults?.length > 0 ? queryResults[0] : null
-
     return whereStringBlock
+  }
+
+  const buildHeaderString = (idMaps, whereKeyResults) => {
+    const loggerTitle = 'buildHeaderString'
+    
+    for (let idMapKey in idMaps) {
+      let headerString = `SELECT ${idMaps[idMapKey].return_field}, ${fieldsToString(idMaps[idMapKey].field)} FROM ${idMaps[idMapKey].type} WHERE `
+      for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
+        let fullString = headerString + whereResults.replace(/^\s+OR\s/, '')
+        whereKeyResults[idMapKey] = fullString.replace(/\sOR\s$/, '')
+      }
+    }
+
+    return whereKeyResults
+  }
+
+  const fieldsToString = (fields) => {
+    let fieldValues = fields.map(field => {
+      return field.field
+    })
+    return fieldValues.join(', ')
   }
 
   /**
