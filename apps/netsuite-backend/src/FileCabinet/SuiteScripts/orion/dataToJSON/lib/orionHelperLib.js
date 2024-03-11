@@ -67,7 +67,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     const loggerTitle = 'buildHeaderString'
     
     for (let idMapKey in idMaps) {
-      let headerString = `SELECT ${idMaps[idMapKey].return_field} FROM ${idMaps[idMapKey].type} WHERE `
+      let headerString = `SELECT ${idMaps[idMapKey].return_field}, ${fieldsToString(idMaps[idMapKey].field)} FROM ${idMaps[idMapKey].type} WHERE `
       for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
         let fullString = headerString + whereResults.replace(/^\s+OR\s/, '')
         whereKeyResults[idMapKey] = fullString.replace(/\sOR\s$/, '')
@@ -75,6 +75,13 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
 
     return whereKeyResults
+  }
+
+  const fieldsToString = (fields) => {
+    let fieldValues = fields.map(field => {
+      return field.field
+    })
+    return fieldValues.join(', ')
   }
 
   /**
