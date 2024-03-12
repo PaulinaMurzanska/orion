@@ -134,11 +134,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
       toResults = toResults.filter(toResult => {
         return toResult !== null
-      }
+      })
 
       let foundEntries = []
       for (let [idx, toResult] of toResults.entries()) {
-        if (toResult === fromResults[idx] || (soundexStrings[idx] && soundex(fromResults[idx]) === soundex(toResult)) {
+        if (toResult === fromResults[idx] || (soundexStrings[idx] && soundex(fromResults[idx]) === soundex(toResult))) {
           foundEntries.push(toResult)
         }
 
