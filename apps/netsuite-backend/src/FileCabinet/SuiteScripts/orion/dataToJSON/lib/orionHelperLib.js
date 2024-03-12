@@ -37,7 +37,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
 
     whereKeyResults = buildHeaderString(idMaps, whereKeyResults)
-    console.log('whereKeyResults', whereKeyResults)
+    return getSQLResults(whereKeyResults)
   }
 
   const buildWhereString = (idMapKey, idMaps, keyResults, newOutputDefKeysLoop, whereString) => {
@@ -75,6 +75,21 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
 
     return whereKeyResults
+  }
+
+  const getSQLResults = (whereKeyResults) => {
+    let resultValues = {}
+    for (let idMapKey in whereKeyResults) {
+      let combinedResults = []
+      for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
+        let queryResults = query.run({ query: whereResults })
+        let results = queryResults.asMappedResults()
+        combinedResults = combinedResults.concat(results)
+      }
+      resultValues[idMapKey] = combinedResults
+    }
+
+    return resultValues
   }
 
   const fieldsToString = (fields) => {
