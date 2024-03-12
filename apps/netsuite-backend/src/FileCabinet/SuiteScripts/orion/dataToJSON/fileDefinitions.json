@@ -45,11 +45,7 @@
               "soundex": false
             },
             {
-<<<<<<< HEAD
-              "field": "custrecord_orion_catcode_mancode"],
-=======
               "field": "custrecord_orion_catcode_mancode",
->>>>>>> data-to-json-backup
               "soundex": false
             }
           ],

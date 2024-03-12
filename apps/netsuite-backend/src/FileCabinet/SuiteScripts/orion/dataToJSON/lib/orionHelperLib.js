@@ -37,7 +37,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
 
     whereKeyResults = buildHeaderString(idMaps, whereKeyResults)
-    return getSQLResults(whereKeyResults)
+    const searchResults = getSQLResults(whereKeyResults)
+    newOutputDefKeysLoop = addResultsToOutput(searchResults, newOutputDefKeysLoop, idMaps)
+
+    return newOutputDefKeysLoop
+
   }
 
   const buildWhereString = (idMapKey, idMaps, keyResults, newOutputDefKeysLoop, whereString) => {
@@ -90,6 +94,20 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
 
     return resultValues
+  }
+
+  const addResultsToOutput = (resultValues, newOutputDefKeysLoop, idMaps) => {
+    const loggerTitle = 'addResultsToOutput'
+    for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
+      for (let idMapKey in idMaps) {
+        if (idMaps[idMapKey].map_field?.length > 0) {
+          let outputValues = []
+          for (let [idx, field] of idMaps[idMapKey].map_field.entries()) {
+            newOutputDefKeys[field] = resultValues[idMapKey][idx][field]
+          }
+        }
+      }
+    }
   }
 
   const fieldsToString = (fields) => {
