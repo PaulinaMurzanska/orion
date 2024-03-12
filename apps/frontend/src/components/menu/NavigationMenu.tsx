@@ -1,8 +1,9 @@
-import styled from 'styled-components';
-import { PersonIcon, GearIcon } from '@radix-ui/react-icons';
-import { useNavigate } from 'react-router-dom';
+import { GearIcon, PersonIcon } from '@radix-ui/react-icons';
+
 import { MenuElement } from './types';
 import NavigationMenuItem from './NavigationMenuItem';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   height: 100vh;

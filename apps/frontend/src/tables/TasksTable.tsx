@@ -1,5 +1,6 @@
-import { Table } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
+
+import { Table } from '@orionsuite/shared-components';
 
 interface Task {
   id: number;

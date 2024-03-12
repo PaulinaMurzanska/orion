@@ -48,3 +48,9 @@ Thumbs.db
 *.mov
 *.wmv
 
+# nx cache
+*.nx/cache
+
+
+#vs code seetings
+.vscode
