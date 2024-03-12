@@ -74,7 +74,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
       let headerString = `SELECT ${idMaps[idMapKey].return_field}, ${fieldsToString(idMaps[idMapKey].field)} FROM ${idMaps[idMapKey].type} WHERE `
       for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
         let fullString = headerString + whereResults.replace(/^\s+OR\s/, '')
-        whereKeyResults[idMapKey] = fullString.replace(/\sOR\s$/, '')
+        whereKeyResults[idMapKey][idx] = (fullString.replace(/\sOR\s$/, ''))
       }
     }
 
@@ -82,11 +82,13 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   }
 
   const getSQLResults = (whereKeyResults) => {
+    const loggerTitle = 'getSQLResults'
     let resultValues = {}
+    log.debug(loggerTitle, `whereKeyResults: ${JSON.stringify(whereKeyResults)}`)
     for (let idMapKey in whereKeyResults) {
       let combinedResults = []
       for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
-        let queryResults = query.run({ query: whereResults })
+        let queryResults = query.runSuiteQL({ query: whereResults })
         let results = queryResults.asMappedResults()
         combinedResults = combinedResults.concat(results)
       }
@@ -105,7 +107,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
           for (let [idx, field] of idMaps[idMapKey].map_field.entries()) {
             toResults.push(newOutputDefKeys[field])
           }
-          let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey])
+          let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey], idMapKey)
           if (foundResult) {
             let resultField = foundResult[idMaps[idMapKey].return_field]
             let resultObj = {
@@ -119,34 +121,40 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return newOutputDefKeysLoop
   }
 
-  const findResultOutput = (toResults, searchResults, idMap) => {
-    searchResults.forEach(searchResult => {
-      let fromResults = []
-      let soundexStrings = []
-      for (let [idx, field] of idMap.field.entries()) {
-        if (searchResult[field.field]) {
-          fromResults.push(searchResult[field.field])
-        }
-        if (field.soundex) {
-          soundexStrings.push(field.field)
-        }
+  const findResultOutput = (toResults, searchResults, idMap, idMapKey) => {
+    const loggerTitle = 'findResultOutput'
+    log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
+    log.debug(loggerTitle, `searchResults: ${JSON.stringify(searchResults)}`)
+    log.debug(loggerTitle, `idMap: ${JSON.stringify(idMap)}`)
+
+    const searchResult = searchResults[idMapKey]
+
+    let fromResults = []
+    let soundexStrings = []
+    for (let [idx, field] of idMap.field.entries()) {
+      if (searchResult[field.field]) {
+        fromResults.push(searchResult[field.field])
+      }
+      if (field.soundex) {
+        soundexStrings.push(field.field)
+      }
+    }
+
+    toResults = toResults.filter(toResult => {
+      return toResult !== null
+    })
+
+    let foundEntries = []
+    for (let [idx, toResult] of toResults.entries()) {
+      if (toResult === fromResults[idx] || (soundexStrings[idx] && soundex(fromResults[idx]) === soundex(toResult))) {
+        foundEntries.push(toResult)
       }
 
-      toResults = toResults.filter(toResult => {
-        return toResult !== null
-      })
+      if (idx === toResults.length - 1) {
+        return foundEntries.length === toResults.length ? searchResult : null
+      }
+    }  
 
-      let foundEntries = []
-      for (let [idx, toResult] of toResults.entries()) {
-        if (toResult === fromResults[idx] || (soundexStrings[idx] && soundex(fromResults[idx]) === soundex(toResult))) {
-          foundEntries.push(toResult)
-        }
-
-        if (idx === toResults.length - 1) {
-          return foundEntries.length === toResults.length ? searchResult : null
-        }
-      }  
-    })
   }
 
   const soundex = (word) => {
