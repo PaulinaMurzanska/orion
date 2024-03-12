@@ -116,6 +116,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
         }
       }
     }
+    return newOutputDefKeysLoop
   }
 
   const findResultOutput = (toResults, searchResults, idMap) => {
