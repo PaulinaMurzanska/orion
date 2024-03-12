@@ -100,14 +100,85 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     const loggerTitle = 'addResultsToOutput'
     for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
       for (let idMapKey in idMaps) {
+        const toResults = []
         if (idMaps[idMapKey].map_field?.length > 0) {
-          let outputValues = []
           for (let [idx, field] of idMaps[idMapKey].map_field.entries()) {
-            newOutputDefKeys[field] = resultValues[idMapKey][idx][field]
+            toResults.push(newOutputDefKeys[field])
+          }
+          let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey])
+          if (foundResult) {
+            let resultField = foundResult[idMaps[idMapKey].return_field]
+            let resultObj = {
+              id: foundResult[resultField]
+            }
+            newOutputDefKeys[idMapKey] = resultObj
           }
         }
       }
     }
+  }
+
+  const findResultOutput = (toResults, searchResults, idMap) => {
+    searchResults.forEach(searchResult => {
+      let fromResults = []
+      let soundexStrings = []
+      for (let [idx, field] of idMap.field.entries()) {
+        if (searchResult[field.field]) {
+          fromResults.push(searchResult[field.field])
+        }
+        if (field.soundex) {
+          soundexStrings.push(field.field)
+        }
+      }
+
+      toResults = toResults.filter(toResult => {
+        return toResult !== null
+      }
+
+      let foundEntries = []
+      for (let [idx, toResult] of toResults.entries()) {
+        if (toResult === fromResults[idx] || (soundexStrings[idx] && soundex(fromResults[idx]) === soundex(toResult)) {
+          foundEntries.push(toResult)
+        }
+
+        if (idx === toResults.length - 1) {
+          return foundEntries.length === toResults.length ? searchResult : null
+        }
+      }  
+    })
+  }
+
+  const soundex = (word) => {
+    // Convert the word to uppercase
+    word = word.toUpperCase()
+
+    // Remove non-alphabetic characters
+    word = word.replace(/[^A-Z]/g, '')
+
+    // Handle special cases for initial letters
+    if (word.length > 0) {
+      const firstLetter = word[0]
+      word = word.substring(1).replace(/[AEIOUYHW]/g, '')
+      word = firstLetter + word
+    }
+
+    // Replace consonants with digits
+    word = word.replace(/[BFPV]/g, '1')
+    word = word.replace(/[CGJKQSXZ]/g, '2')
+    word = word.replace(/[DT]/g, '3')
+    word = word.replace(/[L]/g, '4')
+    word = word.replace(/[MN]/g, '5')
+    word = word.replace(/[R]/g, '6')
+
+    // Remove adjacent duplicate digits
+    word = word.replace(/(.)\1+/g, '$1')
+
+    // Pad or truncate to a length of 4
+    while (word.length < 4) {
+      word += '0'
+    }
+
+    return word.substring(0, 4)
   }
 
   const fieldsToString = (fields) => {
