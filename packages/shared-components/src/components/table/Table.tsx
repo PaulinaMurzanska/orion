@@ -17,22 +17,37 @@ import {
   TableHeader,
   TableRow,
 } from './TableComponents';
+import { useState, useEffect } from 'react';
 
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
+  onRowSelectionChange?: CallableFunction;
 }
 
 const Table = <T extends object>(props: TableProps<T>) => {
-  const { data, columns } = props;
+  const { data, columns, onRowSelectionChange } = props;
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data: data,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
     renderFallbackValue: undefined,
-    state: {},
+    onRowSelectionChange: setRowSelection,
+    state: {
+      rowSelection,
+    },
   });
+
+  useEffect(() => {
+    if (onRowSelectionChange) {
+      onRowSelectionChange(
+        table.getSelectedRowModel().flatRows.map((row) => row.original)
+      );
+    }
+  }, [table, rowSelection]);
 
   return (
     <ShadcnTable className="w-full">
