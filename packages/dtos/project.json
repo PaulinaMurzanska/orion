@@ -1,0 +1,23 @@
+{
+  "name": "dtos",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/dtos/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/dtos",
+        "main": "packages/dtos/src/index.ts",
+        "tsConfig": "packages/dtos/tsconfig.lib.json",
+        "assets": ["packages/dtos/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs dtos {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
