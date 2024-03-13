@@ -303,7 +303,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
         optionStr += `${optionValue}\n`
       }
     }
-    log.audit(loggerTitle, `optionStr: ${optionStr}`)
+
     return optionStr
   }
 
