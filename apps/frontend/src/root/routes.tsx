@@ -1,8 +1,9 @@
 import { createBrowserRouter, createHashRouter } from 'react-router-dom';
-import Root from './Root';
-import TasksTable from '../tables/TasksTable';
+
 import OrdersTable from '../tables/OrdersTable';
 import PricingTable from '../tables/PricingTable';
+import Root from './Root';
+import TasksTable from '../tables/TasksTable';
 
 // TODO: Should probably replace with hash router to work with NetSuite
 export default createHashRouter([
