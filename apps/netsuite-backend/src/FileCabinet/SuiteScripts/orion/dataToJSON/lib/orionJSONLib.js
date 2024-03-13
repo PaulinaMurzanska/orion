@@ -239,6 +239,15 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     return newOutputDef
   }
 
+  /**
+   * Converts XML data to JSON format based on the provided file definition, line objects, output definition, and Orion helper library.
+   *
+   * @param {Object} fileDef - The file definition object.
+   * @param {Array} lineObjs - An array of line objects.
+   * @param {Object} outputDef - The output definition object.
+   * @param {Object} orionHelperLib - The Orion helper library object.
+   * @returns {Object} - The converted JSON data.
+   */
   const convertXMLData = (fileDef, lineObjs, outputDef, orionHelperLib) => {
     const loggerTitle = 'convertSIFData'
     const fileMaps = fileDef.mapping
@@ -277,6 +286,15 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     return newOutputDef
   }
 
+  /**
+   * Generates SIF options based on the provided file definition, line object, regular expression, and option match group.
+   *
+   * @param {Object} fileDef - The file definition object.
+   * @param {string} lineObj - The line object to be split.
+   * @param {string} optRegex - The regular expression for matching option names and values.
+   * @param {number} optionMatchGroup - The match group index for extracting option names and values.
+   * @returns {string} - The generated SIF options.
+   */
   const generateSIFOptions = (fileDef, lineObj, optRegex, optionMatchGroup) => {
     const loggerTitle = 'generateSIFOptions'
     lineObj = lineObj.split('\r\n')
@@ -307,6 +325,13 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     return optionStr
   }
 
+  /**
+   * Generates XML options based on the provided file definition and JSON object.
+   *
+   * @param {Object} fileDef - The file definition object.
+   * @param {Object} jsonObj - The JSON object.
+   * @returns {string} - The generated XML options.
+   */
   const generateXMLOptions = (fileDef, jsonObj) => {
     const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
     const optNamePath = optionParams[0].split('[]')[1]
