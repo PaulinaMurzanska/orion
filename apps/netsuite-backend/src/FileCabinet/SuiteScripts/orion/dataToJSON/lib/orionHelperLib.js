@@ -20,15 +20,23 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     let lineLimit = 250
 
     const idMaps = fileDef.id_maps
+
+    // for each key in "id_maps" definition generate a where string
     for (let idMapKey in idMaps) {
       whereKeyResults[idMapKey] = []
       for (let [idx, itemObj] of itemList[idMapKey].entries()) {
         const keyResults = itemObj
+        // if we are not on the first item and the where string does not end with "OR" add "OR" to the end of the string
         if (idx > 0 && !/OR\s$/.test(whereString)) {
           whereString += ' OR '
         }
+        // build the where string
         let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+        
+        // add the where string to the whereKeyResults object if it doeesn't already exist in string
         whereString += whereString.indexOf(returnedString) === -1 ? returnedString : ''
+        
+        // if we are at the line limit or the last item in the list add the where string to the whereKeyResults object and reset the where string
         if (idx === lineLimit - 1 || idx === itemList[idMapKey].length - 1) {
           whereKeyResults[idMapKey] = whereKeyResults[idMapKey].concat([whereString])
           whereString = ''
@@ -60,13 +68,18 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     let fields = idMaps.field
     let whereStringBlock = '('
 
+    // for each field in the "field" array of the "id_maps" definition generate a where string block
     for (let [idx, field] of fields.entries()) {
+      // if we are not on the first item add in between the fields
       if (idx > 1) {
         whereStringBlock += ` ${idMaps.field_join} `
       }
+      // if the field is not a mapped field use the keyResults value, otherwise use the mapped field value
       if (!idMaps.map_field) {
+        // if the value is a service value use SOUNDEX, otherwise use the value
         whereStringBlock += isServiceValue(keyResults.value) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
       } else {
+        // if the value is a service value use SOUNDEX, otherwise use the value
         let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
         if (fieldValue) {
           whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
@@ -87,10 +100,14 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    */
   const buildHeaderString = (idMaps, whereKeyResults) => {
     const loggerTitle = 'buildHeaderString'
-    
+    // for each key in the "id_maps" definition generate a header string
     for (let idMapKey in idMaps) {
+      // build the header string
       let headerString = `SELECT ${idMaps[idMapKey].return_field}, ${fieldsToString(idMaps[idMapKey].field)} FROM ${idMaps[idMapKey].type} WHERE `
+
+      // for each where string in the whereKeyResults object add the header string to the beginning of the where string
       for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
+        // removed OR string from beginning or end
         let fullString = headerString + whereResults.replace(/^\s+OR\s/, '')
         whereKeyResults[idMapKey][idx] = (fullString.replace(/\sOR\s$/, ''))
       }
@@ -109,8 +126,10 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     const loggerTitle = 'getSQLResults'
     let resultValues = {}
     log.debug(loggerTitle, `whereKeyResults: ${JSON.stringify(whereKeyResults)}`)
+    // for each key in the whereKeyResults object run the query and add the results to the resultValues object
     for (let idMapKey in whereKeyResults) {
       let combinedResults = []
+      // for each where string in the whereKeyResults object run the query and add the results to the combinedResults array
       for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
         let queryResults = query.runSuiteQL({ query: whereResults })
         let results = queryResults.asMappedResults()
@@ -134,11 +153,14 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   const addResultsToOutput = (resultValues, newOutputDefKeysLoop, idMaps) => {
     const loggerTitle = 'addResultsToOutput'
 
+    // for each key in the newOutputDefKeysLoop array add the results to the newOutputDefKeysLoop array
     for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
       for (let idMapKey in idMaps) {
         const toResults = []
 
+        // for each field in the "map_field" array of the "id_maps" definition add the results to the toResults array
         if (idMaps[idMapKey].map_field?.length > 0) {
+          // for each field in the "map_field" array of the "id_maps" definition add the results to the toResults array
           for (let [keyIdx, field] of idMaps[idMapKey].map_field.entries()) {
             toResults.push({
               key_idx: keyIdx,
@@ -146,8 +168,10 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
               value: newOutputDefKeys[field]
             })
           }
+          // find the result output based on the toResults and resultValues
           let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey], idMapKey)
           log.debug(loggerTitle, `foundResult: ${JSON.stringify(foundResult)}`)
+          // if a result is found add the result to the newOutputDefKeysLoop array
           if (foundResult) {
             let resultField = foundResult.return_key
             let resultObj = {
