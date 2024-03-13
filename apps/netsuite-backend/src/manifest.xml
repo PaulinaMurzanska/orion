@@ -4,11 +4,7 @@
   <dependencies>
     <features>
       <feature required="true">SERVERSIDESCRIPTING</feature>
-      <feature required="true">ACCOUNTING</feature>
       <feature required="false">CRM</feature>
-      <feature required="false">CUSTOMSEGMENTS</feature>
-      <feature required="false">EXTREMELIST</feature>
-      <feature required="true">CUSTOMRECORDS</feature>
     </features>
   </dependencies>
 </manifest>
