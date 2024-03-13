@@ -205,6 +205,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
     let fromResults = []
     let soundexStrings = []
+    // for each field in the "field" array of the "id_maps" definition add the results to the fromResults array
     for (let [idx, field] of idMap.field.entries()) {
       for (let searchField of searchResult) {
         // log.debug(loggerTitle, `searchField: ${JSON.stringify(searchField)}`)
@@ -220,15 +221,20 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
       }
     }
 
+    // filter out null values from the toResults array
     toResults = toResults.filter(toResult => {
       return toResult.value !== null
     })
 
-    // log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
-    // log.debug(loggerTitle, `fromResults: ${JSON.stringify(fromResults)}`)
+    log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
+    log.debug(loggerTitle, `fromResults: ${JSON.stringify(fromResults)}`)
     let foundEntries = []
+
+    // for each result in the toResults array find the result in the fromResults array
     for (let [idx, toResult] of toResults.entries()) {
       for (let [forIdx, fromResult] of fromResults.entries()) {
+        
+        // if the value and key index match add the return key to the toResult and add the toResult to the foundEntries array
         if ((toResult.value === fromResult.value || (soundexStrings[forIdx] && soundex(fromResult.value) === soundex(toResult.value))) && toResult.key_idx === fromResult.key_idx) {
           log.debug(loggerTitle, `fromResult: ${JSON.stringify(fromResult)}`)
           log.debug(loggerTitle, `toResult: ${JSON.stringify(toResult)}`)
@@ -238,6 +244,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
         }
       }
 
+      // if the index is the last index in the toResults array and the foundEntries array length is equal to the toResults array length return the toResult, otherwise return null
       if (idx === toResults.length - 1) {
         log.debug(loggerTitle, `foundEntries: ${JSON.stringify(foundEntries)}`)
         return foundEntries.length === toResults.length ? toResult : null
@@ -285,6 +292,12 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return word.substring(0, 4)
   }
 
+  /**
+   * Converts an array of fields to a string representation.
+   *
+   * @param {Array} fields - The array of fields to convert.
+   * @returns {string} - The string representation of the fields.
+   */
   const fieldsToString = (fields) => {
     let fieldValues = fields.map(field => {
       return field.field
@@ -300,6 +313,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   const xmlToJSON = text => {
     const xmlNodeToJson = (xmlNode, obj) => {
       var sibling = xmlNode
+      // loop through siblings
       while (sibling) {
         // skip comments
         if (sibling.nodeType == xml.NodeType.COMMENT_NODE) {
@@ -321,6 +335,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
         }
         // handle children
         var value = xmlNodeToJson(sibling.firstChild, childObj)
+        // handle multiple children with same name
         if (sibling.nodeName in obj) {
           if (!Array.isArray(obj[sibling.nodeName])) {
             obj[sibling.nodeName] = [obj[sibling.nodeName]]
