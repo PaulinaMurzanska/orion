@@ -259,6 +259,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
         if (key === 'custcol_pintel_optioncodedescription') {
           newOutputDefKeysLoop[key] = generateXMLOptions(fileDef, jsonLineObject)
         } else if (fileDef.id_maps[key] && orionHelperLib.findIDByField(fileDef, key, value)) {
+          log.debug(loggerTitle, `fileDef.id_maps[key]: ${fileDef.id_maps[key]}`)
           newOutputDefKeysLoop[key] = orionHelperLib.findIDByField(fileDef, key, value)
         } else {
           newOutputDefKeysLoop[key] = value

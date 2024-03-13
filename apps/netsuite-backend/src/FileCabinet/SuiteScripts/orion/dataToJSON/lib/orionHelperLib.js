@@ -40,6 +40,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     const searchResults = getSQLResults(whereKeyResults)
     newOutputDefKeysLoop = addResultsToOutput(searchResults, newOutputDefKeysLoop, idMaps)
 
+    log.debug(loggerTitle, `newOutputDefKeysLoop: ${JSON.stringify(newOutputDefKeysLoop)}`)
     return newOutputDefKeysLoop
 
   }
@@ -100,58 +101,80 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
   const addResultsToOutput = (resultValues, newOutputDefKeysLoop, idMaps) => {
     const loggerTitle = 'addResultsToOutput'
+
     for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
       for (let idMapKey in idMaps) {
         const toResults = []
         if (idMaps[idMapKey].map_field?.length > 0) {
-          for (let [idx, field] of idMaps[idMapKey].map_field.entries()) {
-            toResults.push(newOutputDefKeys[field])
+          for (let [keyIdx, field] of idMaps[idMapKey].map_field.entries()) {
+            toResults.push({
+              key_idx: keyIdx,
+              key: field,
+              value: newOutputDefKeys[field]
+            })
           }
           let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey], idMapKey)
+          log.debug(loggerTitle, `foundResult: ${JSON.stringify(foundResult)}`)
           if (foundResult) {
-            let resultField = foundResult[idMaps[idMapKey].return_field]
+            let resultField = foundResult.return_key
             let resultObj = {
-              id: foundResult[resultField]
+              id: resultField
             }
-            newOutputDefKeys[idMapKey] = resultObj
+            log.debug(loggerTitle, `resultObj: ${JSON.stringify(resultObj)}`)
+            log.debug(loggerTitle, `idMapKey: ${idMapKey}`)
+            newOutputDefKeysLoop[idx][idMapKey] = resultObj
+            log.debug(loggerTitle, `newOutputDefKeysLoop[idx][idMapKey]: ${JSON.stringify(newOutputDefKeysLoop[idx][idMapKey])}`)
           }
         }
       }
     }
+    log.debug(loggerTitle, `newOutputDefKeysLoop: ${JSON.stringify(newOutputDefKeysLoop)}`)
     return newOutputDefKeysLoop
   }
 
   const findResultOutput = (toResults, searchResults, idMap, idMapKey) => {
     const loggerTitle = 'findResultOutput'
-    log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
-    log.debug(loggerTitle, `searchResults: ${JSON.stringify(searchResults)}`)
-    log.debug(loggerTitle, `idMap: ${JSON.stringify(idMap)}`)
 
     const searchResult = searchResults[idMapKey]
 
     let fromResults = []
     let soundexStrings = []
     for (let [idx, field] of idMap.field.entries()) {
-      if (searchResult[field.field]) {
-        fromResults.push(searchResult[field.field])
-      }
-      if (field.soundex) {
-        soundexStrings.push(field.field)
+      for (let searchField of searchResult) {
+        // log.debug(loggerTitle, `searchField: ${JSON.stringify(searchField)}`)
+        if (searchField[field.field]) {
+          fromResults.push({
+            key_idx: idx,
+            return_key: searchField[idMap.return_field],
+            key: field.field,
+            value: searchField[field.field]
+          })
+          soundexStrings.push(field.soundex)
+        }
       }
     }
 
     toResults = toResults.filter(toResult => {
-      return toResult !== null
+      return toResult.value !== null
     })
 
+    // log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
+    // log.debug(loggerTitle, `fromResults: ${JSON.stringify(fromResults)}`)
     let foundEntries = []
     for (let [idx, toResult] of toResults.entries()) {
-      if (toResult === fromResults[idx] || (soundexStrings[idx] && soundex(fromResults[idx]) === soundex(toResult))) {
-        foundEntries.push(toResult)
+      for (let [forIdx, fromResult] of fromResults.entries()) {
+        if ((toResult.value === fromResult.value || (soundexStrings[forIdx] && soundex(fromResult.value) === soundex(toResult.value))) && toResult.key_idx === fromResult.key_idx) {
+          log.debug(loggerTitle, `fromResult: ${JSON.stringify(fromResult)}`)
+          log.debug(loggerTitle, `toResult: ${JSON.stringify(toResult)}`)
+          toResult.return_key = fromResult.return_key
+          foundEntries.push(toResult)
+          break
+        }
       }
 
       if (idx === toResults.length - 1) {
-        return foundEntries.length === toResults.length ? searchResult : null
+        log.debug(loggerTitle, `foundEntries: ${JSON.stringify(foundEntries)}`)
+        return foundEntries.length === toResults.length ? toResult : null
       }
     }  
 
