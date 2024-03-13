@@ -45,6 +45,16 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
   }
 
+  /**
+   * Builds a WHERE string based on the provided parameters.
+   *
+   * @param {string} idMapKey - The key for the ID map.
+   * @param {Object} idMaps - The ID maps object.
+   * @param {Object} keyResults - The key results object.
+   * @param {Array} newOutputDefKeysLoop - The new output definition keys loop array.
+   * @param {string} whereString - The initial WHERE string.
+   * @returns {string} The built WHERE string.
+   */
   const buildWhereString = (idMapKey, idMaps, keyResults, newOutputDefKeysLoop, whereString) => {
     const loggerTitle = 'buildWhereString'
     let fields = idMaps.field
@@ -68,6 +78,13 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return whereStringBlock
   }
 
+  /**
+   * Builds the header string for querying data based on the provided idMaps and whereKeyResults.
+   *
+   * @param {Object} idMaps - The idMaps object containing the mapping information.
+   * @param {Object} whereKeyResults - The whereKeyResults object containing the query results.
+   * @returns {Object} - The modified whereKeyResults object.
+   */
   const buildHeaderString = (idMaps, whereKeyResults) => {
     const loggerTitle = 'buildHeaderString'
     
@@ -82,6 +99,12 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return whereKeyResults
   }
 
+  /**
+   * Retrieves SQL results based on the provided where key results.
+   *
+   * @param {Object} whereKeyResults - The where key results object.
+   * @returns {Object} - The result values object.
+   */
   const getSQLResults = (whereKeyResults) => {
     const loggerTitle = 'getSQLResults'
     let resultValues = {}
@@ -99,13 +122,22 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return resultValues
   }
 
+
+  /**
+   * Adds results to the output based on the provided parameters.
+   *
+   * @param {Array} resultValues - The result values.
+   * @param {Array} newOutputDefKeysLoop - The loop of new output definition keys.
+   * @param {Object} idMaps - The ID maps.
+   * @returns {Array} - The updated newOutputDefKeysLoop array.
+   */
   const addResultsToOutput = (resultValues, newOutputDefKeysLoop, idMaps) => {
     const loggerTitle = 'addResultsToOutput'
 
     for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
       for (let idMapKey in idMaps) {
         const toResults = []
-        
+
         if (idMaps[idMapKey].map_field?.length > 0) {
           for (let [keyIdx, field] of idMaps[idMapKey].map_field.entries()) {
             toResults.push({
@@ -133,6 +165,15 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return newOutputDefKeysLoop
   }
 
+  /**
+   * Finds the result output based on the provided parameters.
+   *
+   * @param {Array} toResults - The array of results to search from.
+   * @param {Object} searchResults - The search results object.
+   * @param {Object} idMap - The mapping object containing field and return field information.
+   * @param {string} idMapKey - The key to access the search result in the idMap object.
+   * @returns {Object|null} - The found result entry or null if not found.
+   */
   const findResultOutput = (toResults, searchResults, idMap, idMapKey) => {
     const loggerTitle = 'findResultOutput'
 
@@ -181,6 +222,12 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
   }
 
+  /**
+   * Calculates the Soundex code for a given word.
+   *
+   * @param {string} word - The word to calculate the Soundex code for.
+   * @returns {string} The Soundex code for the given word.
+   */
   const soundex = (word) => {
     // Convert the word to uppercase
     word = word.toUpperCase()
@@ -280,18 +327,36 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return eval(objectNameString)
   }
 
+  /**
+   * Loads a file from the specified file path and returns its content as a parsed JSON object.
+   *
+   * @param {string} filePath - The path of the file to load.
+   * @returns {Object} - The parsed JSON object representing the content of the file.
+   */
   const loadDefinition = filePath => {
     const fileObj = file.load({ id: filePath })
     const fileContent = fileObj.getContents()
     return JSON.parse(fileContent)
   }
 
+  /**
+   * Checks if a given string is a service value.
+   *
+   * @param {string} str - The string to be checked.
+   * @returns {boolean} Returns true if the string is a service value, otherwise returns false.
+   */
   const isServiceValue = (str) => {
     const loggerTitle = 'isServiceValue'
     log.debug(loggerTitle, `str: ${str}`)
     return /^([^0-9]*)$/.test(str)
   }
 
+  /**
+   * Converts a list of items to a Soundex string.
+   *
+   * @param {string} listItems - The list of items separated by commas and spaces.
+   * @returns {string} The Soundex string generated from the list of items.
+   */
   const listToSoundexString = (listItems) => {
     const itemArr = listItems.split(', ')
     let soundexString = ''
