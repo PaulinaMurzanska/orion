@@ -174,12 +174,10 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
           // if a result is found add the result to the newOutputDefKeysLoop array
           if (foundResult) {
             let resultField = foundResult.return_key
-            let resultObj = {
-              id: resultField
-            }
+            let resultObj = resultField ? {id: resultField} : null
             log.debug(loggerTitle, `resultObj: ${JSON.stringify(resultObj)}`)
             log.debug(loggerTitle, `idMapKey: ${idMapKey}`)
-            newOutputDefKeysLoop[idx][idMapKey] = resultObj
+            newOutputDefKeysLoop[idx][idMapKey] = resultObj ? resultObj : null
             log.debug(loggerTitle, `newOutputDefKeysLoop[idx][idMapKey]: ${JSON.stringify(newOutputDefKeysLoop[idx][idMapKey])}`)
           }
         }
