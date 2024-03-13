@@ -212,15 +212,16 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
         const regexResults = lineObj.match(keyRegex)
         if (regexResults?.length > 0) {
           const value = regexResults[2]
-          if (key === 'custcol_pintel_optioncodedescription') {
-            newOutputDefKeysLoop[key] = generateSIFOptions(fileDef, lineObj, '{var}=(.+)', 1)
-          } else if (fileDef.id_maps[key]) {
+          if (fileDef.id_maps[key]) {
             newOutputDefKeysLoop[key] = value
             itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
           } else {
             newOutputDefKeysLoop[key] = value
           }  
         } 
+        if (key === 'custcol_pintel_optioncodedescription') {
+          newOutputDefKeysLoop[key] = generateSIFOptions(fileDef, lineObj, '{var}=(.+)', 1)
+        }
       }
 
       log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
@@ -277,31 +278,32 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
   }
 
   const generateSIFOptions = (fileDef, lineObj, optRegex, optionMatchGroup) => {
+    const loggerTitle = 'generateSIFOptions'
     lineObj = lineObj.split('\r\n')
     const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
     const optionName = optionParams[0]
     const optValue = optionParams[1]
     
-    optNameRegex = optRegex.replace(/\{var\}/g, optionName)
-    optValRegex = optRegex.replace(/\{var\}/g, optValue)
+    const optNameRegex = optRegex.replace(/\{var\}/g, optionName)
+    const optValRegex = optRegex.replace(/\{var\}/g, optValue)
 
     let optionStr = ''
 
     for (let line of lineObj) {
-      if (line.match(optRegex)) {
-        if (fileDef.extension === 'sif') {
-          const optionName = line.match(optNameRegex)[optionMatchGroup]
-          const optionValue = line.match(optRegex)[optionMatchGroup]
-        }
-        
-        if (optionName?.length > 0) {
-          optionStr += `${optionName} -`
-        } else if (optionValue?.length > 0) {
-          optionStr += `${optionValue}\n`
-        }
+
+      let optionName = line.match(optNameRegex)
+      optionName = optionName?.length > 0 ? optionName[optionMatchGroup] : null
+      let optionValue = line.match(optValRegex)
+      optionValue = optionValue?.length > 0 ? optionValue[optionMatchGroup] : null
+
+      
+      if (optionName?.length > 0) {
+        optionStr += `${optionName} - `
+      } else if (optionValue?.length > 0) {
+        optionStr += `${optionValue}\n`
       }
     }
-    
+    log.audit(loggerTitle, `optionStr: ${optionStr}`)
     return optionStr
   }
 

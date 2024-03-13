@@ -105,6 +105,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
       for (let idMapKey in idMaps) {
         const toResults = []
+        
         if (idMaps[idMapKey].map_field?.length > 0) {
           for (let [keyIdx, field] of idMaps[idMapKey].map_field.entries()) {
             toResults.push({
