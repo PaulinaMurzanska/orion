@@ -1,52 +1,77 @@
-import { Column, createColumnHelper } from '@tanstack/react-table';
-
-import { Table } from '@orionsuite/shared-components';
-
-interface Order {
-  id: number;
-  name: string;
-  createdDate: string;
-  status: string;
-}
-
-const columnHelper = createColumnHelper<Order>();
-
-const columns = [
-  columnHelper.accessor((row) => row, {
-    id: 'id',
-    header: 'ID',
-    cell: (props) => props.getValue().id,
-  }),
-  columnHelper.accessor((row) => row, {
-    id: 'name',
-    header: 'Name',
-    cell: (props) => props.getValue().name,
-  }),
-  columnHelper.accessor((row) => row, {
-    id: 'createdDate',
-    header: 'Created date',
-    cell: (props) => props.getValue().createdDate,
-  }),
-  columnHelper.accessor((row) => row, {
-    id: 'status',
-    header: 'Status',
-    cell: (props) => props.getValue().status,
-  }),
-] as Column<Order>[];
-
-const exampleData: Order[] = [
-  { id: 1, name: 'Order 1', createdDate: '2021-01-01', status: 'New' },
-  { id: 2, name: 'Order 2', createdDate: '2021-01-02', status: 'In progress' },
-  { id: 3, name: 'Order 3', createdDate: '2021-01-03', status: 'Completed' },
-  { id: 4, name: 'Order 4', createdDate: '2021-01-04', status: 'New' },
-  { id: 5, name: 'Order 5', createdDate: '2021-01-05', status: 'In progress' },
-];
+import { Order } from '@orionsuite/dtos';
+import CustomTable from '../components/custom-table/CustomTable';
+import { Button, Input } from '@orionsuite/shared-components';
+import { useMemo, useState } from 'react';
+import { api } from '@orionsuite/api-client';
 
 const OrdersTable = () => {
+  const { data } = api.useGetOrdersQuery();
+
+  const [search, setSearch] = useState<string | undefined>();
+  const [selectedRows, setSelectedRows] = useState<Order[]>([]);
+
+  const filteredData = useMemo(() => {
+    if (search) {
+      return (
+        data?.filter((row) =>
+          row.name.toLowerCase().includes(search.toLowerCase())
+        ) ?? []
+      );
+    }
+    return data ?? [];
+  }, [data, search]);
+
+  const columns = useMemo(
+    () => [
+      {
+        id: 'id',
+        header: 'ID',
+      },
+      {
+        id: 'name',
+        header: 'Name',
+      },
+      {
+        id: 'price',
+        header: 'Price',
+      },
+      {
+        id: 'description',
+        header: 'Description',
+      },
+    ],
+    []
+  );
+
+  const onRowSelectionChange = (selectedRows: Order[]) => {
+    setSelectedRows(selectedRows);
+  };
+
   return (
     <div className="m-10">
-      <h1 className="text-4xl font-extrabold mb-5">Orders table</h1>
-      <Table columns={columns} data={exampleData} />
+      <CustomTable<Order>
+        data={filteredData}
+        columns={columns}
+        onRowSelectionChange={onRowSelectionChange}
+        header={<h1 className="text-3xl font-extrabold">Orders table</h1>}
+        actions={
+          <>
+            <Button variant="ghost">Edit</Button>
+            <Button variant="secondary">Export to PDF</Button>
+            <Button variant="secondary">Customer invoice</Button>
+          </>
+        }
+        filters={
+          <div className="flex gap-2 items-center">
+            <Input
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        }
+        footer={<div>Selected rows {selectedRows.length ?? 0}</div>}
+      />
     </div>
   );
 };
