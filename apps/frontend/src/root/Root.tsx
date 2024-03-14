@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
+
+import NavigationMenu from '../components/menu/NavigationMenu';
 import styled from 'styled-components';
-import NavigationMenu from "../components/menu/NavigationMenu";
 
 const Container = styled.div`
   display: grid;

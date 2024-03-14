@@ -1,0 +1,25 @@
+<suitelet scriptid="customscript_orion_sl_proxy">
+  <description>Does proxy requests to Restlets for testing purposes</description>
+  <isinactive>F</isinactive>
+  <name>Orion SL Proxy</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/orion/testUtils/orion-sl-proxy-suitelet.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_orion_sl_proxy">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <eventtype></eventtype>
+      <isdeployed>T</isdeployed>
+      <isonline>T</isonline>
+      <loglevel>ERROR</loglevel>
+      <runasrole>ADMINISTRATOR</runasrole>
+      <status>RELEASED</status>
+      <title>Orion SL Proxy</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</suitelet>
