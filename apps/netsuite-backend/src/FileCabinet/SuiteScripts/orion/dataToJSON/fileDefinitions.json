@@ -7,6 +7,7 @@
       "description": "CAP studio SIF file",
       "mapping": {
         "item": "PN",
+        "itemid": "PN",
         "description": "PD",
         "quantity": "QT",
         "povendor": "MC",
@@ -23,6 +24,7 @@
         "custcol_pintel_optioncodedescription": "ON - OD"
       },
       "identifiers": "PN, PD, MC, QT, PP, SP, PL",
+      "manufacturer_code": "custcol_pintel_mancode",
       "id_maps": {
         "item": {
           "type": "item",
@@ -60,6 +62,7 @@
       "description": "OFDA XML File",
       "mapping": {
         "item": "['OrderLineItem']['SpecItem']['Number']['#text']",
+        "itemid": "['OrderLineItem']['SpecItem']['Number']['#text']",
         "description": "['OrderLineItem']['SpecItem']['Description']['#text']",
         "quantity": "['OrderLineItem']['Quantity']['#text']",
         "povendor": "['OrderLineItem']['VendorRef']['#text']",
@@ -76,6 +79,7 @@
         "custcol_pintel_optioncodedescription": "['OrderLineItem']['SpecItem']['Option'][]['Code']['#text'] - ['OrderLineItem']['SpecItem']['Option'][]['Description']['#text']"
       },
       "identifiers": "OrderLineItem, Quantity, PublishedPrice, EndCustomerPrice, OrderDealerPrice, OrderDealerDiscount, EndCustomerDiscount",
+      "manufacturer_code": "custcol_pintel_mancode",
       "id_maps": {
         "item": {
           "type": "item",

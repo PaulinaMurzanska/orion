@@ -33,7 +33,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
               whereString += ' OR '
             }
             // build the where string
-            let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+            let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString, fileDef)
             
             // add the where string to the whereKeyResults object if it doeesn't already exist in string
             whereString += whereString.indexOf(returnedString) === -1 ? returnedString : ''
@@ -70,7 +70,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    * @param {string} whereString - The initial WHERE string.
    * @returns {string} The built WHERE string.
    */
-  const buildWhereString = (idMapKey, idMaps, keyResults, newOutputDefKeysLoop, whereString) => {
+  const buildWhereString = (idMapKey, idMaps, keyResults, newOutputDefKeysLoop, whereString, fileDef) => {
     const loggerTitle = 'buildWhereString'
 
     try {
@@ -86,12 +86,12 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
         // if the field is not a mapped field use the keyResults value, otherwise use the mapped field value
         if (!idMaps.map_field) {
           // if the value is a service value use SOUNDEX, otherwise use the value
-          whereStringBlock += isServiceValue(keyResults.value) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
+          whereStringBlock += isServiceValue(keyResults.value, newOutputDefKeysLoop[keyResults.idx], fileDef) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
         } else {
           // if the value is a service value use SOUNDEX, otherwise use the value
           let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
           if (fieldValue) {
-            whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
+            whereStringBlock += isServiceValue(fieldValue, newOutputDefKeysLoop[keyResults.idx], fileDef) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
           }  
         }
       }
@@ -396,10 +396,18 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    * @param {string} str - The string to be checked.
    * @returns {boolean} Returns true if the string is a service value, otherwise returns false.
    */
-  const isServiceValue = (str) => {
+  const isServiceValue = (str, itemObj, fileDef) => {
     const loggerTitle = 'isServiceValue'
+    let resultValue = false
     log.debug(loggerTitle, `str: ${str}`)
-    return /^([^0-9]*)$/.test(str)
+    const containsOnlyLetters = /^([^0-9]*)$/.test(str)
+    const hasManufactureCode = itemObj[fileDef['manufacturer_code']]
+    const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']].length > 3
+    if (containsOnlyLetters && (!hasManufactureCode || manCodeGreaterThanThree)) {
+      resultValue = true
+    }
+    
+    return resultValue
   }
 
   /**
@@ -420,6 +428,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
+    isServiceValue: isServiceValue,
     buildObjectFromString: buildObjectFromString,
     loadDefinition: loadDefinition
   }

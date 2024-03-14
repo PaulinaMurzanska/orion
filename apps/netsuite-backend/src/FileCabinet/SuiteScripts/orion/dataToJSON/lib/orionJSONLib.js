@@ -217,12 +217,16 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
             itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
           } else {
             newOutputDefKeysLoop[key] = value
-          }  
-        } 
+          }
+        }
+        // build out options 
         if (key === 'custcol_pintel_optioncodedescription') {
           newOutputDefKeysLoop[key] = generateSIFOptions(fileDef, lineObj, '{var}=(.+)', 1)
         }
       }
+
+
+      newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)  
 
       log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
 
@@ -276,8 +280,9 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
           } else {
             newOutputDefKeysLoop[key] = value
           }
-        }
       }
+
+      newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
       // if first line, set the newOutputDefKeys to the first item in the newOutputDef
       if (idx === 0) {
         newOutputDef.item.items[0] = newOutputDefKeysLoop
