@@ -226,7 +226,8 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       }
 
 
-      newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)  
+      newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
+      newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item'] 
 
       log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
 
@@ -280,9 +281,11 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
           } else {
             newOutputDefKeysLoop[key] = value
           }
+        }
       }
 
       newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
+      newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item']
       // if first line, set the newOutputDefKeys to the first item in the newOutputDef
       if (idx === 0) {
         newOutputDef.item.items[0] = newOutputDefKeysLoop

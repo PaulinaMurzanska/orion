@@ -1,5 +1,5 @@
 <manifest projecttype="ACCOUNTCUSTOMIZATION">
-  <projectname>data2json</projectname>
+  <projectname>netsuite-backend</projectname>
   <frameworkversion>1.0</frameworkversion>
   <dependencies>
     <features>
