@@ -10,8 +10,9 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    * @returns {string} - The file type
    */
   const getFileType = (filePath) => {
+    const loggerTitle = 'getFileType'
     // Extract the file extension from the file path
-    var fileExtension = filePath.substring(filePath.lastIndexOf('.') + 1)
+    let fileExtension = filePath.match(/\.([0-9a-z]+)(?:[\?#]|$)/i)[1]
 
     // Return the file type
     return fileExtension
@@ -248,7 +249,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    * @param {Object} orionHelperLib - The Orion helper library object.
    * @returns {Object} - The converted JSON data.
    */
-  const convertXMLData = (fileDef, lineObjs, outputDef, orionHelperLib) => {
+  const convertXMLData = (fileDef, lineObjs, outputDef) => {
     const loggerTitle = 'convertSIFData'
     const fileMaps = fileDef.mapping
     let lineOutput = []
@@ -267,13 +268,14 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       // Loop through each file mapping
       for (let key in fileMaps) {
         const value = orionHelperLib.buildObjectFromString(jsonLineObject, fileMaps[key])
-        if (key === 'custcol_pintel_optioncodedescription') {
-          newOutputDefKeysLoop[key] = generateXMLOptions(fileDef, jsonLineObject)
-        } else if (fileDef.id_maps[key] && orionHelperLib.findIDByField(fileDef, key, value)) {
+        if (fileDef.id_maps[key]) {
           newOutputDefKeysLoop[key] = value
           newOutputDefKeysLoop[key] = itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
         } else {
           newOutputDefKeysLoop[key] = value
+        }
+        if (key === 'custcol_pintel_optioncodedescription') {
+          newOutputDefKeysLoop[key] = generateXMLOptions(fileDef, jsonLineObject)
         }
       }
       // if first line, set the newOutputDefKeys to the first item in the newOutputDef

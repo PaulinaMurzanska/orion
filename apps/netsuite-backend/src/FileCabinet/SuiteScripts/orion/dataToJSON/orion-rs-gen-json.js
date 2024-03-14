@@ -42,6 +42,7 @@ define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelpe
           break
         case 'xml':
           textLoops = orionJSONLib.findTextLoops(filteredFileDefs, fileContent, /(<.+:|<)(.+)>.*(<|)/, '(<\/.+:|<)({var})>', 2)
+          break
         default:
           return { message: "ERROR: File type not supported" }
       }
