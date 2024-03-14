@@ -255,6 +255,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     let options = []
     let newOutputDef = JSON.parse(JSON.stringify(outputDef))
     let newOutputDefKeys = JSON.parse(JSON.stringify(outputDef.item.items[0]))
+    let itemList = {}
 
     // Loop through each line objects
     for (let [idx, lineObj] of lineObjs.entries()) {
@@ -269,8 +270,8 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
         if (key === 'custcol_pintel_optioncodedescription') {
           newOutputDefKeysLoop[key] = generateXMLOptions(fileDef, jsonLineObject)
         } else if (fileDef.id_maps[key] && orionHelperLib.findIDByField(fileDef, key, value)) {
-          log.debug(loggerTitle, `fileDef.id_maps[key]: ${fileDef.id_maps[key]}`)
-          newOutputDefKeysLoop[key] = orionHelperLib.findIDByField(fileDef, key, value)
+          newOutputDefKeysLoop[key] = value
+          newOutputDefKeysLoop[key] = itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
         } else {
           newOutputDefKeysLoop[key] = value
         }
@@ -283,6 +284,8 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       }
     }
     
+    newOutputDefKeysLoop = orionHelperLib.findIDByField(fileDef, itemList, newOutputDef.item.items)
+
     return newOutputDef
   }
 

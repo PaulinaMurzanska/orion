@@ -115,16 +115,7 @@ describe('orionJSONLib - generateLineJSON - Generate Line JSON', () => {
     
     let idsGenerated = []
 
-    // mocks the return of id numbers
-    jest.spyOn(orionHelperLib, 'findIDByField').mockImplementation(() => {
-      // mock random ID number
-      let mockRandIDNum = Math.floor(Math.random()*100000)
-      const idReturn = { "id": mockRandIDNum }
-      idsGenerated.push(idReturn)
-      return idReturn
-    })
-
-    const lineJSON = orionJSONLib.generateLineJSON(definition, textLoops, outDef, orionHelperLib)
+    const lineJSON = orionJSONLib.generateLineJSON(definition, textLoops, outDef)
 
     // check for existance of item in array
     expect(idsGenerated).toEqual(
