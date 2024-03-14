@@ -15,41 +15,48 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    */
   const findIDByField = (fileDef, itemList, newOutputDefKeysLoop) => {
     const loggerTitle = 'findIDByField'
-    let whereString = ''
-    let whereKeyResults = {}
-    let lineLimit = 250
+    try {
+      let whereString = ''
+      let whereKeyResults = {}
+      let lineLimit = 250
 
-    const idMaps = fileDef.id_maps
+      const idMaps = fileDef.id_maps
 
-    // for each key in "id_maps" definition generate a where string
-    for (let idMapKey in idMaps) {
-      whereKeyResults[idMapKey] = []
-      for (let [idx, itemObj] of itemList[idMapKey].entries()) {
-        const keyResults = itemObj
-        // if we are not on the first item and the where string does not end with "OR" add "OR" to the end of the string
-        if (idx > 0 && !/OR\s$/.test(whereString)) {
-          whereString += ' OR '
-        }
-        // build the where string
-        let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
-        
-        // add the where string to the whereKeyResults object if it doeesn't already exist in string
-        whereString += whereString.indexOf(returnedString) === -1 ? returnedString : ''
-        
-        // if we are at the line limit or the last item in the list add the where string to the whereKeyResults object and reset the where string
-        if (idx === lineLimit - 1 || idx === itemList[idMapKey].length - 1) {
-          whereKeyResults[idMapKey] = whereKeyResults[idMapKey].concat([whereString])
-          whereString = ''
+      // for each key in "id_maps" definition generate a where string
+      for (let idMapKey in idMaps) {
+        whereKeyResults[idMapKey] = []
+        if (itemList[idMapKey]) {
+          for (let [idx, itemObj] of itemList[idMapKey].entries()) {
+            const keyResults = itemObj
+            // if we are not on the first item and the where string does not end with "OR" add "OR" to the end of the string
+            if (idx > 0 && !/OR\s$/.test(whereString)) {
+              whereString += ' OR '
+            }
+            // build the where string
+            let returnedString = buildWhereString(idMapKey, idMaps[idMapKey], keyResults, newOutputDefKeysLoop, whereString)
+            
+            // add the where string to the whereKeyResults object if it doeesn't already exist in string
+            whereString += whereString.indexOf(returnedString) === -1 ? returnedString : ''
+            
+            // if we are at the line limit or the last item in the list add the where string to the whereKeyResults object and reset the where string
+            if (idx === lineLimit - 1 || idx === itemList[idMapKey].length - 1) {
+              whereKeyResults[idMapKey] = whereKeyResults[idMapKey].concat([whereString])
+              whereString = ''
+            }
+          }
         }
       }
+
+      whereKeyResults = buildHeaderString(idMaps, whereKeyResults)
+      const searchResults = getSQLResults(whereKeyResults)
+      newOutputDefKeysLoop = addResultsToOutput(searchResults, newOutputDefKeysLoop, idMaps)
+
+      log.debug(loggerTitle, `newOutputDefKeysLoop: ${JSON.stringify(newOutputDefKeysLoop)}`)
+      return newOutputDefKeysLoop
+
+    } catch (e) {
+      log.error(loggerTitle, e)
     }
-
-    whereKeyResults = buildHeaderString(idMaps, whereKeyResults)
-    const searchResults = getSQLResults(whereKeyResults)
-    newOutputDefKeysLoop = addResultsToOutput(searchResults, newOutputDefKeysLoop, idMaps)
-
-    log.debug(loggerTitle, `newOutputDefKeysLoop: ${JSON.stringify(newOutputDefKeysLoop)}`)
-    return newOutputDefKeysLoop
 
   }
 
@@ -65,30 +72,35 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    */
   const buildWhereString = (idMapKey, idMaps, keyResults, newOutputDefKeysLoop, whereString) => {
     const loggerTitle = 'buildWhereString'
-    let fields = idMaps.field
-    let whereStringBlock = '('
 
-    // for each field in the "field" array of the "id_maps" definition generate a where string block
-    for (let [idx, field] of fields.entries()) {
-      // if we are not on the first item add in between the fields
-      if (idx > 1) {
-        whereStringBlock += ` ${idMaps.field_join} `
+    try {
+      let fields = idMaps.field
+      let whereStringBlock = '('
+
+      // for each field in the "field" array of the "id_maps" definition generate a where string block
+      for (let [idx, field] of fields.entries()) {
+        // if we are not on the first item add in between the fields
+        if (idx > 0) {
+          whereStringBlock += ` ${idMaps.field_join} `
+        }
+        // if the field is not a mapped field use the keyResults value, otherwise use the mapped field value
+        if (!idMaps.map_field) {
+          // if the value is a service value use SOUNDEX, otherwise use the value
+          whereStringBlock += isServiceValue(keyResults.value) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
+        } else {
+          // if the value is a service value use SOUNDEX, otherwise use the value
+          let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
+          if (fieldValue) {
+            whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
+          }  
+        }
       }
-      // if the field is not a mapped field use the keyResults value, otherwise use the mapped field value
-      if (!idMaps.map_field) {
-        // if the value is a service value use SOUNDEX, otherwise use the value
-        whereStringBlock += isServiceValue(keyResults.value) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
-      } else {
-        // if the value is a service value use SOUNDEX, otherwise use the value
-        let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
-        if (fieldValue) {
-          whereStringBlock += isServiceValue(fieldValue) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
-        }  
-      }
+      whereStringBlock += ')'
+
+      return whereStringBlock
+    } catch (e) {
+      log.error(loggerTitle, e)
     }
-    whereStringBlock += ')'
-
-    return whereStringBlock
   }
 
   /**
@@ -179,6 +191,8 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
             log.debug(loggerTitle, `idMapKey: ${idMapKey}`)
             newOutputDefKeysLoop[idx][idMapKey] = resultObj ? resultObj : null
             log.debug(loggerTitle, `newOutputDefKeysLoop[idx][idMapKey]: ${JSON.stringify(newOutputDefKeysLoop[idx][idMapKey])}`)
+          } else {
+            newOutputDefKeysLoop[idx][idMapKey] = null
           }
         }
       }

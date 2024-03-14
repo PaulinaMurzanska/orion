@@ -62,7 +62,7 @@
         "item": "['OrderLineItem']['SpecItem']['Number']['#text']",
         "description": "['OrderLineItem']['SpecItem']['Description']['#text']",
         "quantity": "['OrderLineItem']['Quantity']['#text']",
-        "povender": "['OrderLineItem']['VendorRef']['#text']",
+        "povendor": "['OrderLineItem']['VendorRef']['#text']",
         "custcol_pintel_entcode": "['OrderLineItem']['VendorRef']['@EnterpriseRef']",
         "custcol_pintel_listprice": "['OrderLineItem']['Price']['PublishedPrice']['#text']",
         "custcol_pintel_tag1": "['OrderLineItem']['Tag'][0]['Value']['#text']",
@@ -80,14 +80,28 @@
         "item": {
           "type": "item",
           "return_field": "id",
-          "field": ["itemid"],
-          "map_field": null,
+          "field": [
+            {
+              "field": "itemid",
+              "soundex": true
+            }
+          ],
+          "map_field": ["item"],
           "field_join": "AND"
         },
         "povendor": {
           "type": "customrecord_orion_cat_code",
           "return_field": "custrecord_orion_catcode_vendor",
-          "field": ["custrecord_orion_codecat", "custrecord_orion_catcode_mancode"],
+          "field": [
+            {
+              "field": "custrecord_orion_codecat",
+              "soundex": false
+            },
+            {
+              "field": "custrecord_orion_catcode_mancode",
+              "soundex": false
+            }
+          ],
           "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
           "field_join": "AND"
         }

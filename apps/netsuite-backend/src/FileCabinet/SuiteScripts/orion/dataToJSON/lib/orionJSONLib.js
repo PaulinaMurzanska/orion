@@ -168,7 +168,6 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
   const generateLineJSON = (fileDef, lineObj, outputDef, orionHelperLib) => {
     const loggerTitle = 'generateLineJSON'
     try {
-      log.debug(loggerTitle, `fileDef: ${JSON.stringify(fileDef)}`)
       switch (fileDef.extension) {
         case 'sif':
           return convertSIFData(fileDef, lineObj, '({var})=(.+)', outputDef, orionHelperLib)
@@ -250,7 +249,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    * @returns {Object} - The converted JSON data.
    */
   const convertXMLData = (fileDef, lineObjs, outputDef) => {
-    const loggerTitle = 'convertSIFData'
+    const loggerTitle = 'convertXMLData'
     const fileMaps = fileDef.mapping
     let lineOutput = []
     let options = []
@@ -267,15 +266,16 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       newOutputDefKeysLoop['line'] = idx
       // Loop through each file mapping
       for (let key in fileMaps) {
-        const value = orionHelperLib.buildObjectFromString(jsonLineObject, fileMaps[key])
-        if (fileDef.id_maps[key]) {
-          newOutputDefKeysLoop[key] = value
-          newOutputDefKeysLoop[key] = itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
-        } else {
-          newOutputDefKeysLoop[key] = value
-        }
         if (key === 'custcol_pintel_optioncodedescription') {
           newOutputDefKeysLoop[key] = generateXMLOptions(fileDef, jsonLineObject)
+        } else {
+          const value = orionHelperLib.buildObjectFromString(jsonLineObject, fileMaps[key])
+          if (fileDef.id_maps[key]) {
+            newOutputDefKeysLoop[key] = value
+            itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
+          } else {
+            newOutputDefKeysLoop[key] = value
+          }
         }
       }
       // if first line, set the newOutputDefKeys to the first item in the newOutputDef
@@ -285,6 +285,8 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
         newOutputDef.item.items.push(newOutputDefKeysLoop)
       }
     }
+
+    log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}, newOutputDef: ${JSON.stringify(newOutputDef)}`)
     
     newOutputDefKeysLoop = orionHelperLib.findIDByField(fileDef, itemList, newOutputDef.item.items)
 
@@ -338,18 +340,21 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    * @returns {string} - The generated XML options.
    */
   const generateXMLOptions = (fileDef, jsonObj) => {
+    const loggerTitle = 'generateXMLOptions'
     const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
     const optNamePath = optionParams[0].split('[]')[1]
     const optValuePath = optionParams[1].split('[]')[1]
     const optionRoot = optionParams[0].split('[]')[0]
+    log.debug(loggerTitle, `optionRoot: ${optionRoot}, optNamePath: ${optNamePath}, optValuePath: ${optValuePath}`)
 
     const options = orionHelperLib.buildObjectFromString(jsonObj, optionRoot)
+    log.debug(loggerTitle, `options: ${JSON.stringify(options)}`)
 
     let optionStr = ''
 
     for (let [idx, option] of options.entries()) {
-      const optionName = orionHelperLib.buildObjectFromString(option, `${optionRoot}[${idx}]${optNamePath}`)
-      const optionValue = orionHelperLib.buildObjectFromString(option, `${optionRoot}[${idx}]${optValuePath}`)
+      const optionName = orionHelperLib.buildObjectFromString(option, `${optNamePath}`)
+      const optionValue = orionHelperLib.buildObjectFromString(option, `${optValuePath}`)
       optionStr += `${optionName} - ${optionValue}\n`
     }
 
