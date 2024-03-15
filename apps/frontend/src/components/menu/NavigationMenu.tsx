@@ -1,4 +1,4 @@
-import { GearIcon, PersonIcon } from '@radix-ui/react-icons';
+import { DashboardIcon, GearIcon, PersonIcon } from '@radix-ui/react-icons';
 
 import { MenuElement } from './types';
 import NavigationMenuItem from './NavigationMenuItem';
@@ -48,6 +48,13 @@ const NavigationMenu = () => {
         navigate('/pricing');
       },
       icon: <PersonIcon width="18px" height="18px" />,
+    },
+    {
+      name: 'Components Library',
+      onClick: () => {
+        navigate('/components');
+      },
+      icon: <DashboardIcon width="18px" height="18px" />,
     },
   ] as MenuElement[];
 

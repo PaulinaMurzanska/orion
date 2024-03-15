@@ -1,5 +1,6 @@
 import { createBrowserRouter, createHashRouter } from 'react-router-dom';
 
+import ComponentsLibrary from '../components-library/ComponentsLibrary';
 import OrdersTable from '../tables/OrdersTable';
 import PricingTable from '../tables/PricingTable';
 import Root from './Root';
@@ -22,6 +23,10 @@ export default createHashRouter([
       {
         path: '/pricing',
         element: <PricingTable />,
+      },
+      {
+        path: '/components',
+        element: <ComponentsLibrary />,
       },
     ],
   },
