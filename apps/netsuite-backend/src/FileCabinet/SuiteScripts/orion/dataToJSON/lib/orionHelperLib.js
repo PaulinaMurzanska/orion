@@ -77,10 +77,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
       let fields = idMaps.field
       let whereStringBlock = '('
 
+      log.debug(loggerTitle, `fields: ${JSON.stringify(fields)}`)
       // for each field in the "field" array of the "id_maps" definition generate a where string block
       for (let [idx, field] of fields.entries()) {
         // if we are not on the first item add in between the fields
-        if (idx > 0) {
+        if (idx > 0 && !/\($/.test(whereStringBlock)) {
           whereStringBlock += ` ${idMaps.field_join} `
         }
         // if the field is not a mapped field use the keyResults value, otherwise use the mapped field value
@@ -141,9 +142,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     // for each key in the whereKeyResults object run the query and add the results to the resultValues object
     for (let idMapKey in whereKeyResults) {
       let combinedResults = []
+      log.debug(loggerTitle, `idMapKey: ${idMapKey}`)
       // for each where string in the whereKeyResults object run the query and add the results to the combinedResults array
-      for (let [idx, whereResults] of whereKeyResults[idMapKey].entries()) {
-        let queryResults = query.runSuiteQL({ query: whereResults })
+      for (let [idx, whereResult] of whereKeyResults[idMapKey].entries()) {
+        log.debug(loggerTitle, `whereResult: ${whereResult}`)
+        let queryResults = query.runSuiteQL({ query: whereResult })
         let results = queryResults.asMappedResults()
         combinedResults = combinedResults.concat(results)
       }
