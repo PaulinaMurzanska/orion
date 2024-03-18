@@ -1,9 +1,9 @@
 import { createHashRouter } from 'react-router-dom';
 
+import ComponentsLibrary from '../components-library/ComponentsLibrary';
 import OrdersTable from '../tables/OrdersTable';
 import Root from './Root';
 
-// TODO: Should probably replace with hash router to work with NetSuite
 export default createHashRouter([
   {
     path: '/',
@@ -12,6 +12,10 @@ export default createHashRouter([
       {
         path: '/orders',
         element: <OrdersTable />,
+      },
+      {
+        path: '/components',
+        element: <ComponentsLibrary />,
       },
     ],
   },
