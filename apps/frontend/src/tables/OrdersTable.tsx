@@ -7,19 +7,9 @@ import { api } from '@orionsuite/api-client';
 const OrdersTable = () => {
   const { data } = api.useGetOrdersQuery();
 
+  const [editable, setEditable] = useState<boolean | undefined>();
   const [search, setSearch] = useState<string | undefined>();
   const [selectedRows, setSelectedRows] = useState<Order[]>([]);
-
-  const filteredData = useMemo(() => {
-    if (search) {
-      return (
-        data?.filter((row) =>
-          row.name.toLowerCase().includes(search.toLowerCase())
-        ) ?? []
-      );
-    }
-    return data ?? [];
-  }, [data, search]);
 
   const columns = useMemo(
     () => [
@@ -50,13 +40,36 @@ const OrdersTable = () => {
   return (
     <div className="m-10">
       <CustomTable<Order>
-        data={filteredData}
+        data={data ?? []}
         columns={columns}
         onRowSelectionChange={onRowSelectionChange}
         header={<h1 className="text-3xl font-extrabold">Orders table</h1>}
+        editable={editable}
+        search={search}
+        setSearch={setSearch}
+        onRowUpdate={(rowIndex, columnId, value) => {
+          console.log('Row updated', rowIndex, columnId, value);
+        }}
         actions={
           <>
-            <Button variant="ghost">Edit</Button>
+            {!editable && (
+              <Button variant="ghost" onClick={() => setEditable(!editable)}>
+                Edit
+              </Button>
+            )}
+            {editable && (
+              <>
+                <Button variant="ghost" onClick={() => setEditable(!editable)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => setEditable(!editable)}
+                >
+                  Save
+                </Button>
+              </>
+            )}
             <Button variant="secondary">Export to PDF</Button>
             <Button variant="secondary">Customer invoice</Button>
           </>

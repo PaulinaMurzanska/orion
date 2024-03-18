@@ -29,23 +29,9 @@ const NavigationMenu = () => {
 
   const topConfig = [
     {
-      name: 'Tasks',
-      onClick: () => {
-        navigate('/tasks');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
       name: 'Orders',
       onClick: () => {
         navigate('/orders');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
-      name: 'Pricing',
-      onClick: () => {
-        navigate('/pricing');
       },
       icon: <PersonIcon width="18px" height="18px" />,
     },
