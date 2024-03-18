@@ -1,12 +1,12 @@
 import { Column, createColumnHelper } from '@tanstack/react-table';
 import {
-  EditableCell,
   IndeterminateCheckbox,
   Separator,
   Table,
 } from '@orionsuite/shared-components';
 import { ReactNode, useMemo } from 'react';
 
+import CustomEditableCell from '../../../components/custom-table-cell/CustomEditableCell';
 import styled from 'styled-components';
 
 interface Props<T> {
@@ -31,10 +31,10 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div`
-  height: 600px;
+  height: auto;
 `;
 
-export function CustomTable<T extends object>({
+export function CustomTableWithCustomInputDemo<T extends object>({
   data,
   columns,
   onRowSelectionChange,
@@ -82,12 +82,14 @@ export function CustomTable<T extends object>({
           enableSorting: true,
           header: column.header,
           cell: (props) =>
-            EditableCell({
+            CustomEditableCell({
               editable,
               initialValue: props.getValue() as any,
               table: props.table,
               rowIndex: props.row.index,
               columnId: column.id,
+              cell_variant: column.cell_variant,
+              disabled: column.disabled,
             }),
         })
       ) as Column<T>[]),
@@ -117,4 +119,4 @@ export function CustomTable<T extends object>({
   );
 }
 
-export default CustomTable;
+export default CustomTableWithCustomInputDemo;

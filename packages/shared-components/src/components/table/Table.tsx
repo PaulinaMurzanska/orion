@@ -1,18 +1,16 @@
 import {
   ColumnDef,
   FilterFn,
+  RowModel,
+  TableState,
+  Table as TableType,
+  Updater,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  RowModel,
-  Table as TableType,
-  TableState,
-  Updater,
   useReactTable,
 } from '@tanstack/react-table';
-import { rankItem } from '@tanstack/match-sorter-utils';
-
 import {
   Table as ShadcnTable,
   TableBody,
@@ -21,7 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from './TableComponents';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { rankItem } from '@tanstack/match-sorter-utils';
 
 interface TableProps<T> {
   data: T[];
@@ -94,6 +94,7 @@ const Table = <T extends object>(props: TableProps<T>) => {
     meta: {
       updateData: (rowIndex: number, columnId: string, value: T) => {
         // Skip page index reset until after next rerender
+
         skipAutoResetPageIndex();
         if (onRowUpdate) {
           onRowUpdate(rowIndex, columnId, value);
