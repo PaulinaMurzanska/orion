@@ -88,7 +88,7 @@ describe('orionJSONLib - matchDefinition - Find Matching Definition', () => {
     const filteredFileDefs = orionJSONLib.findDefLinesByType(fileDefs, fileType)
     const textLoops = orionJSONLib.findTextLoops(filteredFileDefs, testSIFile2, /^(.+)=/, null, 1)
     const definition = orionJSONLib.matchDefinition(filteredFileDefs, textLoops, failureLimit)
-    expect(definition.name).toBe('CAP Studio')
+    expect(definition.name).toBe('CAP Studio Alt')
   })
   it('finds matching definition for xml', () => {
     const fileType = 'xml'
