@@ -276,10 +276,10 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
         } else {
           const value = orionHelperLib.buildObjectFromString(jsonLineObject, fileMaps[key])
           if (fileDef.id_maps[key]) {
-            newOutputDefKeysLoop[key] = value
+            newOutputDefKeysLoop[key] = orionHelperLib.retrieveFromResults(value, '|', 0)
             itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
           } else {
-            newOutputDefKeysLoop[key] = value
+            newOutputDefKeysLoop[key] = orionHelperLib.retrieveFromResults(value, '|', 0)
           }
         }
       }

@@ -428,12 +428,26 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return soundexString
   }
 
+  /**
+   * Retrieves a value from a string by splitting it using a specified delimiter and returning the value at a specified index.
+   *
+   * @param {string} stringValue - The string to be split.
+   * @param {string} splitterValue - The delimiter used to split the string.
+   * @param {number} indexToReturn - The index of the value to be returned from the split array.
+   * @returns {string} The value at the specified index from the split array.
+   */
+  const retrieveFromResults = (stringValue, splitterValue, indexToReturn) => {
+    const splitArray = stringValue.split(splitterValue)
+    return splitArray[indexToReturn]
+  }
+
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
     isServiceValue: isServiceValue,
     buildObjectFromString: buildObjectFromString,
-    loadDefinition: loadDefinition
+    loadDefinition: loadDefinition,
+    retrieveFromResults: retrieveFromResults
   }
 
 })
