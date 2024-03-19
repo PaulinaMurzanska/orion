@@ -168,40 +168,44 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   const addResultsToOutput = (resultValues, newOutputDefKeysLoop, idMaps) => {
     const loggerTitle = 'addResultsToOutput'
 
-    // for each key in the newOutputDefKeysLoop array add the results to the newOutputDefKeysLoop array
-    for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
-      for (let idMapKey in idMaps) {
-        const toResults = []
+    try {
+      // for each key in the newOutputDefKeysLoop array add the results to the newOutputDefKeysLoop array
+      for (let [idx, newOutputDefKeys] of newOutputDefKeysLoop.entries()) {
+        for (let idMapKey in idMaps) {
+          const toResults = []
 
-        // for each field in the "map_field" array of the "id_maps" definition add the results to the toResults array
-        if (idMaps[idMapKey].map_field?.length > 0) {
           // for each field in the "map_field" array of the "id_maps" definition add the results to the toResults array
-          for (let [keyIdx, field] of idMaps[idMapKey].map_field.entries()) {
-            toResults.push({
-              key_idx: keyIdx,
-              key: field,
-              value: newOutputDefKeys[field]
-            })
-          }
-          // find the result output based on the toResults and resultValues
-          let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey], idMapKey)
-          log.debug(loggerTitle, `foundResult: ${JSON.stringify(foundResult)}`)
-          // if a result is found add the result to the newOutputDefKeysLoop array
-          if (foundResult) {
-            let resultField = foundResult.return_key
-            let resultObj = resultField ? {id: resultField} : null
-            log.debug(loggerTitle, `resultObj: ${JSON.stringify(resultObj)}`)
-            log.debug(loggerTitle, `idMapKey: ${idMapKey}`)
-            newOutputDefKeysLoop[idx][idMapKey] = resultObj ? resultObj : null
-            log.debug(loggerTitle, `newOutputDefKeysLoop[idx][idMapKey]: ${JSON.stringify(newOutputDefKeysLoop[idx][idMapKey])}`)
-          } else {
-            newOutputDefKeysLoop[idx][idMapKey] = null
+          if (idMaps[idMapKey].map_field?.length > 0) {
+            // for each field in the "map_field" array of the "id_maps" definition add the results to the toResults array
+            for (let [keyIdx, field] of idMaps[idMapKey].map_field.entries()) {
+              toResults.push({
+                key_idx: keyIdx,
+                key: field,
+                value: newOutputDefKeys[field]
+              })
+            }
+            // find the result output based on the toResults and resultValues
+            let foundResult = findResultOutput(toResults, resultValues, idMaps[idMapKey], idMapKey)
+            log.debug(loggerTitle, `foundResult: ${JSON.stringify(foundResult)}`)
+            // if a result is found add the result to the newOutputDefKeysLoop array
+            if (foundResult) {
+              let resultField = foundResult.return_key
+              let resultObj = resultField ? {id: resultField} : null
+              log.debug(loggerTitle, `resultObj: ${JSON.stringify(resultObj)}`)
+              log.debug(loggerTitle, `idMapKey: ${idMapKey}`)
+              newOutputDefKeysLoop[idx][idMapKey] = resultObj ? resultObj : null
+              log.debug(loggerTitle, `newOutputDefKeysLoop[idx][idMapKey]: ${JSON.stringify(newOutputDefKeysLoop[idx][idMapKey])}`)
+            } else {
+              newOutputDefKeysLoop[idx][idMapKey] = null
+            }
           }
         }
       }
+      log.debug(loggerTitle, `newOutputDefKeysLoop: ${JSON.stringify(newOutputDefKeysLoop)}`)
+      return newOutputDefKeysLoop
+    } catch (e) {
+      log.error(loggerTitle, e)
     }
-    log.debug(loggerTitle, `newOutputDefKeysLoop: ${JSON.stringify(newOutputDefKeysLoop)}`)
-    return newOutputDefKeysLoop
   }
 
   /**
@@ -216,55 +220,59 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   const findResultOutput = (toResults, searchResults, idMap, idMapKey) => {
     const loggerTitle = 'findResultOutput'
 
-    const searchResult = searchResults[idMapKey]
+    try {
+      const searchResult = searchResults[idMapKey]
 
-    let fromResults = []
-    let soundexStrings = []
-    // for each field in the "field" array of the "id_maps" definition add the results to the fromResults array
-    for (let [idx, field] of idMap.field.entries()) {
-      for (let searchField of searchResult) {
-        // log.debug(loggerTitle, `searchField: ${JSON.stringify(searchField)}`)
-        if (searchField[field.field]) {
-          fromResults.push({
-            key_idx: idx,
-            return_key: searchField[idMap.return_field],
-            key: field.field,
-            value: searchField[field.field]
-          })
-          soundexStrings.push(field.soundex)
-        }
-      }
-    }
-
-    // filter out null values from the toResults array
-    toResults = toResults.filter(toResult => {
-      return toResult.value !== null
-    })
-
-    log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
-    log.debug(loggerTitle, `fromResults: ${JSON.stringify(fromResults)}`)
-    let foundEntries = []
-
-    // for each result in the toResults array find the result in the fromResults array
-    for (let [idx, toResult] of toResults.entries()) {
-      for (let [forIdx, fromResult] of fromResults.entries()) {
-        
-        // if the value and key index match add the return key to the toResult and add the toResult to the foundEntries array
-        if ((toResult.value === fromResult.value || (soundexStrings[forIdx] && soundex(fromResult.value) === soundex(toResult.value))) && toResult.key_idx === fromResult.key_idx) {
-          log.debug(loggerTitle, `fromResult: ${JSON.stringify(fromResult)}`)
-          log.debug(loggerTitle, `toResult: ${JSON.stringify(toResult)}`)
-          toResult.return_key = fromResult.return_key
-          foundEntries.push(toResult)
-          break
+      let fromResults = []
+      let soundexStrings = []
+      // for each field in the "field" array of the "id_maps" definition add the results to the fromResults array
+      for (let [idx, field] of idMap.field.entries()) {
+        for (let searchField of searchResult) {
+          // log.debug(loggerTitle, `searchField: ${JSON.stringify(searchField)}`)
+          if (searchField[field.field]) {
+            fromResults.push({
+              key_idx: idx,
+              return_key: searchField[idMap.return_field],
+              key: field.field,
+              value: searchField[field.field]
+            })
+            soundexStrings.push(field.soundex)
+          }
         }
       }
 
-      // if the index is the last index in the toResults array and the foundEntries array length is equal to the toResults array length return the toResult, otherwise return null
-      if (idx === toResults.length - 1) {
-        log.debug(loggerTitle, `foundEntries: ${JSON.stringify(foundEntries)}`)
-        return foundEntries.length === toResults.length ? toResult : null
+      // filter out null values from the toResults array
+      toResults = toResults.filter(toResult => {
+        return toResult.value !== null
+      })
+
+      log.debug(loggerTitle, `toResults: ${JSON.stringify(toResults)}`)
+      log.debug(loggerTitle, `fromResults: ${JSON.stringify(fromResults)}`)
+      let foundEntries = []
+
+      // for each result in the toResults array find the result in the fromResults array
+      for (let [idx, toResult] of toResults.entries()) {
+        for (let [forIdx, fromResult] of fromResults.entries()) {
+          
+          // if the value and key index match add the return key to the toResult and add the toResult to the foundEntries array
+          if ((toResult.value === fromResult.value || (soundexStrings[forIdx] && soundex(fromResult.value) === soundex(toResult.value))) && toResult.key_idx === fromResult.key_idx) {
+            log.debug(loggerTitle, `fromResult: ${JSON.stringify(fromResult)}`)
+            log.debug(loggerTitle, `toResult: ${JSON.stringify(toResult)}`)
+            toResult.return_key = fromResult.return_key
+            foundEntries.push(toResult)
+            break
+          }
+        }
+
+        // if the index is the last index in the toResults array and the foundEntries array length is equal to the toResults array length return the toResult, otherwise return null
+        if (idx === toResults.length - 1) {
+          log.debug(loggerTitle, `foundEntries: ${JSON.stringify(foundEntries)}`)
+          return foundEntries.length === toResults.length ? toResult : null
+        }
       }
-    }  
+    } catch (e) {
+      log.error(loggerTitle, e)
+    } 
 
   }
 
@@ -376,9 +384,15 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    * @returns {any} - The target object found within docObject.
    */
   const buildObjectFromString = (docObject, objectTree) => {
-    let objectNameString = 'docObject'
-    objectNameString = `${objectNameString}${objectTree}`
-    return eval(objectNameString)
+    const loggerTitle = 'buildObjectFromString'
+
+    try {
+      let objectNameString = 'docObject'
+      objectNameString = `${objectNameString}${objectTree}`
+      return eval(objectNameString)
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
   }
 
   /**
@@ -388,9 +402,15 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    * @returns {Object} - The parsed JSON object representing the content of the file.
    */
   const loadDefinition = filePath => {
-    const fileObj = file.load({ id: filePath })
-    const fileContent = fileObj.getContents()
-    return JSON.parse(fileContent)
+    const loggerTitle = 'loadDefinition'
+
+    try {
+      const fileObj = file.load({ id: filePath })
+      const fileContent = fileObj.getContents()
+      return JSON.parse(fileContent)
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
   }
 
   /**
@@ -401,16 +421,21 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    */
   const isServiceValue = (str, itemObj, fileDef) => {
     const loggerTitle = 'isServiceValue'
-    let resultValue = false
-    log.debug(loggerTitle, `str: ${str}`)
-    const containsOnlyLetters = /^([^0-9]*)$/.test(str)
-    const hasManufactureCode = itemObj[fileDef['manufacturer_code']]
-    const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']].length > 3
-    if (containsOnlyLetters && (!hasManufactureCode || manCodeGreaterThanThree)) {
-      resultValue = true
+
+    try {
+      let resultValue = false
+      log.debug(loggerTitle, `str: ${str}`)
+      const containsOnlyLetters = /^([^0-9]*)$/.test(str)
+      const hasManufactureCode = itemObj[fileDef['manufacturer_code']]
+      const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']].length > 3
+      if (containsOnlyLetters && (!hasManufactureCode || manCodeGreaterThanThree)) {
+        resultValue = true
+      }
+      
+      return resultValue
+    } catch (e) {
+      log.error(loggerTitle, e)
     }
-    
-    return resultValue
   }
 
   /**
@@ -420,12 +445,18 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    * @returns {string} The Soundex string generated from the list of items.
    */
   const listToSoundexString = (listItems) => {
-    const itemArr = listItems.split(', ')
-    let soundexString = ''
-    for (const item of itemArr) {
-      soundexString += `SOUNDEX('${item}'), `
-    }
+    const loggerTitle = 'listToSoundexString'
+
+    try {
+      const itemArr = listItems.split(', ')
+      let soundexString = ''
+      for (const item of itemArr) {
+        soundexString += `SOUNDEX('${item}'), `
+      }
     return soundexString
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
   }
 
   /**
@@ -437,8 +468,14 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
    * @returns {string} The value at the specified index from the split array.
    */
   const retrieveFromResults = (stringValue, splitterValue, indexToReturn) => {
-    const splitArray = stringValue.split(splitterValue)
-    return splitArray[indexToReturn]
+    const loggerTitle = 'retrieveFromResults'
+
+    try {
+      const splitArray = stringValue.split(splitterValue)
+      return splitArray[indexToReturn]
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
   }
 
   return {

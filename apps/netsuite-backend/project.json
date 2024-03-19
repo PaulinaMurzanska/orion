@@ -6,7 +6,7 @@
   "targets": {
     "test": {
       "command": "jest",
-      "cache": true
+      "cache": false
     },
     "deploy": {
       "command": "source ~/.zshrc && cd apps/netsuite-backend && suitecloud project:deploy",

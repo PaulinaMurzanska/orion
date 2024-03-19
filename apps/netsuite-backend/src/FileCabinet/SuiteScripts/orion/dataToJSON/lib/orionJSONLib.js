@@ -38,18 +38,24 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    * @returns {Array} - An array of split lines representing the text loops found.
    */
   const findTextLoops = (fileDefs, textContent, lineIdentifier, endIdentifier, matchGroup) => {
-    for (let fileDef of fileDefs) {
-      const startLine = fileDef.identifiers.split(', ')[0]
-      const lineRegex = new RegExp(startLine, 'gm')
-      // remove xml definition
-      textContent = textContent.replace(/<\?xml.+\?>/, '')
-      textContent = textContent.replace(/<(Envelope)(.+")/, '<$1')
-      const linesFound = textContent.match(lineRegex)
-      // if lines found, split the text content into separate array elements
-      if (linesFound?.length > 0) {
-        const splitLines = getLoopGroup(fileDefs, textContent, startLine, lineIdentifier, endIdentifier, matchGroup)
-        return splitLines
+    const loggerTitle = 'findTextLoops'
+
+    try {
+      for (let fileDef of fileDefs) {
+        const startLine = fileDef.identifiers.split(', ')[0]
+        const lineRegex = new RegExp(startLine, 'gm')
+        // remove xml definition
+        textContent = textContent.replace(/<\?xml.+\?>/, '')
+        textContent = textContent.replace(/<(Envelope)(.+")/, '<$1')
+        const linesFound = textContent.match(lineRegex)
+        // if lines found, split the text content into separate array elements
+        if (linesFound?.length > 0) {
+          const splitLines = getLoopGroup(fileDefs, textContent, startLine, lineIdentifier, endIdentifier, matchGroup)
+          return splitLines
+        }
       }
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e.message}`)
     }
   }
 
@@ -88,6 +94,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
             const endMatch = endIdentifier ? textContentLine.match(new RegExp(endIdentifier)) : null
             // if multiple instances exist split the text blocks into separate array elements
             if (content === lineStart) {
+              log.debug(loggerTitle, `content: ${content}, lineStart: ${lineStart}, endMatch: ${endMatch}`)
               if (endMatch?.length > 0) {
                 if (!textContentArr[idx + 1] || textContentArr[idx + 1].indexOf(lineStart) === -1) {
                   foundLines.push(textContentLine)
@@ -208,6 +215,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       for (let key in fileMaps) {
         // replace the variable in the valueRegex with the file mapping value
         const keyRegex = new RegExp(valueRegex.replace(/\{var\}/g, fileMaps[key]))
+        log.debug(loggerTitle, `keyRegex: ${keyRegex}`)
         // match the line object with the keyRegex
         const regexResults = lineObj.match(keyRegex)
         if (regexResults?.length > 0) {
@@ -312,32 +320,36 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    */
   const generateSIFOptions = (fileDef, lineObj, optRegex, optionMatchGroup) => {
     const loggerTitle = 'generateSIFOptions'
-    lineObj = lineObj.split('\r\n')
-    const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
-    const optionName = optionParams[0]
-    const optValue = optionParams[1]
-    
-    const optNameRegex = optRegex.replace(/\{var\}/g, optionName)
-    const optValRegex = optRegex.replace(/\{var\}/g, optValue)
-
-    let optionStr = ''
-
-    for (let line of lineObj) {
-
-      let optionName = line.match(optNameRegex)
-      optionName = optionName?.length > 0 ? optionName[optionMatchGroup] : null
-      let optionValue = line.match(optValRegex)
-      optionValue = optionValue?.length > 0 ? optionValue[optionMatchGroup] : null
-
+    try {
+      lineObj = lineObj.split('\r\n')
+      const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
+      const optionName = optionParams[0]
+      const optValue = optionParams[1]
       
-      if (optionName?.length > 0) {
-        optionStr += `${optionName} - `
-      } else if (optionValue?.length > 0) {
-        optionStr += `${optionValue}\n`
-      }
-    }
+      const optNameRegex = optRegex.replace(/\{var\}/g, optionName)
+      const optValRegex = optRegex.replace(/\{var\}/g, optValue)
 
-    return optionStr
+      let optionStr = ''
+
+      for (let line of lineObj) {
+
+        let optionName = line.match(optNameRegex)
+        optionName = optionName?.length > 0 ? optionName[optionMatchGroup] : null
+        let optionValue = line.match(optValRegex)
+        optionValue = optionValue?.length > 0 ? optionValue[optionMatchGroup] : null
+
+        
+        if (optionName?.length > 0) {
+          optionStr += `${optionName} - `
+        } else if (optionValue?.length > 0) {
+          optionStr += `${optionValue}\n`
+        }
+      }
+
+      return optionStr
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e.message}`)
+    }
   }
 
   /**
