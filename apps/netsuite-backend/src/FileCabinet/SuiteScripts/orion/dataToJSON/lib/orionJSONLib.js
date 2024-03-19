@@ -200,56 +200,61 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    */
   const convertSIFData = (fileDef, lineObjs, valueRegex, outputDef) => {
     const loggerTitle = 'convertSIFData'
-    const fileMaps = fileDef.mapping
-    let lineOutput = []
-    let options = []
-    let newOutputDef = JSON.parse(JSON.stringify(outputDef))
-    let newOutputDefKeys = JSON.parse(JSON.stringify(outputDef.item.items[0]))
-    let itemList = {}
 
-    // Loop through each line objects
-    for (let [idx, lineObj] of lineObjs.entries()) {
-      let newOutputDefKeysLoop = JSON.parse(JSON.stringify(newOutputDefKeys))
-      newOutputDefKeysLoop['line'] = idx
-      // Loop through each file mapping
-      for (let key in fileMaps) {
-        // replace the variable in the valueRegex with the file mapping value
-        const keyRegex = new RegExp(valueRegex.replace(/\{var\}/g, fileMaps[key]))
-        log.debug(loggerTitle, `keyRegex: ${keyRegex}`)
-        // match the line object with the keyRegex
-        const regexResults = lineObj.match(keyRegex)
-        if (regexResults?.length > 0) {
-          const value = regexResults[2]
-          if (fileDef.id_maps[key]) {
-            newOutputDefKeysLoop[key] = value
-            itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
-          } else {
-            newOutputDefKeysLoop[key] = value
+    try {
+      const fileMaps = fileDef.mapping
+      let lineOutput = []
+      let options = []
+      let newOutputDef = JSON.parse(JSON.stringify(outputDef))
+      let newOutputDefKeys = JSON.parse(JSON.stringify(outputDef.item.items[0]))
+      let itemList = {}
+
+      // Loop through each line objects
+      for (let [idx, lineObj] of lineObjs.entries()) {
+        let newOutputDefKeysLoop = JSON.parse(JSON.stringify(newOutputDefKeys))
+        newOutputDefKeysLoop['line'] = idx
+        // Loop through each file mapping
+        for (let key in fileMaps) {
+          // replace the variable in the valueRegex with the file mapping value
+          const keyRegex = new RegExp(valueRegex.replace(/\{var\}/g, fileMaps[key]))
+          log.debug(loggerTitle, `keyRegex: ${keyRegex}`)
+          // match the line object with the keyRegex
+          const regexResults = lineObj.match(keyRegex)
+          if (regexResults?.length > 0) {
+            const value = orionHelperLib.retrieveValueFromDelimitedString(regexResults[2], '|', 0)
+            if (fileDef.id_maps[key]) {
+              newOutputDefKeysLoop[key] = value
+              itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]
+            } else {
+              newOutputDefKeysLoop[key] = value
+            }
+          }
+          // build out options 
+          if (key === 'custcol_pintel_optioncodedescription') {
+            newOutputDefKeysLoop[key] = generateSIFOptions(fileDef, lineObj, '{var}=(.+)', 1)
           }
         }
-        // build out options 
-        if (key === 'custcol_pintel_optioncodedescription') {
-          newOutputDefKeysLoop[key] = generateSIFOptions(fileDef, lineObj, '{var}=(.+)', 1)
+
+
+        newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
+        newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item'] 
+
+        log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
+
+        // if first line, set the newOutputDefKeys to the first item in the newOutputDef
+        if (idx === 0) {
+          newOutputDef.item.items[0] = newOutputDefKeysLoop
+        } else {
+          newOutputDef.item.items.push(newOutputDefKeysLoop)
         }
       }
 
-
-      newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
-      newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item'] 
-
-      log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
-
-      // if first line, set the newOutputDefKeys to the first item in the newOutputDef
-      if (idx === 0) {
-        newOutputDef.item.items[0] = newOutputDefKeysLoop
-      } else {
-        newOutputDef.item.items.push(newOutputDefKeysLoop)
-      }
+      newOutputDefKeysLoop = orionHelperLib.findIDByField(fileDef, itemList, newOutputDef.item.items)
+      
+      return newOutputDef
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e.message}`)
     }
-
-    newOutputDefKeysLoop = orionHelperLib.findIDByField(fileDef, itemList, newOutputDef.item.items)
-    
-    return newOutputDef
   }
 
   /**

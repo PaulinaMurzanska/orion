@@ -56,6 +56,9 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
     } catch (e) {
       log.error(loggerTitle, e)
+      const fileObj = file.create({ name: 'error.txt', fileType: file.Type.PLAINTEXT, contents: JSON.stringify(e), folder: 104})
+      fileObj.save()
+
     }
 
   }
@@ -86,12 +89,14 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
         }
         // if the field is not a mapped field use the keyResults value, otherwise use the mapped field value
         if (!idMaps.map_field) {
+          keyResults.value = keyResults.value.replace(/'/g, "''").replace(/"/g, '""')
           // if the value is a service value use SOUNDEX, otherwise use the value
           whereStringBlock += isServiceValue(keyResults.value, newOutputDefKeysLoop[keyResults.idx], fileDef) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${keyResults.value}'))` : `(${field.field} = '${keyResults.value}')`
         } else {
           // if the value is a service value use SOUNDEX, otherwise use the value
           let fieldValue = newOutputDefKeysLoop[keyResults.idx][idMaps.map_field[idx]]
           if (fieldValue) {
+            fieldValue = fieldValue.replace(/'/g, "''").replace(/"/g, '""')
             whereStringBlock += isServiceValue(fieldValue, newOutputDefKeysLoop[keyResults.idx], fileDef) && field.soundex ? `(SOUNDEX(${field.field}) = SOUNDEX('${fieldValue}'))` : `(${field.field} = '${fieldValue}')`
           }  
         }
@@ -478,13 +483,25 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
   }
 
+  const retrieveValueFromDelimitedString = (stringValue, splitterValue, indexToReturn) => {
+    const loggerTitle = 'retrieveValueFromDelimitedString'
+
+    try {
+      const splitArray = stringValue.split(splitterValue)
+      return splitArray[indexToReturn]
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
+  }
+
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
     isServiceValue: isServiceValue,
     buildObjectFromString: buildObjectFromString,
     loadDefinition: loadDefinition,
-    retrieveFromResults: retrieveFromResults
+    retrieveFromResults: retrieveFromResults,
+    retrieveValueFromDelimitedString: retrieveValueFromDelimitedString
   }
 
 })
