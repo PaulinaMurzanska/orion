@@ -14,7 +14,7 @@
       <allroles>F</allroles>
       <audslctrole>ADMINISTRATOR</audslctrole>
       <isdeployed>T</isdeployed>
-      <loglevel>DEBUG</loglevel>
+      <loglevel>ERROR</loglevel>
       <status>RELEASED</status>
       <title>Orion RS Generate JSON</title>
     </scriptdeployment>
