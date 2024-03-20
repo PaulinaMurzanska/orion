@@ -8,9 +8,9 @@ const nsExport = SuiteCloudJestConfiguration.build({
 
 module.exports = {
   ...nsExport,
-  displayName: 'backend',
+  displayName: 'netsuite-backend',
   preset: '../../jest.preset.js',
   testEnvironment: 'node',
   moduleFileExtensions: ['js', 'html'],
-  coverageDirectory: '../../coverage/apps/backend',
+  coverageDirectory: '../../coverage/apps/netsuite-backend',
 };

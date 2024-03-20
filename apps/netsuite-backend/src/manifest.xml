@@ -1,10 +1,14 @@
 <manifest projecttype="ACCOUNTCUSTOMIZATION">
-  <projectname>data2json</projectname>
+  <projectname>netsuite-backend</projectname>
   <frameworkversion>1.0</frameworkversion>
   <dependencies>
     <features>
       <feature required="true">SERVERSIDESCRIPTING</feature>
+      <feature required="true">ACCOUNTING</feature>
       <feature required="false">CRM</feature>
+      <feature required="false">CUSTOMSEGMENTS</feature>
+      <feature required="false">EXTREMELIST</feature>
+      <feature required="true">CUSTOMRECORDS</feature>
     </features>
   </dependencies>
 </manifest>

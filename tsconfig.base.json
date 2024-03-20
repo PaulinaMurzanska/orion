@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@orionsuite/netsuite-backend": ["apps/netsuite-backend/src/index.ts"],
       "@orionsuite/api-client": ["packages/api-client/src/index.ts"],
       "@orionsuite/dtos": ["packages/dtos/src/index.ts"],
       "@orionsuite/shared-components": [

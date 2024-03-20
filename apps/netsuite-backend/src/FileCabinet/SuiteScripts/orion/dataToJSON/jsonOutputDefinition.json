@@ -1,0 +1,22 @@
+{
+	"item": {
+		"items": [{
+			"line": null,
+			"item": { "id": null },
+      "description": null,
+      "quantity": null,
+      "povendor": { "id": null },
+      "custcol_pintel_entcode": null,
+      "custcol_pintel_listprice": null,
+      "custcol_pintel_tag1": null,
+      "custcol_pintel_tag2": null,
+      "custcol_pintel_porate": null,
+      "custcol_pintel_mancode": null,
+      "rate": null,
+      "costestimaterate": null,
+      "custcol_pintel_dealerdisc": null,
+      "custcol_pintel_custdiscount": null,
+      "custcol_pintel_optioncodedescription": null
+		}]
+	}
+}

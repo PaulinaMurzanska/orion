@@ -1,0 +1,170 @@
+{
+  "failureLimit": 10,
+  "fileDefinitions": [
+    {
+      "name": "CAP Studio",
+      "extension": "sif",
+      "description": "CAP studio SIF file",
+      "mapping": {
+        "item": "PN",
+        "itemid": "PN",
+        "description": "PD",
+        "quantity": "QT",
+        "povendor": "MC",
+        "custcol_pintel_entcode": "MG",
+        "custcol_pintel_listprice": "PL",
+        "custcol_pintel_tag1": "L1",
+        "custcol_pintel_tag2": "L2",
+        "custcol_pintel_porate": "PB",
+        "custcol_pintel_mancode": "MC",
+        "rate": "PS",
+        "costestimaterate": "PB",
+        "custcol_pintel_dealerdisc": "PP",
+        "custcol_pintel_custdiscount": "SP",
+        "custcol_pintel_optioncodedescription": "ON - OD"
+      },
+      "identifiers": "PN, PD, MC, QT, PP, SP, PL",
+      "manufacturer_code": "custcol_pintel_mancode",
+      "id_maps": {
+        "item": {
+          "type": "item",
+          "return_field": "id",
+          "field": [
+            {
+              "field": "itemid",
+              "soundex": true
+            }
+          ],
+          "map_field": ["item"],
+          "field_join": "AND"
+        },
+        "povendor": {
+          "type": "customrecord_orion_cat_code",
+          "return_field": "custrecord_orion_catcode_vendor",
+          "field": [
+            {
+              "field": "custrecord_orion_codecat",
+              "soundex": false
+            },
+            {
+              "field": "custrecord_orion_catcode_mancode",
+              "soundex": false
+            }
+          ],
+          "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
+          "field_join": "AND"
+        }
+      }
+    },
+    {
+      "name": "CAP Studio Alt",
+      "extension": "sif",
+      "description": "Alternate CAP studio SIF file",
+      "mapping": {
+        "item": "PN",
+        "itemid": "PN",
+        "description": "PD",
+        "quantity": "QT",
+        "povendor": "MC",
+        "custcol_pintel_entcode": "MG",
+        "custcol_pintel_listprice": "PL",
+        "custcol_pintel_tag1": "L1",
+        "custcol_pintel_tag2": "L2",
+        "custcol_pintel_porate": "PB",
+        "custcol_pintel_mancode": "MC",
+        "rate": "PS",
+        "costestimaterate": "PB",
+        "custcol_pintel_dealerdisc": "P%",
+        "custcol_pintel_custdiscount": "S-",
+        "custcol_pintel_optioncodedescription": "ON - OD"
+      },
+      "identifiers": "PN, PD, MC, QT, P%, S-, PL",
+      "manufacturer_code": "custcol_pintel_mancode",
+      "id_maps": {
+        "item": {
+          "type": "item",
+          "return_field": "id",
+          "field": [
+            {
+              "field": "itemid",
+              "soundex": true
+            }
+          ],
+          "map_field": ["item"],
+          "field_join": "AND"
+        },
+        "povendor": {
+          "type": "customrecord_orion_cat_code",
+          "return_field": "custrecord_orion_catcode_vendor",
+          "field": [
+            {
+              "field": "custrecord_orion_codecat",
+              "soundex": false
+            },
+            {
+              "field": "custrecord_orion_catcode_mancode",
+              "soundex": false
+            }
+          ],
+          "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
+          "field_join": "AND"
+        }
+      }
+    },
+    {
+      "name": "OFDA XML",
+      "extension": "xml",
+      "description": "OFDA XML File",
+      "mapping": {
+        "item": "['OrderLineItem']['SpecItem']['Number']['#text']",
+        "itemid": "['OrderLineItem']['SpecItem']['Number']['#text']",
+        "description": "['OrderLineItem']['SpecItem']['Description']['#text']",
+        "quantity": "['OrderLineItem']['Quantity']['#text']",
+        "povendor": "['OrderLineItem']['VendorRef']['#text']",
+        "custcol_pintel_entcode": "['OrderLineItem']['VendorRef']['@EnterpriseRef']",
+        "custcol_pintel_listprice": "['OrderLineItem']['Price']['PublishedPrice']['#text']",
+        "custcol_pintel_tag1": "['OrderLineItem']['Tag'][0]['Value']['#text']",
+        "custcol_pintel_tag2": "['OrderLineItem']['Tag'][1]['Value']['#text']",
+        "custcol_pintel_porate": "['OrderLineItem']['Price']['OrderDealerPrice']['#text']",
+        "custcol_pintel_mancode": "['OrderLineItem']['SpecItem']['Catalog']['Code']['#text']",
+        "rate": "['OrderLineItem']['Price']['EndCustomerPrice']['#text']",
+        "costestimaterate": "['OrderLineItem']['Price']['OrderDealerPrice']['#text']",
+        "custcol_pintel_dealerdisc": "['OrderLineItem']['Price']['OrderDealerDiscount']['#text']",
+        "custcol_pintel_custdiscount": "['OrderLineItem']['Price']['EndCustomerDiscount']['#text']",
+        "custcol_pintel_optioncodedescription": "['OrderLineItem']['SpecItem']['Option'][]['Code']['#text'] - ['OrderLineItem']['SpecItem']['Option'][]['Description']['#text']"
+      },
+      "identifiers": "OrderLineItem, Quantity, PublishedPrice, EndCustomerPrice, OrderDealerPrice, OrderDealerDiscount, EndCustomerDiscount",
+      "manufacturer_code": "custcol_pintel_mancode",
+      "id_maps": {
+        "item": {
+          "type": "item",
+          "return_field": "id",
+          "field": [
+            {
+              "field": "itemid",
+              "soundex": true
+            }
+          ],
+          "map_field": ["item"],
+          "field_join": "AND"
+        },
+        "povendor": {
+          "type": "customrecord_orion_cat_code",
+          "return_field": "custrecord_orion_catcode_vendor",
+          "field": [
+            {
+              "field": "custrecord_orion_codecat",
+              "soundex": false
+            },
+            {
+              "field": "custrecord_orion_catcode_mancode",
+              "soundex": false
+            }
+          ],
+          "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
+          "field_join": "AND"
+        }
+      }
+    }
+  ]
+}

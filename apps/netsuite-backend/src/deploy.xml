@@ -1,9 +1,10 @@
 <deploy>
     <files>
-        <path>~/FileCabinet/SuiteScripts/orion/testUtils/orion-rs-test-endpoint.js</path>
-        <path>~/FileCabinet/SuiteScripts/orion/testUtils/orion-sl-proxy-suitelet.js</path>
+        <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
+        <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
     </files>
     <objects>
-        <path>~/Objects/suitelet/customscript_orion_sl_proxy.xml</path>
+        <path>~/Objects/restlet/customscript_orion_rs_gen_json.xml</path>
+        <path>~/Objects/customrecordtype/customrecord_orion_cat_code.xml</path>
     </objects>
 </deploy>
