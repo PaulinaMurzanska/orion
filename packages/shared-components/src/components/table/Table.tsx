@@ -1,13 +1,17 @@
 import {
   ColumnDef,
+  FilterFn,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
   RowModel,
   Table as TableType,
   TableState,
   Updater,
   useReactTable,
 } from '@tanstack/react-table';
+import { rankItem } from '@tanstack/match-sorter-utils';
 
 import {
   Table as ShadcnTable,
@@ -17,27 +21,84 @@ import {
   TableHeader,
   TableRow,
 } from './TableComponents';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   onRowSelectionChange?: CallableFunction;
+  onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
+  search?: string;
+  setSearch?: (search: string) => void;
+}
+
+function useSkipper() {
+  const shouldSkipRef = useRef(true);
+  const shouldSkip = shouldSkipRef.current;
+
+  // Wrap a function with this to skip a pagination reset temporarily
+  const skip = useCallback(() => {
+    shouldSkipRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    shouldSkipRef.current = true;
+  });
+
+  return [shouldSkip, skip] as const;
 }
 
 const Table = <T extends object>(props: TableProps<T>) => {
-  const { data, columns, onRowSelectionChange } = props;
+  const {
+    data,
+    columns,
+    onRowSelectionChange,
+    onRowUpdate,
+    search,
+    setSearch,
+  } = props;
   const [rowSelection, setRowSelection] = useState({});
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
+
+  const fuzzyFilter: FilterFn<T> = (row, columnId, value, addMeta) => {
+    const itemRank = rankItem(row.getValue(columnId), value);
+    addMeta({
+      itemRank,
+    });
+    return itemRank.passed;
+  };
 
   const table = useReactTable({
     data: data,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     enableRowSelection: true,
-    renderFallbackValue: undefined,
     onRowSelectionChange: setRowSelection,
+
+    renderFallbackValue: undefined,
+    enableGlobalFilter: true,
+    enableColumnFilters: true,
+    onGlobalFilterChange: setSearch,
+    globalFilterFn: fuzzyFilter,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
     state: {
       rowSelection,
+      globalFilter: search,
+    },
+    autoResetPageIndex,
+    debugTable: true,
+    meta: {
+      updateData: (rowIndex: number, columnId: string, value: T) => {
+        // Skip page index reset until after next rerender
+        skipAutoResetPageIndex();
+        if (onRowUpdate) {
+          onRowUpdate(rowIndex, columnId, value);
+        }
+      },
     },
   });
 
@@ -73,8 +134,8 @@ const Table = <T extends object>(props: TableProps<T>) => {
                     header.getContext()
                   )}
                   {{
-                    // asc: sortIcon(true),
-                    // desc: sortIcon(false),
+                    asc: '▲',
+                    desc: '▼',
                   }[header.column.getIsSorted() as string] ?? null}
                 </div>
               </TableHead>

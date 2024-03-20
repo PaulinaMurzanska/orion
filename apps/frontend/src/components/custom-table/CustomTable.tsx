@@ -1,10 +1,10 @@
 import {
-  Button,
+  EditableCell,
   IndeterminateCheckbox,
   Separator,
   Table,
 } from '@orionsuite/shared-components';
-import { Column, createColumnHelper, RowModel } from '@tanstack/react-table';
+import { Column, createColumnHelper } from '@tanstack/react-table';
 import styled from 'styled-components';
 import { ReactNode, useMemo } from 'react';
 
@@ -12,10 +12,14 @@ interface Props<T> {
   data: T[];
   columns: any[];
   onRowSelectionChange?: CallableFunction;
+  onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
+  editable?: boolean;
   header: ReactNode;
   actions?: ReactNode;
   footer?: ReactNode;
   filters?: ReactNode;
+  search?: string;
+  setSearch?: (search: string) => void;
 }
 
 const Container = styled.div`
@@ -33,10 +37,14 @@ export function CustomTable<T extends object>({
   data,
   columns,
   onRowSelectionChange,
+  onRowUpdate,
   actions,
+  editable,
   header,
   footer,
   filters,
+  search,
+  setSearch,
 }: Props<T>) {
   const columnHelper = createColumnHelper<T>();
   const columnDef = useMemo(() => {
@@ -66,14 +74,24 @@ export function CustomTable<T extends object>({
     return [
       checkbox,
       ...(columns.map((column) =>
-        columnHelper.accessor((row) => row, {
+        columnHelper.accessor((row: T) => (row as any)[column.id], {
           id: column.id,
+          enableGlobalFilter: true,
+          enableColumnFilter: true,
+          enableSorting: true,
           header: column.header,
-          cell: (props) => (props.getValue() as any)[column.id],
+          cell: (props) =>
+            EditableCell({
+              editable,
+              initialValue: props.getValue() as any,
+              table: props.table,
+              rowIndex: props.row.index,
+              columnId: column.id,
+            }),
         })
       ) as Column<T>[]),
     ];
-  }, [columnHelper, columns]);
+  }, [columnHelper, columns, editable]);
 
   return (
     <Container>
@@ -87,6 +105,9 @@ export function CustomTable<T extends object>({
           data={data}
           columns={columnDef}
           onRowSelectionChange={onRowSelectionChange}
+          onRowUpdate={onRowUpdate}
+          search={search}
+          setSearch={setSearch}
         />
       </TableContainer>
       <Separator className="mt-5 mb-2" />
