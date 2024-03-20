@@ -1,10 +1,6 @@
 <deploy>
     <files>
         <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
-        <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
+        <path>~/FileCabinet/SuiteScripts/orion/createFile/rl-bom-create-file.js</path>
     </files>
-    <objects>
-        <path>~/Objects/restlet/customscript_orion_rs_gen_json.xml</path>
-        <path>~/Objects/customrecordtype/customrecord_orion_cat_code.xml</path>
-    </objects>
 </deploy>
