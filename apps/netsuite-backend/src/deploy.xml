@@ -6,6 +6,6 @@
     <objects>
         <path>~/Objects/restlet/customscript_orion_rs_gen_json.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_cat_code.xml</path>
-        <path>~/Objects/customrecordtype/customrecord_bom_import.xml</path>
+        <path>~/Objects/customrecordtype/customrecord_orion_bom_import.xml</path>
     </objects>
 </deploy>

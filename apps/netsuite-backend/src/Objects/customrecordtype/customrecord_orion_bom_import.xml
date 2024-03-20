@@ -1,4 +1,4 @@
-<customrecordtype scriptid="customrecord_bom_import">
+<customrecordtype scriptid="customrecord_orion_bom_import">
   <accesstype>CUSTRECORDENTRYPERM</accesstype>
   <allowattachments>T</allowattachments>
   <allowinlinedeleting>F</allowinlinedeleting>
