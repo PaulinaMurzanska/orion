@@ -7,3 +7,4 @@ export { default as IndeterminateCheckbox } from './table/IndeterminateCheckbox'
 export { Checkbox } from './checkbox/Checkbox';
 export { Separator } from './separator/Separator';
 export * from './card/Card';
+export * from './dropdown/Dropdown';

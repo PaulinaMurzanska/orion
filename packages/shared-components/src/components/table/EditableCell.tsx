@@ -40,13 +40,16 @@ const EditableCell = <T extends object>({
   }, [initialValue]);
 
   return (
-    <input
-      disabled={!editable}
-      className="w-full bg-transparent hover:bg-transparent"
-      value={value as string}
-      onChange={(e) => setValue(e.target.value)}
-      onBlur={onBlur}
-    />
+    <div style={{ width: 'max-content' }}>
+      <input
+        size={value.length + 3}
+        disabled={!editable}
+        className="w-full bg-transparent hover:bg-transparent"
+        value={value as string}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={onBlur}
+      />
+    </div>
   );
 };
 
