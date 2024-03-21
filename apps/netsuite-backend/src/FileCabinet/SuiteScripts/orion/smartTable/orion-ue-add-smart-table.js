@@ -3,7 +3,7 @@
  * @NScriptType UserEventScript
  * @NModuleScope SameAccount
  */
-define(['N/ui/serverWidget'], (serverWidget) => {
+define(['N/ui/serverWidget', 'N/runtime'], (serverWidget, runtime) => {
   /**
    * Executes before a record is loaded in the user interface.
    *
@@ -12,28 +12,53 @@ define(['N/ui/serverWidget'], (serverWidget) => {
    * @param {N/ui/serverWidget.Form} context.form - The NetSuite form object.
    */
   const beforeLoad = (context) => {
-    if (context.type === context.UserEventType.VIEW) {
+    if (context.type === context.UserEventType.VIEW || context.type === context.UserEventType.EDIT) {
       const form = context.form
+
+      const scriptContent = runtime.getCurrentScript().getParameter({
+        name: 'custscript_orion_bom_script_content'
+      })
+
+      const tabName = 'custpage_smart_table_tab'
 
       // Create a new tab
       const tab = form.addTab({
-        id: 'custpage_smart_table_tab',
+        id: tabName,
         label: 'Smart Table'
       })
 
       // Add a custom HTML field to the tab
-      const htmlField = form.addField({
+      const tableField = form.addField({
         id: 'custpage_smart_table_html',
         type: serverWidget.FieldType.INLINEHTML,
         label: 'Custom HTML',
         container: 'custpage_smart_table_tab'
       })
 
-      htmlField.updateLayoutType({
+      tableField.updateLayoutType({
         layoutType: serverWidget.FieldLayoutType.OUTSIDEABOVE
       })
-      
-      htmlField.defaultValue = '<p>React Code Goes Here</p>'
+
+      tableField.defaultValue = scriptContent
+
+      const defaultField = form.addField({
+        id: 'custpage_set_default_tab',
+        type: serverWidget.FieldType.INLINEHTML,
+        label: 'Custom HTML',
+      })
+
+      defaultField.defaultValue = `
+      <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+          // Code to execute when the DOM is fully loaded
+          var element = document.getElementById("custpage_smart_table_tab_div");
+          if (element) {
+            window.showmachine="${tabName}"
+            ShowitemsMachine("${tabName}")
+          } 
+        });
+      </script>
+      `
     }
   }
 
