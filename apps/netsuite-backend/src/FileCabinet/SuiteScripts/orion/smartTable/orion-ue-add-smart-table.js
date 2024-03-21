@@ -49,16 +49,14 @@ define(['N/ui/serverWidget', 'N/runtime'], (serverWidget, runtime) => {
 
       defaultField.defaultValue = `
       <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-          // Code to execute when the DOM is fully loaded
-          var element = document.getElementById("custpage_smart_table_tab_div");
-          if (element) {
-            window.showmachine="${tabName}"
-            ShowitemsMachine("${tabName}")
-          } 
+        window.addEventListener('load', () => {
+          ShowTab("${tabName}",false)
         });
       </script>
       `
+
+      form.insertTab({ tab: tab , nexttab: 'items' })
+      
     }
   }
 
