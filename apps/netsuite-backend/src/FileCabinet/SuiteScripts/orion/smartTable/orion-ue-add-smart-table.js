@@ -28,9 +28,11 @@ define(['N/ui/serverWidget'], (serverWidget) => {
         label: 'Custom HTML',
         container: 'custpage_smart_table_tab'
       })
+
       htmlField.updateLayoutType({
         layoutType: serverWidget.FieldLayoutType.OUTSIDEABOVE
       })
+      
       htmlField.defaultValue = '<p>React Code Goes Here</p>'
     }
   }
