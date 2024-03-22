@@ -8,5 +8,6 @@
         <path>~/Objects/restlet/customscript_orion_rs_gen_json.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_cat_code.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_bom_import.xml</path>
+        <path>~/Objects/restlet/customscript_orion_rl_bom_create_edit_im.xml</path>
     </objects>
 </deploy>
