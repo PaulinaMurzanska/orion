@@ -15,11 +15,12 @@ define(['N/record'], function (record) {
       const editID = context.editID
       const bomImportValues = context.importValues
       // {
-      //   custrecord_bom_import_importd_file_url: '/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt',
-      //   custrecord_bom_import_json_importd_file: '/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt',
+      //   action: "create",
+      //   custrecord_bom_import_importd_file_url: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt",
+      //   custrecord_bom_import_json_importd_file: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt",
       //   custrecord_bom_import_file_import_order: 1,
       //   custrecord_bom_import_transaction: 123456,
-      //   custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N'
+      //   custrecord_orion_bom_intialization_ident: "GmOBKvsQkQ4R3U2N"
       // }
 
       const recordID = await createCustomRecord(action, bomImportValues )
@@ -55,7 +56,12 @@ define(['N/record'], function (record) {
       switch (action) {
         case 'create':
           const customRecord = await record.create.promise({
-            type: 'customrecord_bom_import'
+            type: 'customrecord_orion_bom_import'
+          })
+
+          customRecord.setValue({
+            fieldId: 'name',
+            value: 'Intiated BoM Import'
           })
 
           // set field values
@@ -72,7 +78,7 @@ define(['N/record'], function (record) {
         case 'edit':
           // update values
           bomImportID = await record.submitFields.promise({
-            type: 'customrecord_bom_import',
+            type: 'customrecord_orion_bom_import',
             id: editID,
             values: bomImportValues
           })
@@ -83,7 +89,7 @@ define(['N/record'], function (record) {
 
     } catch (e) {
       const errorString = e.toString()
-      // Handle errors
+      // handle errors
       log.error({
         title: loggerTitle,
         details: `Error: ${errorString}`
