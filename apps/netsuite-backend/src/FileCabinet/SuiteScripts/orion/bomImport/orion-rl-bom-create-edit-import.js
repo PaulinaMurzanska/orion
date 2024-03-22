@@ -30,7 +30,7 @@ define(['N/record'], function (record) {
 
     } catch (e) {
       const errorString = e.toString()
-      // Handle errors
+      // handle errors
       log.error({
         title: loggerTitle,
         details: `Error: ${errorString}`
@@ -54,7 +54,7 @@ define(['N/record'], function (record) {
       let bomImportID
       switch (action) {
         case 'create':
-          const customRecord = record.create({
+          const customRecord = await record.create.promise({
             type: 'customrecord_bom_import'
           })
 
@@ -67,11 +67,11 @@ define(['N/record'], function (record) {
           }
 
           // save values
-          bomImportID = customRecord.save()
+          bomImportID = await customRecord.save.promise()
           break
         case 'edit':
           // update values
-          bomImportID = record.submitFields({
+          bomImportID = await record.submitFields.promise({
             type: 'customrecord_bom_import',
             id: editID,
             values: bomImportValues
