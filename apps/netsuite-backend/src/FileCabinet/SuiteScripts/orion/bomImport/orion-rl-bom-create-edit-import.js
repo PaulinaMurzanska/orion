@@ -13,7 +13,7 @@ define(['N/record'], function (record) {
       log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
       const action = context.action
       const editID = context.editID
-      const bomImportValues = context.importValues
+      const bomImportValues = context
       // {
       //   action: "create",
       //   custrecord_bom_import_importd_file_url: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt",
