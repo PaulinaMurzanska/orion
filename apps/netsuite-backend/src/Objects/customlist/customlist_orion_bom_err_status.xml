@@ -1,0 +1,20 @@
+<customlist scriptid="customlist_orion_bom_err_status">
+  <description>The error statuses for the BoM error records</description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>BoM Error Status</name>
+  <customvalues>
+    <customvalue scriptid="val_58044_td2893635_420">
+      <isinactive>F</isinactive>
+      <value>In Error</value>
+    </customvalue>
+    <customvalue scriptid="val_58045_td2893635_969">
+      <isinactive>F</isinactive>
+      <value>In Review</value>
+    </customvalue>
+    <customvalue scriptid="val_58046_td2893635_538">
+      <isinactive>F</isinactive>
+      <value>Resolved</value>
+    </customvalue>
+  </customvalues>
+</customlist>
