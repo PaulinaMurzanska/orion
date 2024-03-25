@@ -44,7 +44,8 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
       // You can send a response if needed
       return ({
         output: {
-          fileURL: fileURL
+          fileURL: fileURL,
+          fileID: fileID
         }
       })
     } catch (e) {
