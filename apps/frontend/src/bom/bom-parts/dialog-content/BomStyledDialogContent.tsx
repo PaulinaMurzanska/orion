@@ -16,14 +16,7 @@ const StyledDropArea = styled.div`
   row-gap: 10px;
   align-items: flex-start;
   cursor: move;
-`;
-
-const StyledDropActions = styled.div`
-  min-width: 80px;
-  margin-left: 10px;
-  border: 1px solid grey;
-  display: flex;
-  flex-flow: column wrap;
+  position: relative;
 `;
 
 const StyledCard = styled(Card)`
@@ -33,4 +26,26 @@ const StyledCard = styled(Card)`
   padding: 20px;
 `;
 
-export { StyledContentWrapper, StyledDropArea, StyledDropActions, StyledCard };
+const StyledMinus = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  z-index: 20;
+  font-size: 30px;
+  &::after {
+    content: '-';
+  }
+  &:hover {
+    box-shadow: 0px 0px 26px -2px rgba(66, 68, 90, 1);
+  }
+`;
+
+export { StyledContentWrapper, StyledDropArea, StyledCard, StyledMinus };

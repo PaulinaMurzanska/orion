@@ -12,10 +12,38 @@ import {
 } from '@orionsuite/shared-components';
 
 import BomDialogContent from '../dialog-content/BomDialogContent';
+import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
 import { mdiSofaSingle } from '@mdi/js';
+import { nanoid } from 'nanoid';
+import { useState } from 'react';
+
+const fileObjEmpty: FileObjectType = {
+  id: '',
+  fileLoading: false,
+  fileAdded: false,
+  fileName: 'Drag and Drop',
+  fullFileName: '',
+  fileExtension: '',
+  loaderText: '',
+  fileContent: '',
+  bomRecordID: null,
+  bomRecordStatus: 1,
+  fileJSON: {},
+  file: null,
+  itemLines: [],
+};
 
 const BomCustomDialog = () => {
+  const idInitial = nanoid(8);
+  const initialObject = { ...fileObjEmpty };
+  initialObject.id = idInitial;
+  const [fileObjs, setFileObjs] = useState<FileObjectType[]>([initialObject]);
+
+  const setFilesDataArray = (filesArray: FileObjectType[]) => {
+    setFileObjs(filesArray);
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -26,7 +54,16 @@ const BomCustomDialog = () => {
       </DialogTrigger>
       <CustomDialogContent overlayClassName="bg-black/30" closeIconTop={false}>
         <StyledInnerContent>
-          <BomDialogContent />
+          <BomDialogContent
+            setFilesDataArray={setFilesDataArray}
+            fileObjs={fileObjs}
+            emptyObject={fileObjEmpty}
+          />
+          <div>
+            <pre>
+              <code>{JSON.stringify(fileObjs, null, 2)}</code>
+            </pre>
+          </div>
         </StyledInnerContent>
         <DialogFooter className="sm:justify-center">
           <DialogClose asChild>
