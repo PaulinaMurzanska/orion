@@ -2,19 +2,26 @@ import { Button } from '@orionsuite/shared-components';
 import Icon from '@mdi/react';
 import styled from 'styled-components';
 
+interface DragDropProps {
+  extension?: string | null;
+}
+
 const StyledContentCentered = styled.div`
   display: flex;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
 
-const StyledAttachment = styled.div`
+const StyledAttachment = styled.div<DragDropProps>`
   width: 100px;
   height: 100px;
   border-radius: 2vh;
   color: white;
-  background-color: #2db1ba;
+  background-color: ${(props) =>
+    props.extension === '' ? '#2db1ba' : 'rgb(45, 186, 135)'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -37,6 +44,7 @@ const StyledDropButton = styled(Button)`
 
 const StyledDragDrop = styled.div`
   font-family: 'Inter';
+  position: relative;
 `;
 
 const StyledDragTitle = styled.h2`

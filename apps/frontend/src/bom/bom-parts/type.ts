@@ -1,17 +1,15 @@
 type FileObjectType = {
-  id: number | null;
+  id: any;
   fileLoading: boolean;
   fileAdded: boolean;
   fileName: string | null;
   fullFileName: string | null;
-  buttonText: string | null;
-  statusText: string | null;
-  loaderText: string | null;
-  fileContent: string | null;
+  fileExtension: string | null;
+  fileContent: string | null | ArrayBuffer;
   bomRecordID: number | null;
   bomRecordStatus: number | null;
   fileJSON: { [key: string]: any };
-  file: string | null;
+  file: any;
   itemLines: any[];
 };
 
