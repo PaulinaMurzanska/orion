@@ -9,5 +9,6 @@
         <path>~/Objects/customrecordtype/customrecord_orion_cat_code.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_bom_import.xml</path>
         <path>~/Objects/restlet/customscript_orion_rl_bom_create_edit_im.xml</path>
+        <path>~/Objects/usereventscript/customscript_orion_ue_bom_logic.xml</path>
     </objects>
 </deploy>
