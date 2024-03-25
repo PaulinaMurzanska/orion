@@ -1,7 +1,8 @@
-import { Order } from '@orionsuite/dtos';
-import CustomTable from '../components/custom-table/CustomTable';
 import { Button, Input } from '@orionsuite/shared-components';
 import { useMemo, useState } from 'react';
+
+import CustomTable from '../components/custom-table/CustomTable';
+import { Order } from '@orionsuite/dtos';
 import { api } from '@orionsuite/api-client';
 
 const OrdersTable = () => {

@@ -5,6 +5,10 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  RowModel,
+  Table as TableType,
+  TableState,
+  Updater,
   useReactTable,
 } from '@tanstack/react-table';
 import { rankItem } from '@tanstack/match-sorter-utils';
@@ -20,6 +24,7 @@ import {
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ColumnMenu from './ColumnMenu';
 import { getCommonPinningStyles } from './styles';
+import { rankItem } from '@tanstack/match-sorter-utils';
 
 interface TableProps<T> {
   data: T[];
