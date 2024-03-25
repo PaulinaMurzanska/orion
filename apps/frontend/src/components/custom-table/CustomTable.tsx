@@ -30,7 +30,8 @@ const Container = styled.div`
 
 const TableContainer = styled.div<{ width: number }>`
   height: 75vh;
-  width: ${(props) => props.width}px;
+  //width: ${(props) => props.width}px;
+  width: 90vw;
 `;
 
 export function CustomTable<T extends object>({
@@ -122,6 +123,7 @@ export function CustomTable<T extends object>({
           onRowUpdate={onRowUpdate}
           search={search}
           setSearch={setSearch}
+          editable={editable}
         />
       </TableContainer>
       <Separator className="mt-5 mb-2" />

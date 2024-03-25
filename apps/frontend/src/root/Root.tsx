@@ -12,7 +12,7 @@ const Container = styled.div`
 const Root = () => {
   return (
     <Container>
-      <NavigationMenu />
+      {/*<NavigationMenu />*/}
       <Outlet />
     </Container>
   );
