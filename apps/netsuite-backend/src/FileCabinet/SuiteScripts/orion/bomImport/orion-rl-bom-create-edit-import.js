@@ -23,7 +23,7 @@ define(['N/record'], function (record) {
       //   custrecord_orion_bom_intialization_ident: "GmOBKvsQkQ4R3U2N"
       // }
 
-      const recordID = await createCustomRecord(action, bomImportValues )
+      const recordID = await createCustomRecord(action, bomImportValues, editID)
 
       return {
         bomRecordID: recordID
