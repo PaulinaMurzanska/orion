@@ -31,7 +31,7 @@ const Container = styled.div`
 const TableContainer = styled.div<{ width: number }>`
   height: 75vh;
   //width: ${(props) => props.width}px;
-  width: 90vw;
+  width: calc(100vw - 4.5rem);
 `;
 
 export function CustomTable<T extends object>({
@@ -115,7 +115,7 @@ export function CustomTable<T extends object>({
       </div>
       {filters && <div className="flex justify-between mb-4">{filters}</div>}
 
-      <TableContainer width={containerWidth - 10}>
+      <TableContainer width={containerWidth}>
         <Table
           data={data}
           columns={columnDef}

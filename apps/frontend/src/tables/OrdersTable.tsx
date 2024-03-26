@@ -39,7 +39,7 @@ const OrdersTable = () => {
   };
 
   return (
-    <div className="m-10">
+    <div className="m-6">
       <CustomTable<Order>
         data={data ?? []}
         columns={columns}
