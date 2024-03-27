@@ -67,7 +67,7 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
       for (let bomRecord of bomRecordsFound) {
         const bomRecordID = bomRecord.id
 
-        const bomRecordID = record.submitFields({
+        const bomRecordID = await record.submitFields.promise({
           type: 'customrecord_orion_bom_import',
           id: bomRecordID,
           values: {
