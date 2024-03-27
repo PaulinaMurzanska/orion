@@ -44,7 +44,16 @@ define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelpe
           textLoops = orionJSONLib.findTextLoops(filteredFileDefs, fileContent, /(<.+:|<)(.+)>.*(<|)/, '(<\/.+:|<)({var})>', 2)
           break
         default:
-          return { message: "ERROR: File type not supported" }
+          return new Response({
+            status: 400, // Bad Request
+            body: {
+              error: 'ERROR: File type not supported',
+              details: 'Please include a file type of sif or xml in the file name.'
+            },
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
       }
 
       // matches the file definitions by type
@@ -52,11 +61,29 @@ define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelpe
       // generates the line JSON based on the file type
       const lineJSON = orionJSONLib.generateLineJSON(definition, textLoops, outDef, orionHelperLib)
 
-      return { message: "SUCCESS: Lines have been generated", lineJSON: lineJSON }
+      return new Response({
+        status: 200, // Successful Response
+        body: {
+          message: 'SUCCESS: Lines have been generated',
+          lineJSON: lineJSON
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
 
     } catch (e) {
       log.error({ title: loggerTitle, details: e })
-      return { message: `ERROR: ${e}` }
+      return new Response({
+        status: 500, // Bad Request
+        body: {
+          error: e.code,
+          details: e.message
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
     }
   }
 
