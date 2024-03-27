@@ -8,15 +8,24 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
 
   const beforeLoad = async (context) => {
     const loggerTitle = 'beforeLoad'
-    log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
-    if (context.type === context.UserEventType.CREATE) {
-      await setBeforeDataValue(context)
+    try {
+      log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
+      if (context.type === context.UserEventType.CREATE) {
+        await setBeforeDataValue(context)
+      }
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
     }
   }
 
   const afterSubmit = async (context) => {
-    if (context.type === context.UserEventType.CREATE) {
-      await setAfterDataValue(context)
+    const loggerTitle = 'afterSubmit'
+    try {
+      if (context.type === context.UserEventType.CREATE) {
+        await setAfterDataValue(context)
+      }
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
     }
   }
 
@@ -64,50 +73,70 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
    */
   const setAfterDataValue = async (context) => {
     const loggerTitle = 'setAfterDataValue'
-    const currentRecord = context.newRecord
-    const transactionID = currentRecord.id
 
-    // get the created string from the freeform text field
-    const createdString = currentRecord.getValue('custpage_created_data_code_field_text')
+    try {
+      const currentRecord = context.newRecord
+      const transactionID = currentRecord.id
 
-    // query for the BOM records that have the created string
-    const getBOMRecordsQL = `
-      SELECT id
-      FROM customrecord_orion_bom_import
-      WHERE custrecord_orion_bom_intializaiton_ident = '${createdString}'
-    `
+      // get the created string from the freeform text field
+      const createdString = currentRecord.getValue('custpage_created_data_code_field_text')
 
-    log.debug(loggerTitle, `createdString: ${createdString}`)
+      // query for the BOM records that have the created string
+      const getBOMRecordsQL = `
+        SELECT id
+        FROM customrecord_orion_bom_import
+        WHERE custrecord_orion_bom_intializaiton_ident = '${createdString}'
+      `
 
-    // get the BOM records that have the created string
-    const bomRecordsFound = await new Promise(resolve => { resolve(query.runSuiteQL(getBOMRecordsQL).asMappedResults()) })
+      log.debug(loggerTitle, `createdString: ${createdString}`)
 
-    log.debug(loggerTitle, `bomRecordsFound: ${JSON.stringify(bomRecordsFound)}`)
+      // get the BOM records that have the created string
+      const bomRecordsFound = await new Promise(resolve => { resolve(query.runSuiteQL(getBOMRecordsQL).asMappedResults()) })
 
-    if (bomRecordsFound?.length > 0) {
-      for (let bomRecord of bomRecordsFound) {
-        const bomRecordID = bomRecord.id
+      log.debug(loggerTitle, `bomRecordsFound: ${JSON.stringify(bomRecordsFound)}`)
 
-        const bomResultRecordID = await record.submitFields.promise({
-          type: 'customrecord_orion_bom_import',
-          id: bomRecordID,
-          values: {
-            custrecord_bom_import_transaction: transactionID,
-            custrecord_orion_bom_intializaiton_ident: null
-          }
-        })
+      // if BOM records are found, update the BOM records with the transaction ID and remove the created string
+      if (bomRecordsFound?.length > 0) {
+        for (let bomRecord of bomRecordsFound) {
+          const bomRecordID = bomRecord.id
+
+          const bomResultRecordID = await record.submitFields.promise({
+            type: 'customrecord_orion_bom_import',
+            id: bomRecordID,
+            values: {
+              custrecord_bom_import_transaction: transactionID,
+              custrecord_orion_bom_intializaiton_ident: null
+            }
+          })
+        }
       }
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
     }
   }
 
+  /**
+   * Generates a random string of the specified length.
+   *
+   * @param {number} length - The length of the random string to generate.
+   * @returns {string} The randomly generated string.
+   */
   const generateRandomString = (length) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = ''
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length)
-      result += characters.charAt(randomIndex)
+    loggerTitle = 'generateRandomString'
+
+    try {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = ''
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length)
+        result += characters.charAt(randomIndex)
+      }
+      return result
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
     }
-    return result
+
+    return null
   }
 
   return {
