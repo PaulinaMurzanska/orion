@@ -66,17 +66,14 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
     if (bomRecordsFound?.length > 0) {
       for (let bomRecord of bomRecordsFound) {
         const bomRecordID = bomRecord.id
-        const bomRecordObj = record.load({
+
+        const bomRecordID = record.submitFields({
           type: 'customrecord_orion_bom_import',
-          id: bomRecordID
+          id: bomRecordID,
+          values: {
+            custrecord_bom_import_transaction: transactionID
+          }
         })
-
-        bomRecordObj.setValue({
-          fieldId: 'custrecord_bom_import_transaction',
-          value: transactionID
-        })
-
-        bomRecordObj.save()
       }
     }
   }
