@@ -5,7 +5,6 @@
  */
 
 define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidget) => {
-  let createdString
 
   const beforeLoad = async (context) => {
     const loggerTitle = 'beforeLoad'
@@ -30,14 +29,29 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
     const loggerTitle = 'setBeforeDataValue'
     try {
       const form = context.form
+      // Add inline HTML field in the form with a value the front end can access
       const inlineHtmlField = form.addField({
         id: 'custpage_created_data_code_field',
         type: serverWidget.FieldType.INLINEHTML,
+        label: 'Created Data Code HTML'
+      })
+      // Add freeform text field in the form to be accessed later on
+      const freeformTextField = form.addField({
+        id: 'custpage_created_data_code_field_text',
+        type: serverWidget.FieldType.TEXT,
         label: 'Created Data Code'
       })
 
+      // make field hidden
+      freeformTextField.updateDisplayType({
+        displayType : serverWidget.FieldDisplayType.HIDDEN
+      })
+      // generate random string
       const createdString = generateRandomString(20)
+      // write the random string to the inline HTML field
       inlineHtmlField.defaultValue = `<span id="created-string-id" data-create-id="${createdString}"></span>`
+      // write the random string to the freeform text field to be accessed after submit
+      freeformTextField.defaultValue = createdString
     } catch (e) {
       log.error(loggerTitle, `Error: ${e}`)
     }
@@ -53,12 +67,19 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
     const currentRecord = context.newRecord
     const transactionID = currentRecord.id
 
+    // get the created string from the freeform text field
+    const createdString = currentRecord.getValue('custpage_created_data_code_field_text')
+
+    // query for the BOM records that have the created string
     const getBOMRecordsQL = `
       SELECT id
       FROM customrecord_orion_bom_import
       WHERE custrecord_orion_bom_intializaiton_ident = '${createdString}'
     `
 
+    log.debug(loggerTitle, `createdString: ${createdString}`)
+
+    // get the BOM records that have the created string
     const bomRecordsFound = await new Promise(resolve => { resolve(query.runSuiteQL(getBOMRecordsQL).asMappedResults()) })
 
     log.debug(loggerTitle, `bomRecordsFound: ${JSON.stringify(bomRecordsFound)}`)
@@ -67,11 +88,12 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
       for (let bomRecord of bomRecordsFound) {
         const bomRecordID = bomRecord.id
 
-        const bomRecordID = await record.submitFields.promise({
+        const bomResultRecordID = await record.submitFields.promise({
           type: 'customrecord_orion_bom_import',
           id: bomRecordID,
           values: {
-            custrecord_bom_import_transaction: transactionID
+            custrecord_bom_import_transaction: transactionID,
+            custrecord_orion_bom_intializaiton_ident: null
           }
         })
       }
