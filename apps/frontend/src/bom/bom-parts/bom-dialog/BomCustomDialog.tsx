@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from '@orionsuite/shared-components';
 
+import BomDialogContent from '../dialog-content/BomDialogContent';
 import Icon from '@mdi/react';
 import { mdiSofaSingle } from '@mdi/js';
 
@@ -24,7 +25,9 @@ const BomCustomDialog = () => {
         </CustomTriggerButton>
       </DialogTrigger>
       <CustomDialogContent overlayClassName="bg-black/30" closeIconTop={false}>
-        <StyledInnerContent>inner content</StyledInnerContent>
+        <StyledInnerContent>
+          <BomDialogContent />
+        </StyledInnerContent>
         <DialogFooter className="sm:justify-center">
           <DialogClose asChild>
             <CustomButton type="button" variant="ghost">
