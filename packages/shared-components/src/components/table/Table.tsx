@@ -1,18 +1,16 @@
 import {
   ColumnDef,
   FilterFn,
+  RowModel,
+  TableState,
+  Table as TableType,
+  Updater,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  RowModel,
-  Table as TableType,
-  TableState,
-  Updater,
   useReactTable,
 } from '@tanstack/react-table';
-import { rankItem } from '@tanstack/match-sorter-utils';
-
 import {
   Table as ShadcnTable,
   TableBody,
@@ -21,7 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from './TableComponents';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import ColumnMenu from './ColumnMenu';
 import { getCommonPinningStyles } from './styles';
 import { rankItem } from '@tanstack/match-sorter-utils';
