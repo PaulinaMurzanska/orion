@@ -5,7 +5,7 @@
  * @NAmdConfig /SuiteScripts/orion/orionModules.json
  */
 
-define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelperLib) => {
+define(['N/file', 'N/error', 'orion/json', 'orion/helper'], (file, error, orionJSONLib, orionHelperLib) => {
   /**
    * Function called upon sending a GET request to the RESTlet.
    *
@@ -15,7 +15,7 @@ define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelpe
   const post = (context) => {
     const loggerTitle = 'get'
 
-    try {
+
       log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
       const fileContent = context.fileContent
       const fileName = context.fileName
@@ -44,10 +44,11 @@ define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelpe
           textLoops = orionJSONLib.findTextLoops(filteredFileDefs, fileContent, /(<.+:|<)(.+)>.*(<|)/, '(<\/.+:|<)({var})>', 2)
           break
         default:
-          return {
-            error: 'ERROR: File type not supported',
-            details: 'Please include a file type of sif or xml in the file name.'
-          }
+          throw error.create({
+            name: 'ORION_WRONG_FILE_TYPE',
+            message: 'Please include a file type of sif or xml in the file name.',
+            notifyOff: false
+          })
       }
 
       // matches the file definitions by type
@@ -59,29 +60,16 @@ define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelpe
 
       if (lineJSON?.length > 0) {
         return {
-          message: 'SUCCESS: Lines have been generated',
+          message: 'SUCCESS: Lines have been generated.',
           lineJSON: lineJSON
         }
       } else {
-        return {
-          error: 'ERROR: Lines have not been generated',
-          details: 'Please review the error logs'
-        }
+        throw error.create({
+          name: 'ORION_MISSING_LINES',
+          message: 'No lines have been returned.  Please check logs for errors',
+          notifyOff: false
+        })
       }
-
-    } catch (e) {
-      log.error({ title: loggerTitle, details: e })
-      return new Response({
-        status: 500, // Bad Request
-        body: {
-          error: e.code,
-          details: e.message
-        },
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-    }
   }
 
   return {
