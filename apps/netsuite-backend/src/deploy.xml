@@ -1,6 +1,6 @@
 <deploy>
     <files>
         <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
-        <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/orion-rs-gen-json.js</path>
+        <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
     </files>
 </deploy>
