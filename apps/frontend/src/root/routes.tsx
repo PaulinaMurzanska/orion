@@ -1,8 +1,8 @@
-import { createHashRouter } from 'react-router-dom';
-
+import BomImportTool from '../bom/BomImportTool';
 import ComponentsLibrary from '../components-library/ComponentsLibrary';
 import OrdersTable from '../tables/OrdersTable';
 import Root from './Root';
+import { createHashRouter } from 'react-router-dom';
 
 export default createHashRouter([
   {
@@ -16,6 +16,10 @@ export default createHashRouter([
       {
         path: '/components',
         element: <ComponentsLibrary />,
+      },
+      {
+        path: '/bom_import',
+        element: <BomImportTool />,
       },
     ],
   },

@@ -1,18 +1,16 @@
 import {
   ColumnDef,
   FilterFn,
+  RowModel,
+  TableState,
+  Table as TableType,
+  Updater,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  RowModel,
-  Table as TableType,
-  TableState,
-  Updater,
   useReactTable,
 } from '@tanstack/react-table';
-import { rankItem } from '@tanstack/match-sorter-utils';
-
 import {
   Table as ShadcnTable,
   TableBody,
@@ -21,7 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from './TableComponents';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import ColumnMenu from './ColumnMenu';
+import { getCommonPinningStyles } from './styles';
+import { rankItem } from '@tanstack/match-sorter-utils';
 
 interface TableProps<T> {
   data: T[];
@@ -111,7 +113,7 @@ const Table = <T extends object>(props: TableProps<T>) => {
   }, [table, rowSelection]);
 
   return (
-    <ShadcnTable className="w-full">
+    <ShadcnTable>
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
@@ -120,11 +122,12 @@ const Table = <T extends object>(props: TableProps<T>) => {
                 key={header.id}
                 colSpan={header.colSpan}
                 onClick={() => header.column.getToggleSortingHandler()}
+                style={{ ...getCommonPinningStyles(header.column) }}
               >
                 <div
                   {...{
                     className: header.column.getCanSort()
-                      ? 'cursor-pointer select-none'
+                      ? 'flex justify-between items-center cursor-pointer select-none'
                       : '',
                     onClick: header.column.getToggleSortingHandler(),
                   }}
@@ -137,17 +140,24 @@ const Table = <T extends object>(props: TableProps<T>) => {
                     asc: '▲',
                     desc: '▼',
                   }[header.column.getIsSorted() as string] ?? null}
+
+                  {header.column.id !== 'checkbox' && (
+                    <ColumnMenu column={header.column} />
+                  )}
                 </div>
               </TableHead>
             ))}
           </TableRow>
         ))}
       </TableHeader>
-      <TableBody className="w-full">
+      <TableBody>
         {table.getRowModel().rows.map((row) => (
           <TableRow key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
+              <TableCell
+                key={cell.id}
+                style={{ ...getCommonPinningStyles<T>(cell.column) }}
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}
