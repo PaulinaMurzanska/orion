@@ -494,6 +494,19 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
   }
 
+  const returnError = (e) => {
+    return new Response({
+      status: 500,
+      body: {
+        error: e.code,
+        details: e.message
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
@@ -501,7 +514,8 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     buildObjectFromString: buildObjectFromString,
     loadDefinition: loadDefinition,
     retrieveFromResults: retrieveFromResults,
-    retrieveValueFromDelimitedString: retrieveValueFromDelimitedString
+    retrieveValueFromDelimitedString: retrieveValueFromDelimitedString,
+    returnError: returnError
   }
 
 })
