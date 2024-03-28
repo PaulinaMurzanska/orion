@@ -5,7 +5,7 @@
  * @NAmdConfig /SuiteScripts/orion/orionModules.json
  */
 
-define(['N/file', 'N/error', 'orion/json', 'orion/helper'], (file, error, orionJSONLib, orionHelperLib) => {
+define(['N/file', 'orion/json', 'orion/helper'], (file, orionJSONLib, orionHelperLib) => {
   /**
    * Function called upon sending a GET request to the RESTlet.
    *
@@ -44,16 +44,10 @@ define(['N/file', 'N/error', 'orion/json', 'orion/helper'], (file, error, orionJ
           textLoops = orionJSONLib.findTextLoops(filteredFileDefs, fileContent, /(<.+:|<)(.+)>.*(<|)/, '(<\/.+:|<)({var})>', 2)
           break
         default:
-          return new Response({
-            status: 400, // Bad Request
-            body: {
-              error: 'ERROR: File type not supported',
-              details: 'Please include a file type of sif or xml in the file name.'
-            },
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
+          return {
+            error: 'ERROR: File type not supported',
+            details: 'Please include a file type of sif or xml in the file name.'
+          }
       }
 
       // matches the file definitions by type
@@ -63,15 +57,30 @@ define(['N/file', 'N/error', 'orion/json', 'orion/helper'], (file, error, orionJ
 
       log.error(loggerTitle, `lineJSON: ${JSON.stringify(lineJSON)}`)
 
-
+      if (lineJSON?.length > 0) {
         return {
           message: 'SUCCESS: Lines have been generated',
           lineJSON: lineJSON
         }
-
+      } else {
+        return {
+          error: 'ERROR: Lines have not been generated',
+          details: 'Please review the error logs'
+        }
+      }
 
     } catch (e) {
-      log.error(loggerTitle, `Error: ${e}`)
+      log.error({ title: loggerTitle, details: e })
+      return new Response({
+        status: 500, // Bad Request
+        body: {
+          error: e.code,
+          details: e.message
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
     }
   }
 
