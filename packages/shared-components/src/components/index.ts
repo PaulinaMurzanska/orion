@@ -1,6 +1,7 @@
 export { Button, buttonVariants } from './button/Button';
 export { Input } from './input/Input';
 export { default as Table } from './table/Table';
+export * from './table/types';
 export { default as EditableCell } from './table/EditableCell';
 export { DatePicker } from './datepicker/Datepicker';
 export { default as IndeterminateCheckbox } from './table/IndeterminateCheckbox';

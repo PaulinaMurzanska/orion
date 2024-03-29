@@ -1,9 +1,11 @@
 import { Button, Input } from '@orionsuite/shared-components';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import CustomTable from '../components/custom-table/CustomTable';
 import { Order } from '@orionsuite/dtos';
 import { api } from '@orionsuite/api-client';
+import { DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 
 const OrdersTable = () => {
   const { data } = api.useGetOrdersQuery();
@@ -11,6 +13,9 @@ const OrdersTable = () => {
   const [editable, setEditable] = useState<boolean | undefined>();
   const [search, setSearch] = useState<string | undefined>();
   const [selectedRows, setSelectedRows] = useState<Order[]>([]);
+
+  const [orders, setOrders] = useState<Order[]>([]);
+  const ids = useMemo(() => orders?.map(({ id }) => id) ?? [], [orders]);
 
   const columns = useMemo(
     () => [
@@ -38,10 +43,14 @@ const OrdersTable = () => {
     setSelectedRows(selectedRows);
   };
 
+  useEffect(() => {
+    setOrders(data ?? []);
+  }, [data]);
+
   return (
     <div className="m-6">
       <CustomTable<Order>
-        data={data ?? []}
+        data={orders}
         columns={columns}
         onRowSelectionChange={onRowSelectionChange}
         header={<h1 className="text-3xl font-extrabold">Orders table</h1>}
@@ -50,6 +59,27 @@ const OrdersTable = () => {
         setSearch={setSearch}
         onRowUpdate={(rowIndex, columnId, value) => {
           console.log('Row updated', rowIndex, columnId, value);
+          setOrders(old =>
+            old.map((row, index) => {
+              if (index === rowIndex) {
+                return {
+                  ...old[rowIndex],
+                  [columnId]: value,
+                }
+              }
+              return row
+            })
+          )
+        }}
+        onRowDragEnd={(event: DragEndEvent) => {
+          const { active, over } = event;
+          if (active && over && active.id !== over.id) {
+            setOrders((data) => {
+              const oldIndex = ids.indexOf(String(active.id));
+              const newIndex = ids.indexOf(String(over.id));
+              return arrayMove(data, oldIndex, newIndex);
+            });
+          }
         }}
         actions={
           <>

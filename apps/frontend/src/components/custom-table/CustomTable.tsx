@@ -1,17 +1,20 @@
 import {
   EditableCell,
   IndeterminateCheckbox,
+  RowObject,
   Separator,
   Table,
 } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { DragEndEvent } from '@dnd-kit/core';
 
 interface Props<T> {
   data: T[];
   columns: any[];
   onRowSelectionChange?: CallableFunction;
+  onRowDragEnd?: (event: DragEndEvent) => void;
   onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
   editable?: boolean;
   header: ReactNode;
@@ -34,7 +37,7 @@ const TableContainer = styled.div<{ width: number }>`
   width: calc(100vw - 4.5rem);
 `;
 
-export function CustomTable<T extends object>({
+export function CustomTable<T extends RowObject>({
   data,
   columns,
   onRowSelectionChange,
@@ -46,6 +49,7 @@ export function CustomTable<T extends object>({
   filters,
   search,
   setSearch,
+  onRowDragEnd,
 }: Props<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -117,6 +121,7 @@ export function CustomTable<T extends object>({
 
       <TableContainer width={containerWidth}>
         <Table
+          onRowDragEnd={onRowDragEnd}
           data={data}
           columns={columnDef}
           onRowSelectionChange={onRowSelectionChange}
