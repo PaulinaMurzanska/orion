@@ -3,6 +3,7 @@
         <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
         <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
         <path>~/FileCabinet/SuiteScripts/orion/bomImport/*</path>
+        <path>~/FileCabinet/SuiteScripts/orion/frontend/*</path>
     </files>
     <objects>
         <path>~/Objects/restlet/customscript_orion_rs_gen_json.xml</path>
