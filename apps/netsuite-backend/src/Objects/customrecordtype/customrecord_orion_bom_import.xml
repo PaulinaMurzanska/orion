@@ -196,7 +196,7 @@
       <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
-    <customrecordcustomfield scriptid="custrecord_orion_bom_intializaiton_ident">
+    <customrecordcustomfield scriptid="custrecord_orion_bom_intialization_ident">
       <accesslevel>2</accesslevel>
       <allowquickadd>F</allowquickadd>
       <applyformatting>F</applyformatting>
@@ -236,4 +236,24 @@
       <subtab></subtab>
     </customrecordcustomfield>
   </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_58063_td2893635_898">
+      <custrecord_bom_import_file_import_order>1</custrecord_bom_import_file_import_order>
+      <custrecord_bom_import_importd_file_url>/core/media/media.nl?id=199&amp;c=2584332&amp;h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&amp;mv=ltj3t6yo&amp;_xt=.txt</custrecord_bom_import_importd_file_url>
+      <custrecord_bom_import_json_importd_file>/core/media/media.nl?id=199&amp;c=2584332&amp;h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&amp;mv=ltj3t6yo&amp;_xt=.txt</custrecord_bom_import_json_importd_file>
+      <custrecord_bom_import_transaction>[ACCOUNT_SPECIFIC_VALUE]</custrecord_bom_import_transaction>
+      <custrecord_orion_bom_intialization_ident>99kGzHxK3lBKsIY4TGZf</custrecord_orion_bom_intialization_ident>
+      <isinactive>F</isinactive>
+      <name>BOM-201</name>
+    </instance>
+    <instance scriptid="val_58064_td2893635_149">
+      <custrecord_bom_import_file_import_order>1</custrecord_bom_import_file_import_order>
+      <custrecord_bom_import_importd_file_url>/core/media/media.nl?id=199&amp;c=2584332&amp;h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&amp;mv=ltj3t6yo&amp;_xt=.txt</custrecord_bom_import_importd_file_url>
+      <custrecord_bom_import_json_importd_file>/core/media/media.nl?id=199&amp;c=2584332&amp;h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&amp;mv=ltj3t6yo&amp;_xt=.txt</custrecord_bom_import_json_importd_file>
+      <custrecord_bom_import_transaction>[ACCOUNT_SPECIFIC_VALUE]</custrecord_bom_import_transaction>
+      <custrecord_orion_bom_intialization_ident></custrecord_orion_bom_intialization_ident>
+      <isinactive>F</isinactive>
+      <name>BOM-202</name>
+    </instance>
+  </instances>
 </customrecordtype>
