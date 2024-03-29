@@ -53,3 +53,6 @@ Thumbs.db
 
 #nx cache
 .nx/cache
+
+# Frontend build folder
+apps/netsuite-backend/src/FileCabinet/SuiteScripts/orion/frontend/
