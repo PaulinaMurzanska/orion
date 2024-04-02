@@ -43,29 +43,33 @@ const TableRow = <T extends RowObject>({
   };
 
   const rowProps = editable
-    ? {
+    ? {}
+    : {
+        className: 'cursor-pointer',
         onClick: () => {
           setSidebarOpen(true);
           setSidebarRow(row.original);
         },
-      }
-    : { ...attributes, ...listeners };
+      };
 
   return (
-    <Row
-      {...rowProps}
-      className={editable ? '' : 'cursor-pointer'}
-      style={style}
-      ref={setNodeRef}
-    >
-      {row.getVisibleCells().map((cell) => (
-        <TableCell
-          key={cell.id}
-          style={{ ...getCommonPinningStyles<T>(cell.column) }}
-        >
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      ))}
+    <Row {...rowProps} style={style} ref={setNodeRef}>
+      {row.getVisibleCells().map((cell) => {
+        const cellProps =
+          cell.column.id === 'row-drag' && editable
+            ? { ...{ ...listeners, ...attributes } }
+            : {};
+
+        return (
+          <TableCell
+            {...cellProps}
+            key={cell.id}
+            style={{ ...getCommonPinningStyles<T>(cell.column) }}
+          >
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        );
+      })}
     </Row>
   );
 };

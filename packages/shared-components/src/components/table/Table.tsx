@@ -174,7 +174,7 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
                       desc: '▼',
                     }[header.column.getIsSorted() as string] ?? null}
 
-                    {header.column.id !== 'checkbox' && (
+                    {!['checkbox', 'row-drag'].includes(header.column.id) && (
                       <ColumnMenu column={header.column} />
                     )}
                   </div>

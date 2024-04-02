@@ -6,7 +6,13 @@ import {
   Table,
 } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import { DragEndEvent } from '@dnd-kit/core';
 
@@ -33,7 +39,6 @@ const Container = styled.div`
 
 const TableContainer = styled.div<{ width: number }>`
   height: 75vh;
-  //width: ${(props) => props.width}px;
   width: calc(100vw - 4.5rem);
 `;
 
@@ -79,7 +84,14 @@ export function CustomTable<T extends RowObject>({
       ),
     };
 
+    const drag = {
+      id: 'row-drag',
+      size: 1,
+      cell: () => <div>=</div>,
+    };
+
     return [
+      drag,
       checkbox,
       ...(columns.map((column) =>
         columnHelper.accessor((row: T) => (row as any)[column.id], {
