@@ -5,8 +5,8 @@ import {
   Table,
 } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { ReactNode, useMemo } from 'react';
 
 interface Props<T> {
   data: T[];
@@ -23,14 +23,15 @@ interface Props<T> {
 }
 
 const Container = styled.div`
-  width: 100%;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   padding: 15px;
 `;
 
-const TableContainer = styled.div`
-  height: 600px;
+const TableContainer = styled.div<{ width: number }>`
+  height: 75vh;
+  //width: ${(props) => props.width}px;
+  width: calc(100vw - 4.5rem);
 `;
 
 export function CustomTable<T extends object>({
@@ -46,10 +47,13 @@ export function CustomTable<T extends object>({
   search,
   setSearch,
 }: Props<T>) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
   const columnHelper = createColumnHelper<T>();
   const columnDef = useMemo(() => {
     const checkbox = {
       id: 'checkbox',
+      size: 1,
       header: ({ table }: any) => (
         <IndeterminateCheckbox
           {...{
@@ -93,14 +97,25 @@ export function CustomTable<T extends object>({
     ];
   }, [columnHelper, columns, editable]);
 
+  // Resize table to allow horizontal scrolling
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const resizeObserver = new ResizeObserver((event) => {
+      setContainerWidth(event[0].contentBoxSize[0].inlineSize);
+    });
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
   return (
-    <Container>
+    <Container ref={containerRef}>
       <div className="flex justify-between mb-4">
         {header && header}
         {actions && <div className="flex gap-1 justify-end">{actions}</div>}
       </div>
       {filters && <div className="flex justify-between mb-4">{filters}</div>}
-      <TableContainer>
+
+      <TableContainer width={containerWidth}>
         <Table
           data={data}
           columns={columnDef}
@@ -108,6 +123,7 @@ export function CustomTable<T extends object>({
           onRowUpdate={onRowUpdate}
           search={search}
           setSearch={setSearch}
+          editable={editable}
         />
       </TableContainer>
       <Separator className="mt-5 mb-2" />

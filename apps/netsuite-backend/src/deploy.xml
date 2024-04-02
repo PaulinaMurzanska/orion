@@ -3,6 +3,7 @@
         <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
         <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
         <path>~/FileCabinet/SuiteScripts/orion/bomImport/*</path>
+        <path>~/FileCabinet/SuiteScripts/orion/frontend/*</path>
     </files>
     <objects>
         <path>~/Objects/restlet/customscript_orion_rs_gen_json.xml</path>
@@ -12,5 +13,6 @@
         <path>~/Objects/usereventscript/customscript_orion_ue_bom_logic.xml</path>
         <path>~/Objects/customlist/customlist_orion_bom_err_status.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_bom_error.xml</path>
+        <path>~/Objects/customrecordtype/customrecord_orion_bom_import.xml</path>
     </objects>
 </deploy>
