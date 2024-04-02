@@ -10,7 +10,7 @@ servers:
         default: td2893635
         description: Customer ID assigned by the service provider
 paths:
-  /app/site/hosting/restlet.nl:
+  /*dataToJSONDomain*/app/site/hosting/restlet.nl:
     post:
       summary: Process a file and generate JSON output
       tags:
@@ -55,6 +55,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /*getBomRecordDomain*/app/site/hosting/restlet.nl:
+    post:
+      summary: Create or update a BOM import record
+      tags:
+        - bomImport
+      requestBody:
+        description: Request body for creating or updating a BOM import record
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BOMImportRequest'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 225
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BOMImportResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
                 
 components:
   schemas:
@@ -76,7 +122,13 @@ components:
           example: "SUCCESS: Lines have been generated"
         lineJSON:
           $ref: '#/components/schemas/LineJSON'
-          
+    
+    BOMImportResponse:
+        type: object
+        properties:
+          bomRecordID:
+            type: string
+            
     LineJSON:
       type: object
       properties:
@@ -126,7 +178,7 @@ components:
           type: number
         custcol_pintel_optioncodedescription:
           type: string
-          
+            
     ItemDetails:
       type: object
       properties:
@@ -138,6 +190,27 @@ components:
       properties:
         id:
           type: string
+
+    BOMImportRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [create, edit]
+        editID:
+          type: string
+        custrecord_bom_import_importd_file_url:
+          type: string
+        custrecord_bom_import_json_importd_file:
+          type: string
+        custrecord_bom_import_file_import_order:
+          type: integer
+        custrecord_bom_import_transaction:
+          type: string
+        custrecord_orion_bom_intialization_ident:
+          type: string
+      required:
+        - action
         
     ErrorResponse:
       type: object
