@@ -10,7 +10,7 @@ servers:
         default: td2893635
         description: Customer ID assigned by the service provider
 paths:
-  /*dataToJSONURL*/app/site/hosting/restlet.nl:
+  /*dataToJSONDomain*/app/site/hosting/restlet.nl:
     post:
       summary: Create a new file in the Netsuite file cabinet with payload and return file URL and ID
       tags:
@@ -55,7 +55,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /*fileCreationURL*/app/site/hosting/restlet.nl:
+  /*fileCreationDomain*/app/site/hosting/restlet.nl:
     post:
       summary: Process a file and generate JSON output
       tags:
