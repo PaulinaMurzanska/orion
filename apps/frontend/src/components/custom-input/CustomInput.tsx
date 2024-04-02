@@ -1,7 +1,5 @@
 import { InputVariants, inputVariants } from './type';
 import React, { ChangeEvent, useEffect, useState } from 'react';
-
-import { Input } from '@orionsuite/shared-components';
 import { useConvertDataTypes } from '../../hooks/useConvertDataType';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -69,6 +67,7 @@ const CustomInput = ({
         case inputVariants.NUMBER:
           fieldValue = value !== '' ? parseFloat(value.toString()) : null;
           grabInputValue(convertStringToNumber(fieldValue as string | null));
+          break;
         default:
           fieldValue = value;
           grabInputValue(fieldValue);
@@ -106,11 +105,12 @@ const CustomInput = ({
   }, [initialValue]);
 
   return (
-    <div>
-      <Input
+    <div style={{ width: 'max-content' }}>
+      <input
         placeholder={placeholder && placeholder}
         value={value}
         step="any"
+        size={String(value).length + 3}
         className={className}
         type={fieldType}
         onChange={handleChange}

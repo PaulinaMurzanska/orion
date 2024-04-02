@@ -40,7 +40,7 @@ const CustomEditableCell = <T extends object>({
       initialValue={initialValue}
       grabInputValue={triggerOnRowUpdate}
       variant={cell_variant}
-      className="border-none shadow-none disabled:opacity-100"
+      className="w-full bg-transparent hover:bg-transparent border-none"
       disabled={!editable || disabled}
     />
   );
