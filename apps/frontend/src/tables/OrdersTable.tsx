@@ -58,7 +58,6 @@ const OrdersTable = () => {
         search={search}
         setSearch={setSearch}
         onRowUpdate={(rowIndex, columnId, value) => {
-          console.log('Row updated', rowIndex, columnId, value);
           setOrders(old =>
             old.map((row, index) => {
               if (index === rowIndex) {

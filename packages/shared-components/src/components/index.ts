@@ -3,8 +3,6 @@ export { Input } from './input/Input';
 
 // TABLE
 export { default as Table } from './table/Table';
-export { default as RowDrag } from './table/RowDrag';
-export { default as EditableCell } from './table/EditableCell';
 export { default as IndeterminateCheckbox } from './table/IndeterminateCheckbox';
 export * from './table/types';
 
