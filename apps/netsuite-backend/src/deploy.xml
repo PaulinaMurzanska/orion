@@ -15,5 +15,6 @@
         <path>~/Objects/customlist/customlist_orion_bom_err_status.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_bom_error.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_bom_import.xml</path>
+        <path>~/Objects/restlet/customscript_orion_rl_bom_create_file.xml</path>
     </objects>
 </deploy>

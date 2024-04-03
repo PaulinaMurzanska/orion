@@ -12,7 +12,7 @@ servers:
 paths:
   /*dataToJSONDomain*/app/site/hosting/restlet.nl:
     post:
-      summary: Process a file and generate JSON output
+      summary: Create a new file in the Netsuite file cabinet with payload and return file URL and ID
       tags:
         - dataToJSON
       requestBody:
@@ -42,7 +42,52 @@ paths:
           content:
             application/json:    
               schema:
-                $ref: '#/components/schemas/SuccessResponse'
+                $ref: '#/components/schemas/DataToJSONSuccessResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /*fileCreationDomain*/app/site/hosting/restlet.nl:
+    post:
+      summary: Process a file and generate JSON output
+      tags:
+        - bomImport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 292
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/FileCreationResponse'
         '400':
           description: Error response
           content:
@@ -114,7 +159,7 @@ components:
           type: string
           description: The name of the file to be processed
           
-    SuccessResponse:
+    DataToJSONSuccessResponse:
       type: object 
       properties:
         message:
@@ -123,6 +168,14 @@ components:
         lineJSON:
           $ref: '#/components/schemas/LineJSON'
     
+    FileCreationResponse:
+      type: object
+      properties:
+        fileURL:
+          type: string
+        fileID:
+          type: string
+          
     BOMImportResponse:
         type: object
         properties:
