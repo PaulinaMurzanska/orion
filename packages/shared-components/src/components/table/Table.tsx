@@ -24,6 +24,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import ColumnMenu from './ColumnMenu';
 import { getCommonPinningStyles } from './styles';
 import TableSidebar from './TableSidebar';
+import { rankItem } from '@tanstack/match-sorter-utils';
 
 interface TableProps<T> {
   data: T[];
