@@ -1,5 +1,4 @@
 import {
-  EditableCell,
   IndeterminateCheckbox,
   Separator,
   Table,
@@ -7,6 +6,7 @@ import {
 import { Column, createColumnHelper } from '@tanstack/react-table';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import CustomEditableCell from '../custom-table-cell/CustomEditableCell';
 
 interface Props<T> {
   data: T[];
@@ -30,7 +30,8 @@ const Container = styled.div`
 
 const TableContainer = styled.div<{ width: number }>`
   height: 75vh;
-  width: ${(props) => props.width}px;
+  //width: ${(props) => props.width}px;
+  width: calc(100vw - 4.5rem);
 `;
 
 export function CustomTable<T extends object>({
@@ -84,12 +85,14 @@ export function CustomTable<T extends object>({
           enableSorting: true,
           header: column.header,
           cell: (props) =>
-            EditableCell({
+            CustomEditableCell({
               editable,
               initialValue: props.getValue() as any,
               table: props.table,
               rowIndex: props.row.index,
               columnId: column.id,
+              cell_variant: column.cell_variant,
+              disabled: column.disabled,
             }),
         })
       ) as Column<T>[]),
@@ -114,7 +117,7 @@ export function CustomTable<T extends object>({
       </div>
       {filters && <div className="flex justify-between mb-4">{filters}</div>}
 
-      <TableContainer width={containerWidth - 10}>
+      <TableContainer width={containerWidth}>
         <Table
           data={data}
           columns={columnDef}
@@ -122,6 +125,7 @@ export function CustomTable<T extends object>({
           onRowUpdate={onRowUpdate}
           search={search}
           setSearch={setSearch}
+          editable={editable}
         />
       </TableContainer>
       <Separator className="mt-5 mb-2" />

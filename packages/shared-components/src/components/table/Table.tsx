@@ -1,18 +1,16 @@
 import {
   ColumnDef,
   FilterFn,
+  RowModel,
+  TableState,
+  Table as TableType,
+  Updater,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
-  RowModel,
-  Table as TableType,
-  TableState,
-  Updater,
   useReactTable,
 } from '@tanstack/react-table';
-import { rankItem } from '@tanstack/match-sorter-utils';
-
 import {
   Table as ShadcnTable,
   TableBody,
@@ -21,9 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from './TableComponents';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import ColumnMenu from './ColumnMenu';
 import { getCommonPinningStyles } from './styles';
+import TableSidebar from './TableSidebar';
 import { rankItem } from '@tanstack/match-sorter-utils';
 
 interface TableProps<T> {
@@ -33,6 +33,7 @@ interface TableProps<T> {
   onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
   search?: string;
   setSearch?: (search: string) => void;
+  editable?: boolean;
 }
 
 function useSkipper() {
@@ -59,8 +60,11 @@ const Table = <T extends object>(props: TableProps<T>) => {
     onRowUpdate,
     search,
     setSearch,
+    editable,
   } = props;
   const [rowSelection, setRowSelection] = useState({});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarRow, setSidebarRow] = useState<T | undefined>(undefined);
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 
   const fuzzyFilter: FilterFn<T> = (row, columnId, value, addMeta) => {
@@ -152,8 +156,22 @@ const Table = <T extends object>(props: TableProps<T>) => {
         ))}
       </TableHeader>
       <TableBody>
+        <TableSidebar<T>
+          open={sidebarOpen}
+          setOpen={setSidebarOpen}
+          row={sidebarRow}
+        />
         {table.getRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
+          <TableRow
+            key={row.id}
+            className={editable ? '' : 'cursor-pointer'}
+            onClick={() => {
+              if (!editable) {
+                setSidebarOpen(true);
+                setSidebarRow(row.original);
+              }
+            }}
+          >
             {row.getVisibleCells().map((cell) => (
               <TableCell
                 key={cell.id}

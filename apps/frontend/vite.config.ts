@@ -37,6 +37,13 @@ export default defineConfig({
   build: {
     outDir: '../../dist/apps/frontend',
     reportCompressedSize: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: `assets/[name].js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: `assets/[name].[ext]`
+      },
+    },
     commonjsOptions: {
       transformMixedEsModules: true,
     },

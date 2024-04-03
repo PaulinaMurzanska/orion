@@ -1,0 +1,22 @@
+<restlet scriptid="customscript_orion_rl_bom_create_edit_im">
+  <description>Creates and edits BoM import records</description>
+  <isinactive>F</isinactive>
+  <name>Orion RL Bom Create Edit Import</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/orion/bomImport/orion-rl-bom-create-edit-import.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_orion_rl_bom_create_edit_im">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>Orion RL Bom Create Edit Import</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

@@ -42,6 +42,13 @@ const NavigationMenu = () => {
       },
       icon: <DashboardIcon width="18px" height="18px" />,
     },
+    {
+      name: 'BOM Tool',
+      onClick: () => {
+        navigate('/bom-import');
+      },
+      icon: <DashboardIcon width="18px" height="18px" />,
+    },
   ] as MenuElement[];
 
   const bottomConfig = [
