@@ -57,7 +57,7 @@ define(['N/file', 'N/error', 'orion/json', 'orion/helper'], (file, error, orionJ
 
     log.error(loggerTitle, `lineJSON: ${JSON.stringify(lineJSON)}`)
 
-    if (lineJSON?.length > 0) {
+    if (lineJSON?.item?.items?.length > 0) {
       return {
         message: 'SUCCESS: Lines have been generated.',
         lineJSON: lineJSON

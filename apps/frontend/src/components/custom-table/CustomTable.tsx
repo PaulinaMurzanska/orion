@@ -1,5 +1,4 @@
 import {
-  EditableCell,
   IndeterminateCheckbox,
   Separator,
   Table,
@@ -7,6 +6,7 @@ import {
 import { Column, createColumnHelper } from '@tanstack/react-table';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import CustomEditableCell from '../custom-table-cell/CustomEditableCell';
 
 interface Props<T> {
   data: T[];
@@ -85,12 +85,14 @@ export function CustomTable<T extends object>({
           enableSorting: true,
           header: column.header,
           cell: (props) =>
-            EditableCell({
+            CustomEditableCell({
               editable,
               initialValue: props.getValue() as any,
               table: props.table,
               rowIndex: props.row.index,
               columnId: column.id,
+              cell_variant: column.cell_variant,
+              disabled: column.disabled,
             }),
         })
       ) as Column<T>[]),
