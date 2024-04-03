@@ -9,3 +9,4 @@ export { Separator } from './separator/Separator';
 export * from './dialog/DialogComponents';
 export * from './card/Card';
 export * from './dropdown/Dropdown';
+export * from './sheet/Sheet';

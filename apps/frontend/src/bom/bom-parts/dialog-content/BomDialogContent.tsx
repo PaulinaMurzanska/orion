@@ -7,6 +7,7 @@ import {
 
 import DragDrop from './drag-drop-elements/DragDrop';
 import { FileObjectType } from '../type';
+import StatusZone from './drag-drop-elements/StatusZone';
 
 const BomDialogContent = () => {
   const fileObjs: FileObjectType[] = [
@@ -35,7 +36,9 @@ const BomDialogContent = () => {
           <StyledCard>
             <DragDrop fileObj={obj} />
           </StyledCard>
-          <StyledCard>status zone</StyledCard>
+          <StyledCard>
+            <StatusZone fileObj={obj} />
+          </StyledCard>
         </StyledDropArea>
       ))}
       <StyledDropActions>actions </StyledDropActions>

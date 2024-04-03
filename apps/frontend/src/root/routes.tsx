@@ -18,7 +18,7 @@ export default createHashRouter([
         element: <ComponentsLibrary />,
       },
       {
-        path: '/bom_import',
+        path: '/bom-import',
         element: <BomImportTool />,
       },
     ],

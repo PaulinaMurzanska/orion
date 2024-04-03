@@ -45,7 +45,7 @@ const NavigationMenu = () => {
     {
       name: 'BOM Tool',
       onClick: () => {
-        navigate('/bom_import');
+        navigate('/bom-import');
       },
       icon: <DashboardIcon width="18px" height="18px" />,
     },

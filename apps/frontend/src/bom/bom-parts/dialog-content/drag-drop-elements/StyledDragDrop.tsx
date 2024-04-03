@@ -46,10 +46,17 @@ const StyledDragTitle = styled.h2`
   margin-bottom: 2px;
 `;
 
-const StyledDragTextSmall = styled.h2`
+const StyledDragTextSmall = styled.p`
   font-size: 14px;
-  line-height: 1;
+  line-height: 20px;
   color: rgb(128, 128, 128);
+`;
+
+const StyledStatusZoneTextNormal = styled.p`
+  font-size: 16px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.87);
+  white-space: pre;
 `;
 
 export {
@@ -60,4 +67,5 @@ export {
   StyledDragTitle,
   StyledContentCentered,
   StyledDropButton,
+  StyledStatusZoneTextNormal,
 };
