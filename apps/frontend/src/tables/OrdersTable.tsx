@@ -1,7 +1,8 @@
-import { Order } from '@orionsuite/dtos';
-import CustomTable from '../components/custom-table/CustomTable';
 import { Button, Input } from '@orionsuite/shared-components';
 import { useMemo, useState } from 'react';
+
+import CustomTable from '../components/custom-table/CustomTable';
+import { Order } from '@orionsuite/dtos';
 import { api } from '@orionsuite/api-client';
 
 const OrdersTable = () => {
@@ -38,7 +39,7 @@ const OrdersTable = () => {
   };
 
   return (
-    <div className="m-10">
+    <div className="m-6">
       <CustomTable<Order>
         data={data ?? []}
         columns={columns}

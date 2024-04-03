@@ -5,6 +5,7 @@ const Container = styled.div`
   color: black;
   font-size: 20px;
   cursor: pointer;
+  white-space: nowrap;
 
   display: flex;
   align-items: center;
