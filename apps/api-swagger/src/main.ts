@@ -3,7 +3,7 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import * as path from 'path';
 
-const swaggerDocument = YAML.load(path.join(__dirname, './assets/swagger.yml'))
+const swaggerDocument = YAML.load(path.join(__dirname, '../../../apps/netsuite-backend/src/FileCabinet/SuiteScripts/orion/restDefinitions/orion-ns-service.yml'))
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3010;
