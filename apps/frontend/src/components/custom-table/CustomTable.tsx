@@ -5,13 +5,7 @@ import {
   Table,
 } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
-import {
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { DragEndEvent } from '@dnd-kit/core';
 import CustomEditableCell from '../custom-table-cell/CustomEditableCell';
@@ -103,11 +97,11 @@ export function CustomTable<T extends RowObject>({
           cell: (props) =>
             CustomEditableCell({
               editable,
-              initialValue: props.getValue() as any,
+              externalValue: props.getValue() as any,
               table: props.table,
               rowIndex: props.row.index,
               columnId: column.id,
-              cell_variant: column.cell_variant,
+              cellVariant: column.cellVariant,
               disabled: column.disabled,
             }),
         })

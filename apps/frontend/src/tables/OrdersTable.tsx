@@ -30,6 +30,7 @@ const OrdersTable = () => {
       {
         id: 'price',
         header: 'Price',
+        cellVariant: 'currency',
       },
       {
         id: 'description',
@@ -58,17 +59,17 @@ const OrdersTable = () => {
         search={search}
         setSearch={setSearch}
         onRowUpdate={(rowIndex, columnId, value) => {
-          setOrders(old =>
+          setOrders((old) =>
             old.map((row, index) => {
               if (index === rowIndex) {
                 return {
                   ...old[rowIndex],
                   [columnId]: value,
-                }
+                };
               }
-              return row
+              return row;
             })
-          )
+          );
         }}
         onRowDragEnd={(event: DragEndEvent) => {
           const { active, over } = event;
