@@ -57,8 +57,20 @@ const CustomTriggerButton = styled(Button)`
 
 const StyledInnerContent = styled.div`
   width: 100%;
-  flex: 1;
-  padding-top: 10px;
+  padding: 10px 10px 0 0;
+  max-height: 500px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: inherit;
+    padding-top: 30px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #302f2f;
+    border-radius: 6px;
+  }
 `;
 
 export {

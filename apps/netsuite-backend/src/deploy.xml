@@ -2,6 +2,7 @@
     <files>
         <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
         <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
+        <path>~/FileCabinet/SuiteScripts/orion/bomImport/*</path>
         <path>~/FileCabinet/SuiteScripts/orion/frontend/*</path>
     </files>
     <objects>

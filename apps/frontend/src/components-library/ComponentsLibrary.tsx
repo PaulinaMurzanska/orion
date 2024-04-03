@@ -5,6 +5,7 @@ import {
   DatepickerDemo,
   EditableTableDemo,
   InputDemo,
+  ProgressSpinDemo,
   SelectDemo,
 } from './demo-components';
 
@@ -39,6 +40,10 @@ const ComponentsLibrary = () => {
     {
       title: 'Custom Input Demo',
       component: <InputDemo />,
+    },
+    {
+      title: 'Progress Spin Demo',
+      component: <ProgressSpinDemo />,
     },
     {
       title: 'Card Demo',

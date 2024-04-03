@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Orion NetSuite Services
+  description: NetSuite endpoints for the BoM import tool
+  version: 1.0.0
+servers:
+  - url: '{account}.restlets.api.netsuite.com'
+    variables:
+      account:
+        default: td2893635
+        description: Customer ID assigned by the service provider
+paths:
+  /app/site/hosting/restlet.nl:
+    post:
+      summary: Process a file and generate JSON output
+      tags:
+        - dataToJSON
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 225
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+                
+components:
+  schemas:
+    RequestBody:
+      type: object
+      properties:
+        fileContent:
+          type: string
+          description: The content of the file to be processed
+        fileName:
+          type: string
+          description: The name of the file to be processed
+          
+    SuccessResponse:
+      type: object 
+      properties:
+        message:
+          type: string
+          example: "SUCCESS: Lines have been generated"
+        lineJSON:
+          $ref: '#/components/schemas/LineJSON'
+          
+    LineJSON:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/Item'
+          
+    Item:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+            
+    LineItem:
+      type: object
+      properties:
+        line:
+          type: string
+        item:
+          $ref: '#/components/schemas/ItemDetails'
+        description:
+          type: string  
+        quantity:
+          type: number
+        povendor:
+          $ref: '#/components/schemas/Vendor'
+        custcol_pintel_entcode:
+          type: string
+        custcol_pintel_listprice:
+          type: number
+        custcol_pintel_tag1:
+          type: string
+        custcol_pintel_tag2:
+          type: string
+        custcol_pintel_porate:
+          type: number
+        custcol_pintel_mancode:
+          type: string
+        rate:
+          type: number
+        costestimaterate:
+          type: number
+        custcol_pintel_dealerdisc:
+          type: number
+        custcol_pintel_custdiscount:
+          type: number
+        custcol_pintel_optioncodedescription:
+          type: string
+          
+    ItemDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          
+    Vendor:
+      type: object 
+      properties:
+        id:
+          type: string
+        
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: ORION_MISSING_LINES
+            message:
+              type: string
+              example: '{"type":"error.SuiteScriptError","name":"ORION_MISSING_LINES","message":"No lines have been returned","id":null,"stack":["Error"," at Object.post (/SuiteScripts/orion/dataToJSON/orion-rs-gen-json.js:66:21)"],"cause":{"name":"ORION_MISSING_LINES","message":"No lines have been returned","notifyOff":false},"notifyOff":false,"userFacing":true}'

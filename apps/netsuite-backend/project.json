@@ -6,8 +6,15 @@
   "targets": {
     "test": { "command": "jest", "cache": false },
     "deploy": {
+      "command": "source ~/.zshrc && cd apps/netsuite-backend && suitecloud project:deploy --accountspecificvalues WARNING",
       "dependsOn": ["frontend:build"],
-      "command": "cp -R dist/apps/frontend/* apps/netsuite-backend/src/FileCabinet/SuiteScripts/orion/frontend/. && cd apps/netsuite-backend && suitecloud project:deploy",
+      "command": "cp -R dist/apps/frontend/* apps/netsuite-backend/src/FileCabinet/SuiteScripts/orion/frontend/. && cd apps/netsuite-backend && suitecloud project:deploy --accountspecificvalues WARNING",
+      "cache": false
+    },
+    "dev-deploy": {
+      "command": "source ~/.zshrc && cd apps/netsuite-backend && suitecloud project:deploy --accountspecificvalues WARNING",
+      "dependsOn": ["frontend:build"],
+      "command": "cd apps/netsuite-backend && suitecloud project:deploy --accountspecificvalues WARNING",
       "cache": false
     }
   },
