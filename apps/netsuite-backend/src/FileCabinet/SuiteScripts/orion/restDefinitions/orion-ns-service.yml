@@ -10,6 +10,72 @@ servers:
         default: td2893635
         description: Customer ID assigned by the service provider
 paths:
+  /*proxyDomain*/app/site/hosting/scriptlet.nl:
+    post:
+      summary: Proxy a POST request to a internal Restlet for testing
+      tags:
+        - proxyForFrontendTesting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxyPostRequestBody'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Proxy a GET request to a Restlet
+      tags:
+        - proxyForFrontendTesting
+      parameters:
+        - name: scriptID
+          in: query
+          required: true
+          description: Script ID of the target Restlet
+          schema:
+            type: string
+        - name: deploymentID
+          in: query
+          required: true
+          description: Deployment ID of the target Restlet
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /*dataToJSONDomain*/app/site/hosting/restlet.nl:
     post:
       summary: Create a new file in the Netsuite file cabinet with payload and return file URL and ID
@@ -207,6 +273,19 @@ components:
         fileName:
           type: string
           description: The name of the file to be processed
+    
+    ProxyPostRequestBody:
+      type: object
+      required:
+        - scriptID
+        - deploymentID
+      properties:
+        scriptID:
+          type: string
+          description: Script ID of the target Restlet
+        deploymentID:
+          type: string
+          description: Deployment ID of the target Restlet
           
     DataToJSONSuccessResponse:
       type: object 
