@@ -100,7 +100,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /*getBomRecordDomain*/app/site/hosting/restlet.nl:
+  /*createUpdateBomRecordDomain*/app/site/hosting/restlet.nl:
     post:
       summary: Create or update a BOM import record
       tags:
@@ -119,7 +119,7 @@ paths:
           required: true
           schema:
             type: integer
-            default: 225
+            default: 290
         - name: deploy  
           in: query
           description: The deployment id of the RESTlet
