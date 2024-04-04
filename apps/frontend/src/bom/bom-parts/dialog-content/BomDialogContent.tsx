@@ -14,6 +14,7 @@ import StatusZone from './drag-drop-elements/StatusZone';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
 import { nanoid } from 'nanoid';
 import { postToEndpoint2 } from '../../../workers/FileWorker';
+import { postToEndpoint3 } from '../../../workers/FileWorker';
 
 interface DialogContentProps {
   setFilesDataArray: (files: FileObjectType[]) => void;
@@ -29,6 +30,7 @@ const BomDialogContent = ({
   const [fileObjects, setFileObjs] = useState<FileObjectType[]>(fileObjs);
 
   const fileWorker = new FileWorker(); // load web worker that sends files to NetSuite
+  const bomImportWorker = new FileWorker(); // load web worker that creates BoM import records
   const jsonWorker = new FileWorker(); // load web worker that converts sif files to JSON
   const itemCheckWorker = new FileWorker(); // load web worker that checks for item ids and returns missing items
   const itemCreateWorker = new FileWorker(); // load web worker that creates missing items and returns their ids
@@ -54,7 +56,7 @@ const BomDialogContent = ({
     }
   };
 
-  const onDropFunction = async (dropzoneId: string, file: any) => {
+  const onDropFunction = (dropzoneId: string, file: any) => {
     const index = fileObjs.findIndex((obj: any) => obj.id === dropzoneId);
     if (index === -1) return;
 
@@ -82,7 +84,7 @@ const BomDialogContent = ({
 
     const reader = new FileReader();
 
-    reader.onload = async (e: ProgressEvent<FileReader>) => {
+    reader.onload = (e: ProgressEvent<FileReader>) => {
       const fileContent = (e.target as FileReader).result;
 
       setFileObjs((currentFileObjs) => {
@@ -238,23 +240,59 @@ const BomDialogContent = ({
       // };
       // // create object with necessary params for file upload web worker to run
 
+
+
       const newURL =
         'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
+
+      const bomImportCreateURL = 'https://corsproxy.io/?https://td2893635.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=220&deploy=1'
 
       const fileDataObj = {
         fileName: fullFileName,
         fileContent: (e.target as FileReader).result,
+        scriptID: 292,
+        deploymentID: 1,
         endpoint: newURL,
 
         // 'https://2584332.app.netsuite.com/app/site/hosting/restlet.nl?script=64&deploy=1', // TODO: adminable
       };
 
-      const fileUrl = await postToEndpoint2(
-        fileDataObj.fileName,
-        fileDataObj.fileContent,
-        newURL
-      );
-      console.log('fileUrl in the parent', fileUrl.output);
+      // post the message (object) to the web worker
+      fileWorker.postMessage(fileDataObj)
+
+      // on return of the message from the web worker, apply the file to the BoM import record
+      fileWorker.onmessage = (e) => {
+        console.log('fileWorker', e);
+        const { response, error } = e.data;
+        if (response) {
+          console.log('File uploaded successfully:', response);
+          const fileID = response.output.fileID; // update the file URL on the fileObj with the file URL result
+
+          // define fields to set on object
+          const bomImportCreateObj = {
+            action: 'create',
+            custrecord_bom_import_file_import_order: 0,
+            custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N',
+            custrecord_bom_import_importd_file_url: fileID,
+            scriptID: 290,
+            deploymentID: 1,
+            endpoint: bomImportCreateURL
+          };
+
+          bomImportWorker.postMessage(bomImportCreateObj);
+
+        } else if (error) {
+          console.error('Error uploading file:', error);
+        }
+      }
+      
+      
+
+
+
+      const bomRecordID = await postToEndpoint3(bomImportCreateObj, bomImportCreateURL);
+
+      
 
       // let transactionID: string | undefined;
       // if (internalIDMatch) {

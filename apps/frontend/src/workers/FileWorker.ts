@@ -7,25 +7,18 @@ self.onmessage = function (e) {
   console.log('e', e);
   // Fetch enpoint data
   postToEndpoint(
-    e.data.fileName,
-    e.data.fileContent,
-    e.data.endpoint,
-    e.data.method
+    e.data.jsonBody
   );
 };
 
 // Function to post file name and body to the endpoint
 const postToEndpoint = (
-  fileName: string,
-  fileContent: any,
-  endpoint: string,
-  method?: string
+  jsonBody: any,
 ) => {
-  const jsonBody = {
-    fileName: fileName,
-    fileContent: fileContent,
-  };
+
   console.log('jsonBody', jsonBody);
+
+  const endpoint = jsonBody.endpoint;
 
   // Make a POST request to the endpoint
   fetch(endpoint, {
@@ -60,6 +53,31 @@ export const postToEndpoint2 = async (
     scriptID: 292,
     deploymentID: 1,
   };
+  console.log('jsonBody', jsonBody);
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      // method: method || 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: method === 'GET' ? null : JSON.stringify(jsonBody),
+    });
+    console.log('response', response);
+    const data = await response.json();
+    // const respData = JSON.parse(data.body);
+    console.log('postToEndpoint2', data.output);
+    return data;
+    // const data = await json
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const postToEndpoint3 = async (
+  jsonBody: Object,
+  endpoint: string
+) => {
   console.log('jsonBody', jsonBody);
   try {
     const response = await fetch(endpoint, {
