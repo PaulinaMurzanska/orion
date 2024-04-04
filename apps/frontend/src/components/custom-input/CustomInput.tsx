@@ -1,9 +1,9 @@
 import { InputVariants, inputVariants } from './type';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { useConvertDataTypes } from '../../hooks/useConvertDataType';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  initialValue: string | number | null;
+  externalValue: string | number | null;
   grabInputValue: (val: string | number | null) => void;
   placeholder?: string;
   variant?: InputVariants;
@@ -11,18 +11,31 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const CustomInput = ({
-  initialValue,
+  externalValue,
   placeholder,
   grabInputValue,
   variant,
   className,
   ...props
 }: InputProps) => {
-  const [value, setValue] = useState<string | number>('');
-  const [fieldType, setFieldType] = useState<string>('text');
-
   const { formatToDollar, formatToPercent, convertStringToNumber } =
     useConvertDataTypes();
+  const [fieldType, setFieldType] = useState<string>('text');
+  const [value, setValue] = useState<string | number>(() => {
+    if (variant === inputVariants.CURRENCY) {
+      return formatToDollar(externalValue);
+    } else if (variant === inputVariants.PERCENT) {
+      return formatToPercent(externalValue);
+    } else if (variant === inputVariants.NUMBER) {
+      if (externalValue === null) {
+        return '';
+      } else {
+        return externalValue;
+      }
+    } else {
+      return externalValue || '';
+    }
+  });
 
   const handleFocus = () => {
     if (
@@ -85,24 +98,6 @@ const CustomInput = ({
     const targetVal = e.target.value;
     setValue(targetVal);
   };
-
-  useEffect(() => {
-    if (variant === inputVariants.CURRENCY) {
-      const dolVal = formatToDollar(initialValue);
-      setValue(dolVal);
-    } else if (variant === inputVariants.PERCENT) {
-      const percentVal = formatToPercent(initialValue);
-      setValue(percentVal);
-    } else if (variant === inputVariants.NUMBER) {
-      if (initialValue === null) {
-        setValue('');
-      } else {
-        setValue(initialValue);
-      }
-    } else {
-      setValue(initialValue || '');
-    }
-  }, [initialValue]);
 
   return (
     <div style={{ width: 'max-content' }}>
