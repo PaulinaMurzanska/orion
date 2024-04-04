@@ -1,10 +1,6 @@
 import {
   ColumnDef,
   FilterFn,
-  RowModel,
-  TableState,
-  Table as TableType,
-  Updater,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -14,23 +10,40 @@ import {
 import {
   Table as ShadcnTable,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow as ShadcnRow,
 } from './TableComponents';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ColumnMenu from './ColumnMenu';
 import { getCommonPinningStyles } from './styles';
 import TableSidebar from './TableSidebar';
 import { rankItem } from '@tanstack/match-sorter-utils';
+import TableRow from './TableRow';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { RowObject } from './types';
 
 interface TableProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   onRowSelectionChange?: CallableFunction;
   onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
+  onRowDragEnd?: (event: DragEndEvent) => void;
   search?: string;
   setSearch?: (search: string) => void;
   editable?: boolean;
@@ -52,7 +65,7 @@ function useSkipper() {
   return [shouldSkip, skip] as const;
 }
 
-const Table = <T extends object>(props: TableProps<T>) => {
+const Table = <T extends RowObject>(props: TableProps<T>) => {
   const {
     data,
     columns,
@@ -61,6 +74,7 @@ const Table = <T extends object>(props: TableProps<T>) => {
     search,
     setSearch,
     editable,
+    onRowDragEnd,
   } = props;
   const [rowSelection, setRowSelection] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,6 +88,14 @@ const Table = <T extends object>(props: TableProps<T>) => {
     });
     return itemRank.passed;
   };
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {})
+  );
+
+  const dataIds = useMemo(() => data?.map(({ id }: T) => id), [data]);
 
   const table = useReactTable({
     data: data,
@@ -118,72 +140,72 @@ const Table = <T extends object>(props: TableProps<T>) => {
   }, [table, rowSelection]);
 
   return (
-    <ShadcnTable>
-      <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHead
-                key={header.id}
-                colSpan={header.colSpan}
-                onClick={() => header.column.getToggleSortingHandler()}
-                style={{ ...getCommonPinningStyles(header.column) }}
-              >
-                <div
-                  {...{
-                    className: header.column.getCanSort()
-                      ? 'flex justify-between items-center cursor-pointer select-none'
-                      : '',
-                    onClick: header.column.getToggleSortingHandler(),
-                  }}
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={onRowDragEnd}
+      sensors={sensors}
+    >
+      <ShadcnTable>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <ShadcnRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  onClick={() => header.column.getToggleSortingHandler()}
+                  style={{ ...getCommonPinningStyles(header.column) }}
                 >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                  {{
-                    asc: '▲',
-                    desc: '▼',
-                  }[header.column.getIsSorted() as string] ?? null}
+                  <div
+                    {...{
+                      className: header.column.getCanSort()
+                        ? 'flex justify-between items-center cursor-pointer select-none'
+                        : '',
+                      onClick: header.column.getToggleSortingHandler(),
+                    }}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    {{
+                      asc: '▲',
+                      desc: '▼',
+                    }[header.column.getIsSorted() as string] ?? null}
 
-                  {header.column.id !== 'checkbox' && (
-                    <ColumnMenu column={header.column} />
-                  )}
-                </div>
-              </TableHead>
-            ))}
-          </TableRow>
-        ))}
-      </TableHeader>
-      <TableBody>
-        <TableSidebar<T>
-          open={sidebarOpen}
-          setOpen={setSidebarOpen}
-          row={sidebarRow}
-        />
-        {table.getRowModel().rows.map((row) => (
-          <TableRow
-            key={row.id}
-            className={editable ? '' : 'cursor-pointer'}
-            onClick={() => {
-              if (!editable) {
-                setSidebarOpen(true);
-                setSidebarRow(row.original);
-              }
-            }}
+                    {!['checkbox', 'row-drag'].includes(header.column.id) && (
+                      <ColumnMenu column={header.column} />
+                    )}
+                  </div>
+                </TableHead>
+              ))}
+            </ShadcnRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          <TableSidebar<T>
+            open={sidebarOpen}
+            setOpen={setSidebarOpen}
+            row={sidebarRow}
+          />
+          <SortableContext
+            items={dataIds}
+            strategy={verticalListSortingStrategy}
           >
-            {row.getVisibleCells().map((cell) => (
-              <TableCell
-                key={cell.id}
-                style={{ ...getCommonPinningStyles<T>(cell.column) }}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow
+                row={row}
+                key={row.original.id}
+                setSidebarOpen={setSidebarOpen}
+                setSidebarRow={setSidebarRow}
+                editable={editable}
+              />
             ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </ShadcnTable>
+          </SortableContext>
+        </TableBody>
+      </ShadcnTable>
+    </DndContext>
   );
 };
 export default Table;

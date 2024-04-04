@@ -1,17 +1,20 @@
 import {
   IndeterminateCheckbox,
+  RowObject,
   Separator,
   Table,
 } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { DragEndEvent } from '@dnd-kit/core';
 import CustomEditableCell from '../custom-table-cell/CustomEditableCell';
 
 interface Props<T> {
   data: T[];
   columns: any[];
   onRowSelectionChange?: CallableFunction;
+  onRowDragEnd?: (event: DragEndEvent) => void;
   onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
   editable?: boolean;
   header: ReactNode;
@@ -30,11 +33,10 @@ const Container = styled.div`
 
 const TableContainer = styled.div<{ width: number }>`
   height: 75vh;
-  //width: ${(props) => props.width}px;
   width: calc(100vw - 4.5rem);
 `;
 
-export function CustomTable<T extends object>({
+export function CustomTable<T extends RowObject>({
   data,
   columns,
   onRowSelectionChange,
@@ -46,6 +48,7 @@ export function CustomTable<T extends object>({
   filters,
   search,
   setSearch,
+  onRowDragEnd,
 }: Props<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -75,7 +78,14 @@ export function CustomTable<T extends object>({
       ),
     };
 
+    const drag = {
+      id: 'row-drag',
+      size: 1,
+      cell: () => <div>=</div>,
+    };
+
     return [
+      drag,
       checkbox,
       ...(columns.map((column) =>
         columnHelper.accessor((row: T) => (row as any)[column.id], {
@@ -87,11 +97,11 @@ export function CustomTable<T extends object>({
           cell: (props) =>
             CustomEditableCell({
               editable,
-              initialValue: props.getValue() as any,
+              externalValue: props.getValue() as any,
               table: props.table,
               rowIndex: props.row.index,
               columnId: column.id,
-              cell_variant: column.cell_variant,
+              cellVariant: column.cellVariant,
               disabled: column.disabled,
             }),
         })
@@ -119,6 +129,7 @@ export function CustomTable<T extends object>({
 
       <TableContainer width={containerWidth}>
         <Table
+          onRowDragEnd={onRowDragEnd}
           data={data}
           columns={columnDef}
           onRowSelectionChange={onRowSelectionChange}

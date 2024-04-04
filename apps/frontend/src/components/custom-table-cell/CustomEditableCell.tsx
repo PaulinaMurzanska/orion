@@ -3,7 +3,7 @@ import { InputVariants } from '../custom-input/type';
 import { Table } from '@tanstack/table-core/src/types';
 
 interface Props<T> {
-  initialValue: string;
+  externalValue: string;
   editable?: boolean;
   table: Table<T> & {
     options: {
@@ -16,17 +16,17 @@ interface Props<T> {
   };
   rowIndex: number;
   columnId: string;
-  cell_variant?: InputVariants;
+  cellVariant?: InputVariants;
   disabled?: boolean;
 }
 
 const CustomEditableCell = <T extends object>({
-  initialValue,
+  externalValue,
   editable,
   table,
   columnId,
   rowIndex,
-  cell_variant,
+  cellVariant,
   disabled,
 }: Props<T>) => {
   const triggerOnRowUpdate = (val: any) => {
@@ -37,9 +37,9 @@ const CustomEditableCell = <T extends object>({
 
   return (
     <CustomInput
-      initialValue={initialValue}
+      externalValue={externalValue}
       grabInputValue={triggerOnRowUpdate}
-      variant={cell_variant}
+      variant={cellVariant}
       className="w-full bg-transparent hover:bg-transparent border-none"
       disabled={!editable || disabled}
     />
