@@ -87,7 +87,7 @@ define(['N/record'], (record) => {
   }
 
   return {
-    beforeLoad: beforeLoad
+    beforeLoad: beforeLoad,
     afterSubmit: afterSubmit
   }
 })
