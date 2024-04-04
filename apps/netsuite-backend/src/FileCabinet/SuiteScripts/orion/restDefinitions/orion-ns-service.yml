@@ -146,6 +146,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /*getImportRecordDomain*/app/site/hosting/restlet.nl:
+      get:
+        summary: Get BOM import records
+        tags:
+          - bomImport
+        parameters:
+          - name: script
+            in: query
+            description: The script id of the RESTlet
+            required: true
+            schema:
+              type: integer
+              default: 294
+          - name: deploy  
+            in: query
+            description: The deployment id of the RESTlet
+            required: true
+            schema:
+              type: integer
+              default: 1          
+          - name: custrecord_bom_import_transaction
+            in: query
+            description: Transaction ID for BOM import transaction
+            schema:
+              type: string
+          - name: custrecord_orion_bom_intialization_ident
+            in: query
+            description: Generated ID for BOM initialization
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/GetImportRecordResponse'
+          '400':
+            description: Error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '500':
+            description: Error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
                 
 components:
   schemas:
@@ -177,10 +226,21 @@ components:
           type: string
           
     BOMImportResponse:
+      type: object
+      properties:
+        bomRecordID:
+          type: string
+    
+    GetImportRecordResponse:
         type: object
         properties:
-          bomRecordID:
+          message:
             type: string
+            example: "SUCCESS: Import Records Found"
+          bomRecs:
+            type: array
+            items:
+              $ref: '#/components/schemas/BOMRecord'     
             
     LineJSON:
       type: object
@@ -277,3 +337,58 @@ components:
             message:
               type: string
               example: '{"type":"error.SuiteScriptError","name":"ORION_MISSING_LINES","message":"No lines have been returned","id":null,"stack":["Error"," at Object.post (/SuiteScripts/orion/dataToJSON/orion-rs-gen-json.js:66:21)"],"cause":{"name":"ORION_MISSING_LINES","message":"No lines have been returned","notifyOff":false},"notifyOff":false,"userFacing":true}'
+
+    BOMRecord:
+      type: object
+      properties:
+        owner:
+          type: integer
+          example: 12
+        isinactive:
+          type: string
+          example: "F"
+        custrecord_bom_import_file_import_order:
+          type: integer
+          example: 1
+        custrecord_bom_import_json_importd_file:
+          type: string
+          example: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt"
+        custrecord_bom_import_importd_file_url:
+          type: string
+          example: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt"
+        created:
+          type: string
+          example: "3/24/2024"
+        externalid:
+          type: string
+          nullable: true
+        lastmodifiedby:
+          type: integer
+          example: 12
+        custrecord_orion_bom_intialization_ident:
+          type: string
+          example: "99kGzHxK3lBKsIY4TGZf"
+        custrecord_orion_bom_intializaiton_ident:
+          type: string
+          nullable: true
+        abbreviation:
+          type: string
+          nullable: true
+        scriptid:
+          type: string
+          example: "VAL_58063_TD2893635_898"
+        recordid:
+          type: integer
+          example: 201
+        lastmodified:
+          type: string
+          example: "3/29/2024"
+        name:
+          type: string
+          example: "BOM-201"
+        custrecord_bom_import_transaction:
+          type: integer
+          example: 3
+        id:
+          type: integer
+          example: 201
