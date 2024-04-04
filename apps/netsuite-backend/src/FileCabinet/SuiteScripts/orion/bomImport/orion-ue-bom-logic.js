@@ -9,14 +9,24 @@ define(['N/record'], (record) => {
 
   const beforeLoad = async (context) => {
     if (context.type === context.UserEventType.CREATE) {
-      await setBeforeDataValue(context)
+      switch (context.newRecord.type) {
+        case 'salesorder':
+          await setBeforeDataValue(context)
+          break
+      }
     }
   }
 
   const afterSubmit = async (context) => {
     if (context.type === context.UserEventType.CREATE) {
-      await setAfterDataValue(context)
-      await updateImportRecordName(context)
+      switch (context.newRecord.type) {
+        case 'customrecord_orion_bom_import':
+          await updateImportRecordName(context)
+          break
+        case 'salesorder':
+          await setAfterDataValue(context)
+          break
+      }
     }
   }
 
