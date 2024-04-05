@@ -8,7 +8,7 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 
 const BomList = () => {
-  const { data } = api.useGetRecordsQuery({ script: 1002, deploy: 1 });
+  const { data } = api.useGetRecordsQuery({ script: 220, deploy: 1 });
 
   const [editable, setEditable] = useState<boolean | undefined>();
   // const [search, setSearch] = useState<string | undefined>();
@@ -40,6 +40,8 @@ const BomList = () => {
     []
   );
 
+  // fetch('/netsuite').then((res) => console.log('RES', res));
+
   const onRowSelectionChange = (selectedRows: Record[]) => {
     // setSelectedRows(selectedRows);
   };
@@ -54,7 +56,7 @@ const BomList = () => {
         data={records}
         columns={columns}
         onRowSelectionChange={onRowSelectionChange}
-        header={<h1 className="text-3xl font-extrabold">Orders table</h1>}
+        header={<h1 className="text-3xl font-extrabold">Bom list table</h1>}
         // editable={editable}
         // search={search}
         // setSearch={setSearch}

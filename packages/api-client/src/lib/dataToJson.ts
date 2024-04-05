@@ -6,7 +6,7 @@ export const dataToJsonApi = api.injectEndpoints({
     createFileCabinet: builder.query<LineJson, DataToJsonDto>({
       query: (dto) => {
         return {
-          url: `app/site/hosting/restlet.nl?script=${dto.script}&deploy=${dto.deploy}`,
+          url: `?script=${dto.script}&deploy=${dto.deploy}`,
           method: 'POST',
           body: {
             fileContent: dto.fileContent,

@@ -19,6 +19,7 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     prepareHeaders: async (headers, { getState }) => {
       // headers.set('authorization', `Bearer Ml__kgLernFbvoOoRfUcJnGEgbNKvM1GPh6Zv8tg6Vg=AAABjnS1eUrRKZpvZlKZLgYb03cVt31_6Q81QNvc5W1gPH-cAISzMA`);
+      // headers.set('Content-Type', 'application/json');
 
       return headers;
     },
