@@ -1,0 +1,473 @@
+openapi: 3.0.0
+info:
+  title: Orion NetSuite Services
+  description: NetSuite endpoints for the BoM import tool
+  version: 1.0.0
+servers:
+  - url: '{account}.restlets.api.netsuite.com'
+    variables:
+      account:
+        default: td2893635
+        description: Customer ID assigned by the service provider
+paths:
+  /*proxyDomain*/app/site/hosting/scriptlet.nl:
+    post:
+      summary: Proxy a POST request to a internal Restlet for testing
+      tags:
+        - proxyForFrontendTesting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxyPostRequestBody'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Proxy a GET request to a Restlet
+      tags:
+        - proxyForFrontendTesting
+      parameters:
+        - name: scriptID
+          in: query
+          required: true
+          description: Script ID of the target Restlet
+          schema:
+            type: string
+        - name: deploymentID
+          in: query
+          required: true
+          description: Deployment ID of the target Restlet
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /*dataToJSONDomain*/app/site/hosting/restlet.nl:
+    post:
+      summary: Create a new file in the Netsuite file cabinet with payload and return file URL and ID
+      tags:
+        - dataToJSON
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 225
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/DataToJSONSuccessResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /*fileCreationDomain*/app/site/hosting/restlet.nl:
+    post:
+      summary: Process a file and generate JSON output
+      tags:
+        - bomImport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 292
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/FileCreationResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /*createUpdateBomRecordDomain*/app/site/hosting/restlet.nl:
+    post:
+      summary: Create or update a BOM import record
+      tags:
+        - bomImport
+      requestBody:
+        description: Request body for creating or updating a BOM import record
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BOMImportRequest'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 290
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BOMImportResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /*getImportRecordDomain*/app/site/hosting/restlet.nl:
+      get:
+        summary: Get BOM import records
+        tags:
+          - bomImport
+        parameters:
+          - name: script
+            in: query
+            description: The script id of the RESTlet
+            required: true
+            schema:
+              type: integer
+              default: 294
+          - name: deploy  
+            in: query
+            description: The deployment id of the RESTlet
+            required: true
+            schema:
+              type: integer
+              default: 1          
+          - name: custrecord_bom_import_transaction
+            in: query
+            description: Transaction ID for BOM import transaction
+            schema:
+              type: string
+          - name: custrecord_orion_bom_intialization_ident
+            in: query
+            description: Generated ID for BOM initialization
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/GetImportRecordResponse'
+          '400':
+            description: Error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          '500':
+            description: Error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+                
+components:
+  schemas:
+    RequestBody:
+      type: object
+      properties:
+        fileContent:
+          type: string
+          description: The content of the file to be processed
+        fileName:
+          type: string
+          description: The name of the file to be processed
+    
+    ProxyPostRequestBody:
+      type: object
+      required:
+        - scriptID
+        - deploymentID
+      properties:
+        scriptID:
+          type: string
+          description: Script ID of the target Restlet
+        deploymentID:
+          type: string
+          description: Deployment ID of the target Restlet
+          
+    DataToJSONSuccessResponse:
+      type: object 
+      properties:
+        message:
+          type: string
+          example: "SUCCESS: Lines have been generated"
+        lineJSON:
+          $ref: '#/components/schemas/LineJSON'
+    
+    FileCreationResponse:
+      type: object
+      properties:
+        fileURL:
+          type: string
+        fileID:
+          type: string
+          
+    BOMImportResponse:
+      type: object
+      properties:
+        bomRecordID:
+          type: string
+    
+    GetImportRecordResponse:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "SUCCESS: Import Records Found"
+          bomRecs:
+            type: array
+            items:
+              $ref: '#/components/schemas/BOMRecord'     
+            
+    LineJSON:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/Item'
+          
+    Item:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+            
+    LineItem:
+      type: object
+      properties:
+        line:
+          type: string
+        item:
+          $ref: '#/components/schemas/ItemDetails'
+        description:
+          type: string  
+        quantity:
+          type: number
+        povendor:
+          $ref: '#/components/schemas/Vendor'
+        custcol_pintel_entcode:
+          type: string
+        custcol_pintel_listprice:
+          type: number
+        custcol_pintel_tag1:
+          type: string
+        custcol_pintel_tag2:
+          type: string
+        custcol_pintel_porate:
+          type: number
+        custcol_pintel_mancode:
+          type: string
+        rate:
+          type: number
+        costestimaterate:
+          type: number
+        custcol_pintel_dealerdisc:
+          type: number
+        custcol_pintel_custdiscount:
+          type: number
+        custcol_pintel_optioncodedescription:
+          type: string
+            
+    ItemDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          
+    Vendor:
+      type: object 
+      properties:
+        id:
+          type: string
+
+    BOMImportRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [create, edit]
+        editID:
+          type: string
+        custrecord_bom_import_importd_file_url:
+          type: string
+        custrecord_bom_import_json_importd_file:
+          type: string
+        custrecord_bom_import_file_import_order:
+          type: integer
+        custrecord_bom_import_transaction:
+          type: string
+        custrecord_orion_bom_intialization_ident:
+          type: string
+      required:
+        - action
+        
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: ORION_MISSING_LINES
+            message:
+              type: string
+              example: '{"type":"error.SuiteScriptError","name":"ORION_MISSING_LINES","message":"No lines have been returned","id":null,"stack":["Error"," at Object.post (/SuiteScripts/orion/dataToJSON/orion-rs-gen-json.js:66:21)"],"cause":{"name":"ORION_MISSING_LINES","message":"No lines have been returned","notifyOff":false},"notifyOff":false,"userFacing":true}'
+
+    BOMRecord:
+      type: object
+      properties:
+        owner:
+          type: integer
+          example: 12
+        isinactive:
+          type: string
+          example: "F"
+        custrecord_bom_import_file_import_order:
+          type: integer
+          example: 1
+        custrecord_bom_import_json_importd_file:
+          type: string
+          example: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt"
+        custrecord_bom_import_importd_file_url:
+          type: string
+          example: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt"
+        created:
+          type: string
+          example: "3/24/2024"
+        externalid:
+          type: string
+          nullable: true
+        lastmodifiedby:
+          type: integer
+          example: 12
+        custrecord_orion_bom_intialization_ident:
+          type: string
+          example: "99kGzHxK3lBKsIY4TGZf"
+        custrecord_orion_bom_intializaiton_ident:
+          type: string
+          nullable: true
+        abbreviation:
+          type: string
+          nullable: true
+        scriptid:
+          type: string
+          example: "VAL_58063_TD2893635_898"
+        recordid:
+          type: integer
+          example: 201
+        lastmodified:
+          type: string
+          example: "3/29/2024"
+        name:
+          type: string
+          example: "BOM-201"
+        custrecord_bom_import_transaction:
+          type: integer
+          example: 3
+        id:
+          type: integer
+          example: 201

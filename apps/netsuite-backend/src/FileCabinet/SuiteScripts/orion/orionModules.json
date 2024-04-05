@@ -1,0 +1,6 @@
+{
+  "paths": {
+    "orion/json": "/SuiteScripts/orion/dataToJSON/lib/orionJSONLib.js",
+    "orion/helper": "/SuiteScripts/orion/dataToJSON/lib/orionHelperLib.js"
+  }
+}

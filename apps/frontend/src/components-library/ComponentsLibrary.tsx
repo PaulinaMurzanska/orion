@@ -3,7 +3,9 @@ import {
   CardDemo,
   CheckboxDemo,
   DatepickerDemo,
+  EditableTableDemo,
   InputDemo,
+  ProgressSpinDemo,
   SelectDemo,
 } from './demo-components';
 
@@ -13,7 +15,7 @@ import styled from 'styled-components';
 const StyledWrapper = styled.div`
   padding: 20px;
   overflow-y: auto;
-  width: 100vh;
+  width: 100%;
   padding-bottom: 500px;
 `;
 
@@ -36,12 +38,20 @@ const ComponentsLibrary = () => {
       component: <ButtonDemo />,
     },
     {
-      title: 'Input Demo',
+      title: 'Custom Input Demo',
       component: <InputDemo />,
+    },
+    {
+      title: 'Progress Spin Demo',
+      component: <ProgressSpinDemo />,
     },
     {
       title: 'Card Demo',
       component: <CardDemo />,
+    },
+    {
+      title: 'Editable Table Demo - With Various Input Types',
+      component: <EditableTableDemo />,
     },
   ];
   return (

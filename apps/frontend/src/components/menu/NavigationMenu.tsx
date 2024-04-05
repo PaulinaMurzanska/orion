@@ -29,13 +29,6 @@ const NavigationMenu = () => {
 
   const topConfig = [
     {
-      name: 'Tasks',
-      onClick: () => {
-        navigate('/tasks');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
       name: 'Orders',
       onClick: () => {
         navigate('/orders');
@@ -43,16 +36,16 @@ const NavigationMenu = () => {
       icon: <PersonIcon width="18px" height="18px" />,
     },
     {
-      name: 'Pricing',
-      onClick: () => {
-        navigate('/pricing');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
       name: 'Components Library',
       onClick: () => {
         navigate('/components');
+      },
+      icon: <DashboardIcon width="18px" height="18px" />,
+    },
+    {
+      name: 'BOM Tool',
+      onClick: () => {
+        navigate('/bom-import');
       },
       icon: <DashboardIcon width="18px" height="18px" />,
     },

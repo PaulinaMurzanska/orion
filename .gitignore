@@ -48,7 +48,11 @@ Thumbs.db
 *.mov
 *.wmv
 
-.nx/cache/
+#Visual Studio Code
+.vscode/
 
-#vs code seetings
-.vscode
+#nx cache
+.nx/cache
+
+# Frontend build folder
+apps/netsuite-backend/src/FileCabinet/SuiteScripts/orion/frontend/

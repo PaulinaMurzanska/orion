@@ -1,32 +1,25 @@
-import { createBrowserRouter, createHashRouter } from 'react-router-dom';
-
+import BomImportTool from '../bom/BomImportTool';
 import ComponentsLibrary from '../components-library/ComponentsLibrary';
 import OrdersTable from '../tables/OrdersTable';
-import PricingTable from '../tables/PricingTable';
 import Root from './Root';
-import TasksTable from '../tables/TasksTable';
+import { createHashRouter } from 'react-router-dom';
 
-// TODO: Should probably replace with hash router to work with NetSuite
 export default createHashRouter([
   {
     path: '/',
     element: <Root />,
     children: [
       {
-        path: '/tasks',
-        element: <TasksTable />,
-      },
-      {
         path: '/orders',
         element: <OrdersTable />,
       },
       {
-        path: '/pricing',
-        element: <PricingTable />,
-      },
-      {
         path: '/components',
         element: <ComponentsLibrary />,
+      },
+      {
+        path: '/bom-import',
+        element: <BomImportTool />,
       },
     ],
   },
