@@ -12,6 +12,13 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+    proxy: {
+      '/netsuite': {
+        target: 'https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/netsuite/, '')
+      }
+    }
   },
 
   preview: {
