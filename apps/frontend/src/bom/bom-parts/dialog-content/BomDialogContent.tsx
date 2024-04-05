@@ -108,11 +108,11 @@ const BomDialogContent = ({
         return updatedFileObjs;
       });
 
-      const newURL =
+      const baseUrl =
         'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
-      const bomImportCreateURL =
-        'https://corsproxy.io/?https://td2893635.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=220&deploy=1';
+      // const bomImportCreateURL =
+      //   'https://corsproxy.io/?https://td2893635.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=220&deploy=1';
 
       const fileDataObj = {
         fileName: fullFileName,
@@ -121,7 +121,7 @@ const BomDialogContent = ({
         deploymentID: 1,
       };
 
-      const getFileIdentifiers = await handleHttpRequest(fileDataObj, newURL);
+      const getFileIdentifiers = await handleHttpRequest(fileDataObj, baseUrl);
 
       if (getFileIdentifiers.error) {
         const err_msg = getFileIdentifiers.err_message;
@@ -153,23 +153,26 @@ const BomDialogContent = ({
 
         const getBomImportCreateObj = await handleHttpRequest(
           bomImportCreateObj,
-          bomImportCreateURL
+          baseUrl
+          // bomImportCreateURL
         );
-
+        console.log('getBomImportCreateObj', getBomImportCreateObj);
         if (getBomImportCreateObj.error) {
           const err_msg = getBomImportCreateObj.err_message;
           alert(
             `Error on bomImportCreateObj: ${err_msg} We should implement here some action what we want to do if this error appears for this file.`
           );
           terminate(index);
-        } else if (getBomImportCreateObj.output.recordID) {
-          const bomRecordID = getBomImportCreateObj.output.recordID;
+        } else if (getBomImportCreateObj.bomRecordID) {
+          const bomRecordID = getBomImportCreateObj.bomRecordID;
+          console.log('bomRecordID', bomRecordID);
           setFileObjs((currentFileObjs) => {
             const updatedFileObjs = [...currentFileObjs];
             updatedFileObjs[index] = {
               ...updatedFileObjs[index],
-              loaderText: `Created BOM Record Id : ${fileID}`,
+              loaderText: `Created BOM Record Id : ${bomRecordID}`,
               bomRecordID,
+              fileLoading: false,
             };
             return updatedFileObjs;
           });
