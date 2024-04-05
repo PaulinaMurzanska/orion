@@ -1,0 +1,44 @@
+{
+  "items": [
+    {
+      "line": 0,
+      "item": null,
+      "description": "+Everywhere Rectangular Table,Squared Edge,Lam Top/Thermo Edge,T-Leg w/Hgt Adj 24D 48W",
+      "quantity": "1",
+      "povendor": null,
+      "custcol_pintel_entcode": "HMI",
+      "custcol_pintel_listprice": "1679.00",
+      "custcol_pintel_tag1": "CATALOG TAG 1",
+      "custcol_pintel_tag2": "CATALOG TAG 2",
+      "custcol_pintel_porate": "1679.00",
+      "custcol_pintel_mancode": "HGN",
+      "rate": "1679.00",
+      "costestimaterate": "1679.00",
+      "custcol_pintel_dealerdisc": "0.000",
+      "custcol_pintel_custdiscount": "0.000",
+      "custcol_pintel_optioncodedescription": "29 - +misted\n29 - +misted\n8Q - +folkstone grey\n20 - +casters\nNTG - +no grommet\n",
+      "itemid": "DT1AS.2448LA",
+      "product": true
+    },
+    {
+      "line": 1,
+      "item": null,
+      "description": "+Everywhere Rectangular Table,Squared Edge,Lam Top/Thermo Edge,T-Leg w/Hgt Adj 24D 48W",
+      "quantity": "1",
+      "povendor": null,
+      "custcol_pintel_entcode": "HMI",
+      "custcol_pintel_listprice": "1679.00",
+      "custcol_pintel_tag1": "CATALOG TAG 1",
+      "custcol_pintel_tag2": "CATALOG TAG 2",
+      "custcol_pintel_porate": "1679.00",
+      "custcol_pintel_mancode": "HGN",
+      "rate": "1679.00",
+      "costestimaterate": "1679.00",
+      "custcol_pintel_dealerdisc": "0.000",
+      "custcol_pintel_custdiscount": "0.000",
+      "custcol_pintel_optioncodedescription": "29 - +misted\n29 - +misted\n8Q - +folkstone grey\n20 - +casters\nNTG - +no grommet\n",
+      "itemid": "DT1AS.2448LA",
+      "product": true
+    }
+  ]
+}

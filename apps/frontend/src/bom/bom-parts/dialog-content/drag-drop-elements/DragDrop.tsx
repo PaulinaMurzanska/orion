@@ -46,13 +46,13 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      // '.sif': ['.sif'],  // format not supported with accept property, different validation needed
-      // '.pmx': ['.pmx'],  // format not supported with accept property, different validation needed
-      'application/xml': ['.xml'],
-      'application/vnd.ms-excel': ['.xls', '.csv'],
-    },
-    maxSize: 1024 * 1000,
+    // accept: {
+    // '.sif': ['.sif'],  // format not supported with accept property, different validation needed
+    // '.pmx': ['.pmx'],  // format not supported with accept property, different validation needed
+    // 'application/xml': ['.xml'],
+    // 'application/vnd.ms-excel': ['.xls', '.csv'],
+    // },
+    // maxSize: 1024 * 1000,
   });
 
   return (

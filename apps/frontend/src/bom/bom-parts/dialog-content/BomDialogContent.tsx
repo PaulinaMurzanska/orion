@@ -4,6 +4,10 @@ import {
   StyledDropArea,
   StyledMinus,
 } from './BomStyledDialogContent';
+import {
+  handleHttpRequest,
+  handleHttpRequest2,
+} from '../../../workers/FileWorker';
 import { useEffect, useState } from 'react';
 
 import ActionBtns from './action-btns/ActionBtns';
@@ -12,8 +16,56 @@ import { FileObjectType } from '../type';
 import FileWorker from '../../../workers/FileWorker?worker&inline';
 import StatusZone from './drag-drop-elements/StatusZone';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
-import { handleHttpRequest } from '../../../workers/FileWorker';
 import { nanoid } from 'nanoid';
+
+const test = {
+  items: [
+    {
+      line: 0,
+      item: null,
+      description:
+        '+Everywhere Rectangular Table,Squared Edge,Lam Top/Thermo Edge,T-Leg w/Hgt Adj 24D 48W',
+      quantity: '1',
+      povendor: null,
+      custcol_pintel_entcode: 'HMI',
+      custcol_pintel_listprice: '1679.00',
+      custcol_pintel_tag1: 'CATALOG TAG 1',
+      custcol_pintel_tag2: 'CATALOG TAG 2',
+      custcol_pintel_porate: '1679.00',
+      custcol_pintel_mancode: 'HGN',
+      rate: '1679.00',
+      costestimaterate: '1679.00',
+      custcol_pintel_dealerdisc: '0.000',
+      custcol_pintel_custdiscount: '0.000',
+      custcol_pintel_optioncodedescription:
+        '29 - +misted\n29 - +misted\n8Q - +folkstone grey\n20 - +casters\nNTG - +no grommet\n',
+      itemid: 'DT1AS.2448LA',
+      product: true,
+    },
+    {
+      line: 1,
+      item: null,
+      description:
+        '+Everywhere Rectangular Table,Squared Edge,Lam Top/Thermo Edge,T-Leg w/Hgt Adj 24D 48W',
+      quantity: '1',
+      povendor: null,
+      custcol_pintel_entcode: 'HMI',
+      custcol_pintel_listprice: '1679.00',
+      custcol_pintel_tag1: 'CATALOG TAG 1',
+      custcol_pintel_tag2: 'CATALOG TAG 2',
+      custcol_pintel_porate: '1679.00',
+      custcol_pintel_mancode: 'HGN',
+      rate: '1679.00',
+      costestimaterate: '1679.00',
+      custcol_pintel_dealerdisc: '0.000',
+      custcol_pintel_custdiscount: '0.000',
+      custcol_pintel_optioncodedescription:
+        '29 - +misted\n29 - +misted\n8Q - +folkstone grey\n20 - +casters\nNTG - +no grommet\n',
+      itemid: 'DT1AS.2448LA',
+      product: true,
+    },
+  ],
+};
 
 interface DialogContentProps {
   setFilesDataArray: (files: FileObjectType[]) => void;
@@ -111,8 +163,8 @@ const BomDialogContent = ({
       const baseUrl =
         'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
-      // const bomImportCreateURL =
-      //   'https://corsproxy.io/?https://td2893635.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=220&deploy=1';
+      // const baseUrlNEW?? =
+      //   '/netsuite/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
       const fileDataObj = {
         fileName: fullFileName,
@@ -154,7 +206,6 @@ const BomDialogContent = ({
         const getBomImportCreateObj = await handleHttpRequest(
           bomImportCreateObj,
           baseUrl
-          // bomImportCreateURL
         );
         console.log('getBomImportCreateObj', getBomImportCreateObj);
         if (getBomImportCreateObj.error) {
@@ -176,6 +227,30 @@ const BomDialogContent = ({
             };
             return updatedFileObjs;
           });
+
+          console.log('fullFileName', fullFileName);
+          console.log('fileContent', fileContent);
+          console.log('test', JSON.stringify(test));
+
+          const dataToJson = {
+            fileContent: fileContent,
+            fileName: fullFileName,
+            scriptID: 219,
+            deploymentID: 1,
+          };
+
+          const createJson = await handleHttpRequest(dataToJson, baseUrl);
+          console.log('createJson', createJson);
+          const fileJSON = createJson.lineJSON;
+          const newPayload = {
+            ...fileJSON,
+            scriptID: 219,
+            deploymentID: 1,
+          };
+          console.log('newPayload', newPayload);
+          const createFileAgain = await handleHttpRequest(newPayload, baseUrl);
+          console.log('createFileAgain', createFileAgain);
+          // const getFileIdentifiers = await handleHttpRequest(fileDataObj, baseUrl);
         }
       }
 
