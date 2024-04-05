@@ -271,9 +271,10 @@ const BomDialogContent = ({
           // define fields to set on object
           const bomImportCreateObj = {
             action: 'create',
-            custrecord_bom_import_file_import_order: 0,
-            custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N',
             custrecord_bom_import_importd_file_url: fileID,
+            custrecord_bom_import_file_import_order: 1, // change to generate index
+            custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode 
+            custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script
             scriptID: 290,
             deploymentID: 1,
             endpoint: bomImportCreateURL
@@ -285,12 +286,19 @@ const BomDialogContent = ({
           console.error('Error uploading file:', error);
         }
       }
+      // on return of the message from the web worker, capture the bom record id
+      bomImportWorker.onmessage = (e) => {
+        console.log('bomImportWorker', e);
+        const { response, error } = e.data;
+        if (response) {
+          console.log('BoM Import record created successfully:', response);
+          const bomRecordID = response.output.recordID;
+          console.log('bomRecordID', bomRecordID);
+        } else if (error) {
+          console.error('Error creating BoM Import record:', error);
+        }
+      }
       
-      
-
-
-
-      const bomRecordID = await postToEndpoint3(bomImportCreateObj, bomImportCreateURL);
 
       
 
