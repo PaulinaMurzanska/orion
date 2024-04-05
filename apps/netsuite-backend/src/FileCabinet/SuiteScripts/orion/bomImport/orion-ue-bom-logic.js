@@ -8,25 +8,35 @@ define(['N/record'], (record) => {
   let createdString
 
   const beforeLoad = async (context) => {
-    if (context.type === context.UserEventType.CREATE) {
-      switch (context.newRecord.type) {
-        case 'salesorder':
-          await setBeforeDataValue(context)
-          break
+    const loggerTitle = 'beforeLoad'
+    try {
+      if (context.type === context.UserEventType.CREATE) {
+        switch (context.newRecord.type) {
+          case 'salesorder':
+            await setBeforeDataValue(context)
+            break
+        }
       }
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
     }
   }
 
   const afterSubmit = async (context) => {
-    if (context.type === context.UserEventType.CREATE) {
-      switch (context.newRecord.type) {
-        case 'customrecord_orion_bom_import':
-          await updateImportRecordName(context)
-          break
-        case 'salesorder':
-          await setAfterDataValue(context)
-          break
+    const loggerTitle = 'afterSubmit'
+    try {
+      if (context.type === context.UserEventType.CREATE) {
+        switch (context.newRecord.type) {
+          case 'customrecord_orion_bom_import':
+            await updateImportRecordName(context)
+            break
+          case 'salesorder':
+            await setAfterDataValue(context)
+            break
+        }
       }
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
     }
   }
 
@@ -55,7 +65,6 @@ define(['N/record'], (record) => {
   const setAfterDataValue = (context) => {
     const currentRecord = context.newRecord
     const transactionID = currentRecord.id
-
   }
 
   /**
