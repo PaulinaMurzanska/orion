@@ -6,27 +6,22 @@ import { json } from 'stream/consumers';
 self.onmessage = function (e) {
   console.log('e', e);
   // Fetch enpoint data
-  postToEndpoint(
-    e.data.jsonBody
-  );
+  postToEndpoint(e.data.jsonBody);
 };
 
 // Function to post file name and body to the endpoint
-const postToEndpoint = (
-  jsonBody: any,
-) => {
-
+const postToEndpoint = (jsonBody: any) => {
   console.log('jsonBody', jsonBody);
 
   const endpoint = jsonBody.endpoint;
 
   // Make a POST request to the endpoint
   fetch(endpoint, {
-    method: method || 'POST',
+    method: jsonBody.method || 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: method === 'GET' ? null : JSON.stringify(jsonBody),
+    body: jsonBody.method === 'GET' ? null : JSON.stringify(jsonBody),
   })
     .then((response) => response.json())
     .then((data) => {
@@ -41,48 +36,46 @@ const postToEndpoint = (
     });
 };
 
-export const postToEndpoint2 = async (
-  fileName: string,
-  fileContent: any,
+export const handleHttpRequest = async (
+  payload: any,
   endpoint: string,
   method?: string
 ) => {
-  const jsonBody = {
-    fileName: fileName,
-    fileContent: fileContent,
-    scriptID: 292,
-    deploymentID: 1,
-  };
+  const jsonBody = payload;
   console.log('jsonBody', jsonBody);
+  console.log('endpoint', endpoint);
+  let responseData;
   try {
     const response = await fetch(endpoint, {
-      method: 'POST',
-      // method: method || 'POST',
+      method: method || 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: method === 'GET' ? null : JSON.stringify(jsonBody),
     });
-    console.log('response', response);
+    if (!response.ok) {
+      const dataErr = await response.json();
+      throw new Error(dataErr.error.message);
+    }
     const data = await response.json();
-    // const respData = JSON.parse(data.body);
-    console.log('postToEndpoint2', data.output);
-    return data;
-    // const data = await json
-  } catch (err) {
-    console.error(err);
+    responseData = data;
+  } catch (error: any) {
+    const errResp = { error: true, err_message: error.message };
+    responseData = errResp;
+    console.error(error.message);
   }
+  return responseData;
 };
 
 export const postToEndpoint3 = async (
   jsonBody: Object,
-  endpoint: string
+  endpoint: string,
+  method?: string
 ) => {
   console.log('jsonBody', jsonBody);
   try {
     const response = await fetch(endpoint, {
-      method: 'POST',
-      // method: method || 'POST',
+      method: method || 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
