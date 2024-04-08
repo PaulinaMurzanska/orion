@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 export function useConvertDataTypes() {
   const formatCurrency = (val: any) => {
     if (typeof val === 'number') {
