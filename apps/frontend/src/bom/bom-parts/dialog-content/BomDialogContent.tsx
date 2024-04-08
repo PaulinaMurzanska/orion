@@ -4,68 +4,18 @@ import {
   StyledDropArea,
   StyledMinus,
 } from './BomStyledDialogContent';
-import {
-  handleHttpRequest,
-  handleHttpRequest2,
-} from '../../../workers/FileWorker';
 import { useEffect, useState } from 'react';
 
 import ActionBtns from './action-btns/ActionBtns';
 import DragDrop from './drag-drop-elements/DragDrop';
 import { FileObjectType } from '../type';
-import FileWorker from '../../../workers/FileWorker?worker&inline';
 import StatusZone from './drag-drop-elements/StatusZone';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
+import { handleHttpRequest } from '../../../workers/FileWorker';
 import { nanoid } from 'nanoid';
 
-const test = {
-  items: [
-    {
-      line: 0,
-      item: null,
-      description:
-        '+Everywhere Rectangular Table,Squared Edge,Lam Top/Thermo Edge,T-Leg w/Hgt Adj 24D 48W',
-      quantity: '1',
-      povendor: null,
-      custcol_pintel_entcode: 'HMI',
-      custcol_pintel_listprice: '1679.00',
-      custcol_pintel_tag1: 'CATALOG TAG 1',
-      custcol_pintel_tag2: 'CATALOG TAG 2',
-      custcol_pintel_porate: '1679.00',
-      custcol_pintel_mancode: 'HGN',
-      rate: '1679.00',
-      costestimaterate: '1679.00',
-      custcol_pintel_dealerdisc: '0.000',
-      custcol_pintel_custdiscount: '0.000',
-      custcol_pintel_optioncodedescription:
-        '29 - +misted\n29 - +misted\n8Q - +folkstone grey\n20 - +casters\nNTG - +no grommet\n',
-      itemid: 'DT1AS.2448LA',
-      product: true,
-    },
-    {
-      line: 1,
-      item: null,
-      description:
-        '+Everywhere Rectangular Table,Squared Edge,Lam Top/Thermo Edge,T-Leg w/Hgt Adj 24D 48W',
-      quantity: '1',
-      povendor: null,
-      custcol_pintel_entcode: 'HMI',
-      custcol_pintel_listprice: '1679.00',
-      custcol_pintel_tag1: 'CATALOG TAG 1',
-      custcol_pintel_tag2: 'CATALOG TAG 2',
-      custcol_pintel_porate: '1679.00',
-      custcol_pintel_mancode: 'HGN',
-      rate: '1679.00',
-      costestimaterate: '1679.00',
-      custcol_pintel_dealerdisc: '0.000',
-      custcol_pintel_custdiscount: '0.000',
-      custcol_pintel_optioncodedescription:
-        '29 - +misted\n29 - +misted\n8Q - +folkstone grey\n20 - +casters\nNTG - +no grommet\n',
-      itemid: 'DT1AS.2448LA',
-      product: true,
-    },
-  ],
-};
+const baseUrl =
+  'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
 interface DialogContentProps {
   setFilesDataArray: (files: FileObjectType[]) => void;
@@ -79,16 +29,7 @@ const BomDialogContent = ({
   emptyObject,
 }: DialogContentProps) => {
   const [fileObjects, setFileObjs] = useState<FileObjectType[]>(fileObjs);
-
-  const fileWorker = new FileWorker(); // load web worker that sends files to NetSuite
-  const bomImportWorker = new FileWorker(); // load web worker that creates BoM import records
-  const jsonWorker = new FileWorker(); // load web worker that converts sif files to JSON
-  const itemCheckWorker = new FileWorker(); // load web worker that checks for item ids and returns missing items
-  const itemCreateWorker = new FileWorker(); // load web worker that creates missing items and returns their ids
-  const jsonCreateWorker = new FileWorker(); // load web worker that creates JSON records
-  const jsonUpdateWorker = new FileWorker(); // load web worker that updates JSON records
-  const currentURL = window.location.href;
-  const internalIDMatch = currentURL.match(/[?&]id=([^&]*)/);
+  const [filesCombined, setFilesCombined] = useState<any[]>([]);
 
   const handleAddNewDropZone = () => {
     const id = nanoid(8);
@@ -120,13 +61,39 @@ const BomDialogContent = ({
     });
   };
 
+  const handleRequestError = (message: string, index: number, key: string) => {
+    const err_msg = `Error on ${key} function: ${message}. We should implement here some action what we want to do if this error appears for this file.`;
+    alert(err_msg);
+    terminate(index);
+  };
+
+  const onAction = () => {
+    console.log('Create one array of all likes from all objects');
+    const combinedItemLines = fileObjs.map((obj) => obj.itemLines).flat();
+    setFilesCombined(combinedItemLines);
+    console.log('combinedItemLines', combinedItemLines);
+
+    const id = nanoid(5);
+    const combineArrayData = {
+      lines: combinedItemLines,
+      fileName: `Random = ${id}`,
+      scriptID: 292,
+      deploymentID: 1,
+    }; // this is the payload we need to send when we press "import lines"
+    console.log(
+      'The request should be made in this place, the payload is:',
+      combineArrayData
+    );
+  };
+
   const onDropFunction = (dropzoneId: string, file: any) => {
     const index = fileObjs.findIndex((obj: any) => obj.id === dropzoneId);
     if (index === -1) return;
 
     const fileData = extractFileNameAndExtension(file.name);
-    const fileName = fileData.fileName;
+    const fileName = fileData.fileNameShort;
     const fullFileName = file.name;
+    const fileNameJson = fileData.fileNameJson;
     const fileExtension = fileData.extension;
     const loaderText = 'Reading File';
 
@@ -140,6 +107,7 @@ const BomDialogContent = ({
         fileLoading: true,
         fileName,
         fullFileName,
+        fileNameJson,
         loaderText,
         fileExtension,
       };
@@ -160,32 +128,25 @@ const BomDialogContent = ({
         return updatedFileObjs;
       });
 
-      const baseUrl =
-        'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
-
       const fileDataObj = {
-        fileName: fullFileName,
         fileContent: (e.target as FileReader).result,
+        fileName: fullFileName,
         scriptID: 292,
         deploymentID: 1,
       };
 
       console.log('STEP 1 - we are sending fileDataObj to get the fileID');
       const getFileIdentifiers = await handleHttpRequest(fileDataObj, baseUrl);
-
       if (getFileIdentifiers.error) {
         const err_msg = getFileIdentifiers.err_message;
-        alert(
-          `Error on creating file ID: ${err_msg}. We should implement here some action what we want to do if this error appears for this file`
-        );
-        terminate(index);
-      } else if (getFileIdentifiers.output.fileID) {
+        handleRequestError(err_msg, index, 'getFileIdentifiers');
+      } else {
         const fileID = getFileIdentifiers.output.fileID;
-
         setFileObjs((currentFileObjs) => {
           const updatedFileObjs = [...currentFileObjs];
           updatedFileObjs[index] = {
             ...updatedFileObjs[index],
+            fileId: fileID,
             loaderText: `Created file id : ${fileID}`,
           };
           return updatedFileObjs;
@@ -194,12 +155,13 @@ const BomDialogContent = ({
         const bomImportCreateObj = {
           action: 'create',
           custrecord_bom_import_importd_file_url: fileID,
-          custrecord_bom_import_file_import_order: 1, // change to generate index
-          custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode
-          custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script
+          custrecord_bom_import_file_import_order: index + 1,
+          custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode  ---PM:what the actual value should be here????
+          custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script  ---PM:what the actual value should be here????
           scriptID: 290,
           deploymentID: 1,
         };
+
         console.log(
           'STEP 2 - having now the fileID we are sending bomImportCreateObj to get the bomRecordID'
         );
@@ -207,21 +169,16 @@ const BomDialogContent = ({
           bomImportCreateObj,
           baseUrl
         );
-
         if (getBomImportCreateObj.error) {
           const err_msg = getBomImportCreateObj.err_message;
-          alert(
-            `Error on bomImportCreateObj: ${err_msg} We should implement here some action what we want to do if this error appears for this file.`
-          );
-          terminate(index);
-        } else if (getBomImportCreateObj.bomRecordID) {
+          handleRequestError(err_msg, index, 'getBomImportCreateObj');
+        } else {
           const bomRecordID = getBomImportCreateObj.bomRecordID;
           console.log(
             '      bomRecordID was created as',
             bomRecordID,
             '   but we are not using it yet, only to assign it to to local array, but it is not used in HTTP at this step'
           );
-
           setFileObjs((currentFileObjs) => {
             const updatedFileObjs = [...currentFileObjs];
             updatedFileObjs[index] = {
@@ -238,104 +195,149 @@ const BomDialogContent = ({
             scriptID: 219,
             deploymentID: 1,
           };
+
           console.log(
             'STEP 3 - we create dataToJson object, with file content, file name, script and deployment id, in response we expect to get lineJSON'
           );
-          const createJson = await handleHttpRequest(dataToJson, baseUrl);
-          if (createJson.error) {
-            const err_msg = createJson.err_message;
-            alert(
-              `Error on createJson: ${err_msg} We should implement here some action what we want to do if this error appears for this file.`
-            );
-            terminate(index);
+          const getJsonData = await handleHttpRequest(dataToJson, baseUrl);
+          if (getJsonData.error) {
+            const err_msg = getJsonData.err_message;
+            handleRequestError(err_msg, index, 'jsonData');
           } else {
-            const fileJSON = createJson.lineJSON;
-            const newPayload = {
+            const fileJSON = getJsonData.lineJSON;
+            const itemLines = getJsonData.lineJSON.item.items;
+            setFileObjs((currentFileObjs) => {
+              const updatedFileObjs = [...currentFileObjs];
+              updatedFileObjs[index] = {
+                ...updatedFileObjs[index],
+                itemLines,
+              };
+              return updatedFileObjs;
+            });
+
+            const newPayloadToGetUrl = {
               ...fileJSON,
-              scriptID: 219,
+              scriptID: 292,
+              fileName: fileNameJson,
               deploymentID: 1,
             };
-            console.log(
-              'STEP 4 - having lineJSON now, we are sending lineJSON, with script 219 and deployment id=1, I called this function :createFileAgain for now, as I  dont know what it suppose to return, as at this step we receive error'
-            );
-            console.log('   new payload:');
-            console.log('   {');
-            console.log('      ...fileJSON,');
-            console.log('      scriptID: 219,');
-            console.log('      deploymentID: 1');
-            console.log('   }');
 
-            const createFileAgain = await handleHttpRequest(
-              newPayload,
+            console.log(
+              'STEP 4 - having lineJSON now, we are sending lineJSON, with script 292 and deployment id=1'
+            );
+            const fileResponseUrl = await handleHttpRequest(
+              newPayloadToGetUrl,
               baseUrl
             );
-            console.log('      createFileAgain output', createFileAgain);
-            if (createFileAgain.error) {
-              const err_msg = createFileAgain.err_message;
-              alert(
-                `Error on createFileAgain: ${err_msg} We should implement here some action what we want to do if this error appears for this file.`
-              );
-              terminate(index);
+            if (fileResponseUrl.error) {
+              const err_msg = fileResponseUrl.err_message;
+              handleRequestError(err_msg, index, 'fileResponseUrl');
             } else {
-              alert(`createFileAgain WORKED - what is the next step?.`);
-              console.log('STEP 5 - what are the next steps on success?');
+              const dataToEditRecord = {
+                action: 'edit',
+                custrecord_bom_import_json_importd_file: fileID,
+                editID: bomRecordID,
+                scriptID: 290,
+                deploymentID: 1,
+              };
+              console.log(
+                'STEP 5 - now we are awaiting to get the final ID after we sent the action:edit data'
+              );
+              const finalRecordId = await handleHttpRequest(
+                dataToEditRecord,
+                baseUrl
+              );
+              if (finalRecordId.error) {
+                const err_msg = finalRecordId.err_message;
+                handleRequestError(err_msg, index, 'getRecordId');
+              } else {
+                const response = finalRecordId;
+                console.log(
+                  'response',
+                  response,
+                  'we can now set loading state to false'
+                );
+
+                if (finalRecordId.bomRecordID === bomRecordID) {
+                  setFileObjs((currentFileObjs) => {
+                    const updatedFileObjs = [...currentFileObjs];
+                    updatedFileObjs[index] = {
+                      ...updatedFileObjs[index],
+                      fileLoading: false,
+                    };
+                    return updatedFileObjs;
+                  });
+                }
+              }
             }
           }
         }
       }
 
-      ////--- Stefan's workers block ----/////
-      ////--- for some reason the POST is not even getting initiated when I was testing it ----/////
+      /////////////////////////////////////////////////////////////////////
+      // const reorderPayload = {
+      //   action: 'edit',
+      //   custrecord_bom_import_file_import_order: 'current position',
+      //   editID: bomRecordID,
+      //   scriptID: 290,
+      //   deploymentID: 1,
+      // };  // this is the payload we need to send when the reorder happens
 
-      // post the message (object) to the web worker
-      // fileWorker.postMessage(fileDataObj);
+      // const reorderPayload2 = {
+      //   lines: 'array of objects - concatenated array of all liken from all objects',
+      //   fileName: "random string of char eg.'BOB'",
+      //   scriptID: 292,
+      //   deploymentID: 1,
+      // }; // this is the payload we need to send when we press "import lines"
 
-      // on return of the message from the web worker, apply the file to the BoM import record
-      // fileWorker.onmessage = (e) => {
-      //   console.log('fileWorker', e);
-      //   const { response, error } = e.data;
-      //   if (response) {
-      //     console.log('File uploaded successfully:', response);
-      //     const fileID = response.output.fileID; // update the file URL on the fileObj with the file URL result
+      //   ////--- Stefan's workers block ----/////
+      //   ////--- for some reason the POST is not even getting initiated when I was testing it ----/////
 
-      //     // define fields to set on object
-      //     const bomImportCreateObj = {
-      //       action: 'create',
-      //       custrecord_bom_import_importd_file_url: fileID,
-      //       custrecord_bom_import_file_import_order: 1, // change to generate index
-      //       custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode
-      //       custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script
-      //       scriptID: 290,
-      //       deploymentID: 1,
-      //       endpoint: bomImportCreateURL,
-      //     };
+      //   // post the message (object) to the web worker
+      //   // fileWorker.postMessage(fileDataObj);
 
-      //     bomImportWorker.postMessage(bomImportCreateObj);
-      //   } else if (error) {
-      //     console.error('Error uploading file:', error);
-      //   }
-      // };
-      // on return of the message from the web worker, capture the bom record id
-      // bomImportWorker.onmessage = (e) => {
-      //   console.log('bomImportWorker', e);
-      //   const { response, error } = e.data;
-      //   if (response) {
-      //     console.log('BoM Import record created successfully:', response);
-      //     const bomRecordID = response.output.recordID;
-      //     console.log('bomRecordID', bomRecordID);
-      //   } else if (error) {
-      //     console.error('Error creating BoM Import record:', error);
-      //   }
-      // };
+      //   // on return of the message from the web worker, apply the file to the BoM import record
+      //   // fileWorker.onmessage = (e) => {
+      //   //   console.log('fileWorker', e);
+      //   //   const { response, error } = e.data;
+      //   //   if (response) {
+      //   //     console.log('File uploaded successfully:', response);
+      //   //     const fileID = response.output.fileID; // update the file URL on the fileObj with the file URL result
 
-      ////---^^^^^^^^^^ Stefan's workers block ^^^^^^^^^^^----/////
+      //   //     // define fields to set on object
+      //   //     const bomImportCreateObj = {
+      //   //       action: 'create',
+      //   //       custrecord_bom_import_importd_file_url: fileID,
+      //   //       custrecord_bom_import_file_import_order: 1, // change to generate index
+      //   //       custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode
+      //   //       custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script
+      //   //       scriptID: 290,
+      //   //       deploymentID: 1,
+      //   //       endpoint: bomImportCreateURL,
+      //   //     };
+
+      //   //     bomImportWorker.postMessage(bomImportCreateObj);
+      //   //   } else if (error) {
+      //   //     console.error('Error uploading file:', error);
+      //   //   }
+      //   // };
+      //   // on return of the message from the web worker, capture the bom record id
+      //   // bomImportWorker.onmessage = (e) => {
+      //   //   console.log('bomImportWorker', e);
+      //   //   const { response, error } = e.data;
+      //   //   if (response) {
+      //   //     console.log('BoM Import record created successfully:', response);
+      //   //     const bomRecordID = response.output.recordID;
+      //   //     console.log('bomRecordID', bomRecordID);
+      //   //   } else if (error) {
+      //   //     console.error('Error creating BoM Import record:', error);
+      //   //   }
+      //   // };
+
+      //   ////---^^^^^^^^^^ Stefan's workers block ^^^^^^^^^^^----/////
     };
 
     reader.readAsText(file, 'UTF-8');
-  };
-
-  const onAction = () => {
-    alert('action on arrow click');
   };
 
   useEffect(() => {

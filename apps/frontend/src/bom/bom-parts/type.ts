@@ -1,8 +1,10 @@
 type FileObjectType = {
   id: any;
+  fileId: any | null;
   fileLoading: boolean;
   fileAdded: boolean;
   fileName: string | null;
+  fileNameJson: string | null;
   fullFileName: string | null;
   fileExtension: string | null;
   fileContent: string | null | ArrayBuffer;

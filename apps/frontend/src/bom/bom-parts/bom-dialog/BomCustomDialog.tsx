@@ -20,10 +20,12 @@ import { useState } from 'react';
 
 const fileObjEmpty: FileObjectType = {
   id: '',
+  fileId: null,
   fileLoading: false,
   fileAdded: false,
   fileName: 'Drag and Drop',
   fullFileName: '',
+  fileNameJson: '',
   fileExtension: '',
   loaderText: '',
   fileContent: '',
