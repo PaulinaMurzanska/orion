@@ -36,6 +36,13 @@ const NavigationMenu = () => {
       icon: <PersonIcon width="18px" height="18px" />,
     },
     {
+      name: 'BOM list',
+      onClick: () => {
+        navigate('/bom');
+      },
+      icon: <PersonIcon width="18px" height="18px" />,
+    },
+    {
       name: 'Components Library',
       onClick: () => {
         navigate('/components');

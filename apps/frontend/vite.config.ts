@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import Unfonts from 'unplugin-fonts/vite';
 
-
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/frontend',
@@ -12,6 +11,13 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+    proxy: {
+      '/netsuite': {
+        target: 'https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/netsuite/, ''),
+      },
+    },
   },
 
   preview: {
@@ -21,6 +27,7 @@ export default defineConfig({
 
   plugins: [
     react(),
+
     nxViteTsPaths(),
     Unfonts({
       google: {
@@ -41,7 +48,7 @@ export default defineConfig({
       output: {
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        assetFileNames: `assets/[name].[ext]`,
       },
     },
     commonjsOptions: {
