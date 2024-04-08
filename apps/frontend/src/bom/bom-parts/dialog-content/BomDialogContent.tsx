@@ -163,9 +163,6 @@ const BomDialogContent = ({
       const baseUrl =
         'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
-      // const baseUrlNEW?? =
-      //   '/netsuite/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
-
       const fileDataObj = {
         fileName: fullFileName,
         fileContent: (e.target as FileReader).result,
@@ -173,6 +170,7 @@ const BomDialogContent = ({
         deploymentID: 1,
       };
 
+      console.log('STEP 1 - we are sending fileDataObj to get the fileID');
       const getFileIdentifiers = await handleHttpRequest(fileDataObj, baseUrl);
 
       if (getFileIdentifiers.error) {
@@ -202,12 +200,14 @@ const BomDialogContent = ({
           scriptID: 290,
           deploymentID: 1,
         };
-
+        console.log(
+          'STEP 2 - having now the fileID we are sending bomImportCreateObj to get the bomRecordID'
+        );
         const getBomImportCreateObj = await handleHttpRequest(
           bomImportCreateObj,
           baseUrl
         );
-        console.log('getBomImportCreateObj', getBomImportCreateObj);
+
         if (getBomImportCreateObj.error) {
           const err_msg = getBomImportCreateObj.err_message;
           alert(
@@ -216,7 +216,12 @@ const BomDialogContent = ({
           terminate(index);
         } else if (getBomImportCreateObj.bomRecordID) {
           const bomRecordID = getBomImportCreateObj.bomRecordID;
-          console.log('bomRecordID', bomRecordID);
+          console.log(
+            'bomRecordID was created as',
+            bomRecordID,
+            'but we are not using it yet, only to assign it to to local array, but it is not used in HTTP'
+          );
+
           setFileObjs((currentFileObjs) => {
             const updatedFileObjs = [...currentFileObjs];
             updatedFileObjs[index] = {
@@ -228,29 +233,47 @@ const BomDialogContent = ({
             return updatedFileObjs;
           });
 
-          console.log('fullFileName', fullFileName);
-          console.log('fileContent', fileContent);
-          console.log('test', JSON.stringify(test));
-
           const dataToJson = {
             fileContent: fileContent,
             fileName: fullFileName,
             scriptID: 219,
             deploymentID: 1,
           };
-
+          console.log(
+            'STEP 3 - we create dataToJson object, with file content, file name, script and deployment id, in response we expect to get lineJSON'
+          );
           const createJson = await handleHttpRequest(dataToJson, baseUrl);
-          console.log('createJson', createJson);
-          const fileJSON = createJson.lineJSON;
-          const newPayload = {
-            ...fileJSON,
-            scriptID: 219,
-            deploymentID: 1,
-          };
-          console.log('newPayload', newPayload);
-          const createFileAgain = await handleHttpRequest(newPayload, baseUrl);
-          console.log('createFileAgain', createFileAgain);
-          // const getFileIdentifiers = await handleHttpRequest(fileDataObj, baseUrl);
+          if (createJson.error) {
+            const err_msg = createJson.err_message;
+            alert(
+              `Error on createJson: ${err_msg} We should implement here some action what we want to do if this error appears for this file.`
+            );
+            terminate(index);
+          } else {
+            const fileJSON = createJson.lineJSON;
+            const newPayload = {
+              ...fileJSON,
+              scriptID: 219,
+              deploymentID: 1,
+            };
+            console.log(
+              'STEP 4 - having lineJSON now, we are sending lineJSON, with script 219 and deployment id=1, I called this function :createFileAgain like that for no, as I  dont know what it suppose to return, as at this step we receive error'
+            );
+            const createFileAgain = await handleHttpRequest(
+              newPayload,
+              baseUrl
+            );
+            console.log('createFileAgain', createFileAgain);
+            if (createFileAgain.error) {
+              const err_msg = createFileAgain.err_message;
+              alert(
+                `Error on createFileAgain: ${err_msg} We should implement here some action what we want to do if this error appears for this file.`
+              );
+              terminate(index);
+            } else {
+              alert(`createFileAgain WORKED - what is the next step?.`);
+            }
+          }
         }
       }
 

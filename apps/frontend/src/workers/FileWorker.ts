@@ -42,8 +42,8 @@ export const handleHttpRequest = async (
   method?: string
 ) => {
   const jsonBody = payload;
-  console.log('jsonBody', jsonBody);
-  console.log('endpoint', endpoint);
+  // console.log('jsonBody', jsonBody);
+  // console.log('endpoint', endpoint);
   let responseData;
   try {
     const response = await fetch(endpoint, {
@@ -53,10 +53,10 @@ export const handleHttpRequest = async (
       },
       body: method === 'GET' ? null : JSON.stringify(jsonBody),
     });
-    console.log('response', response);
+    // console.log('response', response);
     if (!response.ok) {
       const dataErr = await response.json();
-      console.log('dataErr', dataErr);
+      // console.log('dataErr', dataErr);
       throw new Error(dataErr.error.message);
     }
     const data = await response.json();
