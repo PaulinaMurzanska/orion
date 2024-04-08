@@ -217,9 +217,9 @@ const BomDialogContent = ({
         } else if (getBomImportCreateObj.bomRecordID) {
           const bomRecordID = getBomImportCreateObj.bomRecordID;
           console.log(
-            'bomRecordID was created as',
+            '      bomRecordID was created as',
             bomRecordID,
-            'but we are not using it yet, only to assign it to to local array, but it is not used in HTTP'
+            '   but we are not using it yet, only to assign it to to local array, but it is not used in HTTP at this step'
           );
 
           setFileObjs((currentFileObjs) => {
@@ -228,7 +228,6 @@ const BomDialogContent = ({
               ...updatedFileObjs[index],
               loaderText: `Created BOM Record Id : ${bomRecordID}`,
               bomRecordID,
-              fileLoading: false,
             };
             return updatedFileObjs;
           });
@@ -257,13 +256,20 @@ const BomDialogContent = ({
               deploymentID: 1,
             };
             console.log(
-              'STEP 4 - having lineJSON now, we are sending lineJSON, with script 219 and deployment id=1, I called this function :createFileAgain like that for no, as I  dont know what it suppose to return, as at this step we receive error'
+              'STEP 4 - having lineJSON now, we are sending lineJSON, with script 219 and deployment id=1, I called this function :createFileAgain for now, as I  dont know what it suppose to return, as at this step we receive error'
             );
+            console.log('   new payload:');
+            console.log('   {');
+            console.log('      ...fileJSON,');
+            console.log('      scriptID: 219,');
+            console.log('      deploymentID: 1');
+            console.log('   }');
+
             const createFileAgain = await handleHttpRequest(
               newPayload,
               baseUrl
             );
-            console.log('createFileAgain', createFileAgain);
+            console.log('      createFileAgain output', createFileAgain);
             if (createFileAgain.error) {
               const err_msg = createFileAgain.err_message;
               alert(
@@ -272,6 +278,7 @@ const BomDialogContent = ({
               terminate(index);
             } else {
               alert(`createFileAgain WORKED - what is the next step?.`);
+              console.log('STEP 5 - what are the next steps on success?');
             }
           }
         }

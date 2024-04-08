@@ -60,7 +60,7 @@ export const handleHttpRequest = async (
       throw new Error(dataErr.error.message);
     }
     const data = await response.json();
-    console.log('data', data);
+    console.log('      data', data);
     responseData = data;
   } catch (error: any) {
     const errResp = { error: true, err_message: error.message };
