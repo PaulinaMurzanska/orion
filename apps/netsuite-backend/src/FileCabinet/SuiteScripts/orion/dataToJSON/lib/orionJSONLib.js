@@ -357,6 +357,8 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     }
   }
 
+  
+
   /**
    * Generates XML options based on the provided file definition and JSON object.
    *

@@ -494,6 +494,42 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
   }
 
+  /**
+   * Generates a random string of the specified length.
+   *
+   * @param {number} length - The length of the random string to generate.
+   * @returns {string} The randomly generated string.
+   */
+  const generateRandomString = (length) => {
+    loggerTitle = 'generateRandomString'
+
+    try {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = ''
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length)
+        result += characters.charAt(randomIndex)
+      }
+      return result
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
+    }
+
+    return null
+  }
+
+  const addUUIDToItemLines = (itemLines) => {
+    const loggerTitle = 'addUUIDToItemLines'
+
+    try {
+      for (let itemLine of itemLines) {
+        itemLine.custcol_uuid = `${Date.now()}-${generateRandomString(15)}`
+      }
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
+  }
+
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
