@@ -51,8 +51,8 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
     // '.pmx': ['.pmx'],  // format not supported with accept property, different validation needed
     // 'application/xml': ['.xml'],
     // 'application/vnd.ms-excel': ['.xls', '.csv'],
-    // },
-    // maxSize: 1024 * 1000,
+    // }, // this object sets what files should be accepted
+    // maxSize: 1024 * 1000, // this objects sets max size if need it
   });
 
   return (

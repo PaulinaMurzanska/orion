@@ -1,21 +1,9 @@
-import { Button, DialogContent } from '@orionsuite/shared-components';
-
+import { Button } from '@orionsuite/shared-components';
 import styled from 'styled-components';
 
-const CustomDialogContent = styled(DialogContent)`
-  border-radius: 2vh;
-  background-color: rgb(211, 211, 211);
-  width: 1000px;
-  max-width: 1000px;
-  min-height: 500px;
-  padding: 20px 20px 0 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  row-gap: 20px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 15px -7px,
-    rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
-`;
+interface DialogProps {
+  dialogOpen: boolean;
+}
 
 const CustomButton = styled(Button)`
   color: #1867c0;
@@ -73,9 +61,46 @@ const StyledInnerContent = styled.div`
   }
 `;
 
+const StyledDialog = styled.div``;
+
+const StyledContentWrapper = styled.div`
+  border-radius: 2vh;
+  background-color: rgb(211, 211, 211);
+  width: 1000px;
+  max-width: 1000px;
+  min-height: 500px;
+  padding: 20px 20px 0 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 20px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 15px -7px,
+    rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
+`;
+
+const StyledDialogOpen = styled.div<DialogProps>`
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #00000030;
+  z-index: 200;
+  opacity: ${(props) => (props.dialogOpen ? '1' : '0')};
+  background-color: ${(props) => (props.dialogOpen ? '00000030' : '')};
+  pointer-events: ${(props) => (props.dialogOpen ? 'auto' : 'none')};
+  visibility: ${(props) => (props.dialogOpen ? 'visible' : 'hidden')};
+  transition: all 0.3s ease-out;
+`;
+
 export {
-  CustomDialogContent,
   CustomButton,
   CustomTriggerButton,
   StyledInnerContent,
+  StyledDialog,
+  StyledContentWrapper,
+  StyledDialogOpen,
 };

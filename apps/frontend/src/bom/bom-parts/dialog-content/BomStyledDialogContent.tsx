@@ -1,4 +1,3 @@
-import { Card } from '@orionsuite/shared-components';
 import styled from 'styled-components';
 
 const StyledContentWrapper = styled.div`
@@ -7,23 +6,6 @@ const StyledContentWrapper = styled.div`
   justify-content: left;
   column-gap: 10px;
   row-gap: 10px;
-`;
-
-const StyledDropArea = styled.div`
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-  align-items: flex-start;
-  cursor: move;
-  position: relative;
-`;
-
-const StyledCard = styled(Card)`
-  width: 100%;
-  min-height: 200px;
-  border-radius: 2vh;
-  padding: 20px;
 `;
 
 const StyledMinus = styled.div`
@@ -48,4 +30,4 @@ const StyledMinus = styled.div`
   }
 `;
 
-export { StyledContentWrapper, StyledDropArea, StyledCard, StyledMinus };
+export { StyledContentWrapper, StyledMinus };

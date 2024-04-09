@@ -1,4 +1,5 @@
-import { Button } from '@orionsuite/shared-components';
+import { Button, Card } from '@orionsuite/shared-components';
+
 import Icon from '@mdi/react';
 import styled from 'styled-components';
 
@@ -69,6 +70,23 @@ const StyledStatusZoneTextNormal = styled.p`
   text-align: center;
 `;
 
+const StyledDropArea = styled.div`
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  align-items: flex-start;
+  cursor: move;
+  position: relative;
+`;
+
+const StyledCard = styled(Card)`
+  width: 100%;
+  min-height: 200px;
+  border-radius: 2vh;
+  padding: 20px;
+`;
+
 export {
   StyledAttachment,
   StyledAttachmentIcon,
@@ -78,4 +96,6 @@ export {
   StyledContentCentered,
   StyledDropButton,
   StyledStatusZoneTextNormal,
+  StyledDropArea,
+  StyledCard,
 };

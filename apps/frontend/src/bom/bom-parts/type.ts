@@ -15,6 +15,8 @@ type FileObjectType = {
   file: any;
   itemLines: any[];
   fileURL?: string;
+  initialPosition: number;
+  currentPosition: number;
 };
 
 export { FileObjectType };

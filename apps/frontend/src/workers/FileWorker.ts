@@ -42,8 +42,6 @@ export const handleHttpRequest = async (
   method?: string
 ) => {
   const jsonBody = payload;
-  // console.log('jsonBody', jsonBody);
-  // console.log('endpoint', endpoint);
   let responseData;
   try {
     const response = await fetch(endpoint, {
@@ -53,10 +51,8 @@ export const handleHttpRequest = async (
       },
       body: method === 'GET' ? null : JSON.stringify(jsonBody),
     });
-    // console.log('response', response);
     if (!response.ok) {
       const dataErr = await response.json();
-      // console.log('dataErr', dataErr);
       throw new Error(dataErr.error.message);
     }
     const data = await response.json();
@@ -68,63 +64,4 @@ export const handleHttpRequest = async (
     console.error(error.message);
   }
   return responseData;
-};
-
-export const handleHttpRequest2 = async (
-  payload: any,
-  endpoint: string,
-  method?: string
-) => {
-  const jsonBody = payload;
-  console.log('jsonBody', jsonBody);
-  console.log('endpoint', endpoint);
-  let responseData;
-  try {
-    const response = await fetch(endpoint, {
-      method: method || 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: method === 'GET' ? null : jsonBody,
-    });
-    console.log('response', response);
-    if (!response.ok) {
-      const dataErr = await response.json();
-      console.log('dataErr', dataErr);
-      throw new Error(dataErr.error.message);
-    }
-    const data = await response.json();
-    console.log('data', data);
-    responseData = data;
-  } catch (error: any) {
-    const errResp = { error: true, err_message: error.message };
-    responseData = errResp;
-    console.error(error.message);
-  }
-  return responseData;
-};
-
-export const postToEndpoint3 = async (
-  jsonBody: Object,
-  endpoint: string,
-  method?: string
-) => {
-  console.log('jsonBody', jsonBody);
-  try {
-    const response = await fetch(endpoint, {
-      method: method || 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: method === 'GET' ? null : JSON.stringify(jsonBody),
-    });
-    console.log('response', response);
-    const data = await response.json();
-    // const respData = JSON.parse(data.body);
-    console.log('postToEndpoint2', data.output);
-    return data;
-    // const data = await json
-  } catch (err) {
-    console.error(err);
-  }
 };

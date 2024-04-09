@@ -1,15 +1,13 @@
 import {
-  StyledCard,
-  StyledContentWrapper,
-  StyledDropArea,
-  StyledMinus,
-} from './BomStyledDialogContent';
+  SortableContext,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { useEffect, useState } from 'react';
 
 import ActionBtns from './action-btns/ActionBtns';
-import DragDrop from './drag-drop-elements/DragDrop';
+import DropAndStatusArea from './drag-drop-elements/DropAndStatusArea';
 import { FileObjectType } from '../type';
-import StatusZone from './drag-drop-elements/StatusZone';
+import { StyledContentWrapper } from './BomStyledDialogContent';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
 import { handleHttpRequest } from '../../../workers/FileWorker';
 import { nanoid } from 'nanoid';
@@ -19,27 +17,34 @@ const baseUrl =
 
 interface DialogContentProps {
   setFilesDataArray: (files: FileObjectType[]) => void;
+  onImportLines: () => void;
   fileObjs: FileObjectType[];
   emptyObject: FileObjectType;
+  uploadProgress: boolean;
 }
 
 const BomDialogContent = ({
   fileObjs,
   setFilesDataArray,
   emptyObject,
+  onImportLines,
+  uploadProgress,
 }: DialogContentProps) => {
   const [fileObjects, setFileObjs] = useState<FileObjectType[]>(fileObjs);
-  const [filesCombined, setFilesCombined] = useState<any[]>([]);
 
   const handleAddNewDropZone = () => {
     const id = nanoid(8);
     const dropzone = { ...emptyObject };
+    const positionToSet = fileObjs.length + 1;
+    dropzone.initialPosition = positionToSet;
+    dropzone.currentPosition = positionToSet;
     dropzone.id = id;
+
     const newArray = [...fileObjs, dropzone];
     setFileObjs(newArray);
   };
 
-  const handleDeleteDropZone = (id: number | null) => {
+  const handleDeleteDropZone = (id: number | string) => {
     if (fileObjs.length > 1) {
       const newArray = fileObjs.filter(
         (item: FileObjectType) => item.id !== id
@@ -67,25 +72,6 @@ const BomDialogContent = ({
     terminate(index);
   };
 
-  const onAction = () => {
-    console.log('Create one array of all likes from all objects');
-    const combinedItemLines = fileObjs.map((obj) => obj.itemLines).flat();
-    setFilesCombined(combinedItemLines);
-    console.log('combinedItemLines', combinedItemLines);
-
-    const id = nanoid(5);
-    const combineArrayData = {
-      lines: combinedItemLines,
-      fileName: `Random = ${id}`,
-      scriptID: 292,
-      deploymentID: 1,
-    }; // this is the payload we need to send when we press "import lines"
-    console.log(
-      'The request should be made in this place, the payload is:',
-      combineArrayData
-    );
-  };
-
   const onDropFunction = (dropzoneId: string, file: any) => {
     const index = fileObjs.findIndex((obj: any) => obj.id === dropzoneId);
     if (index === -1) return;
@@ -96,6 +82,7 @@ const BomDialogContent = ({
     const fileNameJson = fileData.fileNameJson;
     const fileExtension = fileData.extension;
     const loaderText = 'Reading File';
+    const fileCurrentPosition = fileObjs[index].currentPosition;
 
     // assign known values to the object
     setFileObjs((currentFileObjs) => {
@@ -151,12 +138,16 @@ const BomDialogContent = ({
           };
           return updatedFileObjs;
         });
-
+        console.log(
+          'Before Step 2 - we have to create functionality described in ticket 51 - to get the value for: custrecord_bom_import_transaction  and  custrecord_orion_bom_intialization_ident'
+        );
         const bomImportCreateObj = {
           action: 'create',
           custrecord_bom_import_importd_file_url: fileID,
-          custrecord_bom_import_file_import_order: index + 1,
-          custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode  ---PM:what the actual value should be here????
+          custrecord_bom_import_file_import_order: fileCurrentPosition,
+          // don't include that custrecord_bom_import_transaction if record doesn't exist
+          custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode  ---PM:what the actual value should be here???? - record exist - grab url param
+          // if record exist do not include that custrecord_orion_bom_intialization_ident
           custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script  ---PM:what the actual value should be here????
           scriptID: 290,
           deploymentID: 1,
@@ -174,11 +165,7 @@ const BomDialogContent = ({
           handleRequestError(err_msg, index, 'getBomImportCreateObj');
         } else {
           const bomRecordID = getBomImportCreateObj.bomRecordID;
-          console.log(
-            '      bomRecordID was created as',
-            bomRecordID,
-            '   but we are not using it yet, only to assign it to to local array, but it is not used in HTTP at this step'
-          );
+
           setFileObjs((currentFileObjs) => {
             const updatedFileObjs = [...currentFileObjs];
             updatedFileObjs[index] = {
@@ -252,18 +239,14 @@ const BomDialogContent = ({
                 handleRequestError(err_msg, index, 'getRecordId');
               } else {
                 const response = finalRecordId;
-                console.log(
-                  'response',
-                  response,
-                  'we can now set loading state to false'
-                );
-
+                console.log('Process completed, set loading to false');
                 if (finalRecordId.bomRecordID === bomRecordID) {
                   setFileObjs((currentFileObjs) => {
                     const updatedFileObjs = [...currentFileObjs];
                     updatedFileObjs[index] = {
                       ...updatedFileObjs[index],
                       fileLoading: false,
+                      loaderText: 'File was successfully uploaded',
                     };
                     return updatedFileObjs;
                   });
@@ -273,68 +256,6 @@ const BomDialogContent = ({
           }
         }
       }
-
-      /////////////////////////////////////////////////////////////////////
-      // const reorderPayload = {
-      //   action: 'edit',
-      //   custrecord_bom_import_file_import_order: 'current position',
-      //   editID: bomRecordID,
-      //   scriptID: 290,
-      //   deploymentID: 1,
-      // };  // this is the payload we need to send when the reorder happens
-
-      // const reorderPayload2 = {
-      //   lines: 'array of objects - concatenated array of all liken from all objects',
-      //   fileName: "random string of char eg.'BOB'",
-      //   scriptID: 292,
-      //   deploymentID: 1,
-      // }; // this is the payload we need to send when we press "import lines"
-
-      //   ////--- Stefan's workers block ----/////
-      //   ////--- for some reason the POST is not even getting initiated when I was testing it ----/////
-
-      //   // post the message (object) to the web worker
-      //   // fileWorker.postMessage(fileDataObj);
-
-      //   // on return of the message from the web worker, apply the file to the BoM import record
-      //   // fileWorker.onmessage = (e) => {
-      //   //   console.log('fileWorker', e);
-      //   //   const { response, error } = e.data;
-      //   //   if (response) {
-      //   //     console.log('File uploaded successfully:', response);
-      //   //     const fileID = response.output.fileID; // update the file URL on the fileObj with the file URL result
-
-      //   //     // define fields to set on object
-      //   //     const bomImportCreateObj = {
-      //   //       action: 'create',
-      //   //       custrecord_bom_import_importd_file_url: fileID,
-      //   //       custrecord_bom_import_file_import_order: 1, // change to generate index
-      //   //       custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode
-      //   //       custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script
-      //   //       scriptID: 290,
-      //   //       deploymentID: 1,
-      //   //       endpoint: bomImportCreateURL,
-      //   //     };
-
-      //   //     bomImportWorker.postMessage(bomImportCreateObj);
-      //   //   } else if (error) {
-      //   //     console.error('Error uploading file:', error);
-      //   //   }
-      //   // };
-      //   // on return of the message from the web worker, capture the bom record id
-      //   // bomImportWorker.onmessage = (e) => {
-      //   //   console.log('bomImportWorker', e);
-      //   //   const { response, error } = e.data;
-      //   //   if (response) {
-      //   //     console.log('BoM Import record created successfully:', response);
-      //   //     const bomRecordID = response.output.recordID;
-      //   //     console.log('bomRecordID', bomRecordID);
-      //   //   } else if (error) {
-      //   //     console.error('Error creating BoM Import record:', error);
-      //   //   }
-      //   // };
-
-      //   ////---^^^^^^^^^^ Stefan's workers block ^^^^^^^^^^^----/////
     };
 
     reader.readAsText(file, 'UTF-8');
@@ -346,20 +267,25 @@ const BomDialogContent = ({
 
   return (
     <StyledContentWrapper>
-      {fileObjs.map((obj) => (
-        <StyledDropArea key={obj.id}>
-          {fileObjs.length > 1 && (
-            <StyledMinus onClick={() => handleDeleteDropZone(obj.id)} />
-          )}
-          <StyledCard>
-            <DragDrop fileObj={obj} onDropFunction={onDropFunction} />
-          </StyledCard>
-          <StyledCard onClick={() => handleDeleteDropZone(obj.id)}>
-            <StatusZone fileObj={obj} />
-          </StyledCard>
-        </StyledDropArea>
-      ))}
-      <ActionBtns onAddClick={handleAddNewDropZone} onActionClick={onAction} />
+      <SortableContext
+        items={fileObjs}
+        strategy={horizontalListSortingStrategy}
+      >
+        {fileObjs.map((obj) => (
+          <DropAndStatusArea
+            key={obj.id}
+            file={obj}
+            fileObjects={fileObjs}
+            handleDeleteDropZone={handleDeleteDropZone}
+            onDropFunction={onDropFunction}
+          />
+        ))}
+      </SortableContext>
+      <ActionBtns
+        onAddClick={handleAddNewDropZone}
+        onActionClick={onImportLines}
+        uploadProgress={uploadProgress}
+      />
     </StyledContentWrapper>
   );
 };
