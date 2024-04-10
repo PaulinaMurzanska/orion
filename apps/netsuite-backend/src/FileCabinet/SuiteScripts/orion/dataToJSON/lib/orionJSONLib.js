@@ -250,6 +250,8 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       }
 
       newOutputDefKeysLoop = orionHelperLib.findIDByField(fileDef, itemList, newOutputDef.item.items)
+
+      orionHelperLib.addUUIDToItemLines(newOutputDef.item.items)
       
       return newOutputDef
     } catch (e) {
@@ -357,7 +359,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     }
   }
 
-  
+
 
   /**
    * Generates XML options based on the provided file definition and JSON object.
