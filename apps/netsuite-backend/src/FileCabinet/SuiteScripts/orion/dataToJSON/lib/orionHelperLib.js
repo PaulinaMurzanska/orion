@@ -523,7 +523,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
     try {
       for (let itemLine of itemLines) {
-        itemLine.custcol_uuid = `${Date.now()}-${generateRandomString(15)}`
+        itemLine.custcol_uuid = `${Date.now()}-${generateRandomString(10)}`
       }
     } catch (e) {
       log.error(loggerTitle, e)
