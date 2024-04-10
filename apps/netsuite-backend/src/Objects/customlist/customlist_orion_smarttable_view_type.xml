@@ -1,0 +1,20 @@
+<customlist scriptid="customlist_orion_smarttable_view_type">
+  <description>The different views for the Orion Smart Table</description>
+  <isinactive>F</isinactive>
+  <isordered>T</isordered>
+  <name>SmartTable View Type</name>
+  <customvalues>
+    <customvalue scriptid="val_59702_td2893635_839">
+      <isinactive>F</isinactive>
+      <value>Default</value>
+    </customvalue>
+    <customvalue scriptid="val_59703_td2893635_477">
+      <isinactive>F</isinactive>
+      <value>User Curated</value>
+    </customvalue>
+    <customvalue scriptid="val_59704_td2893635_507">
+      <isinactive>F</isinactive>
+      <value>Summary</value>
+    </customvalue>
+  </customvalues>
+</customlist>
