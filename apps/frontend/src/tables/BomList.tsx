@@ -6,49 +6,50 @@ import { Order, Record } from '@orionsuite/dtos';
 import { api } from '@orionsuite/api-client';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import ProgressSpin from '../components/progress-spin/ProgressSpin';
+import _ from 'lodash';
 
 const BomList = () => {
-  const { data } = api.useGetRecordsQuery({ script: 220, deploy: 1 });
+  const { data, isLoading } = api.useGetRecordsQuery({
+    script: 220,
+    deploy: 1,
+  });
 
   const [editable, setEditable] = useState<boolean | undefined>();
-  // const [search, setSearch] = useState<string | undefined>();
-  // const [selectedRows, setSelectedRows] = useState<Record[]>([]);
+  const [search, setSearch] = useState<string | undefined>();
+  const [selectedRows, setSelectedRows] = useState<Record[]>([]);
 
   const [records, setRecords] = useState<Record[]>([]);
-  // const ids = useMemo(() => orders?.map(({ id }) => id) ?? [], [orders]);
-
-  const columns = useMemo(
-    () => [
-      {
-        id: 'id',
-        header: 'ID',
-      },
-      {
-        id: 'name',
-        header: 'Name',
-      },
-      {
-        id: 'price',
-        header: 'Price',
-        cellVariant: 'currency',
-      },
-      {
-        id: 'description',
-        header: 'Description',
-      },
-    ],
-    []
+  const [columns, setColumns] = useState<any[]>([]);
+  const ids = useMemo(
+    () => records?.map(({ id }) => String(id)) ?? [],
+    [records]
   );
 
-  // fetch('/netsuite').then((res) => console.log('RES', res));
-
   const onRowSelectionChange = (selectedRows: Record[]) => {
-    // setSelectedRows(selectedRows);
+    setSelectedRows(selectedRows);
   };
 
   useEffect(() => {
-    setRecords(data?.bomRecs ?? []);
+    if (data && data.content) {
+      const parsed = JSON.parse(data.content ?? '{}');
+      const items = parsed?.lineJSON?.item?.items?.slice(0, 100) ?? [];
+      const columns = Object.keys(items[0]).map((key) => ({
+        id: key,
+        header: key,
+      }));
+      setRecords(items);
+      setColumns(columns);
+    }
   }, [data]);
+
+  if (isLoading) {
+    return (
+      <div className="m-10">
+        <ProgressSpin size={10} />
+      </div>
+    );
+  }
 
   return (
     <div className="m-6">
@@ -56,32 +57,32 @@ const BomList = () => {
         data={records}
         columns={columns}
         onRowSelectionChange={onRowSelectionChange}
-        header={<h1 className="text-3xl font-extrabold">Bom list table</h1>}
-        // editable={editable}
-        // search={search}
-        // setSearch={setSearch}
+        header={<h1 className="text-3xl font-extrabold">Bom records</h1>}
+        editable={editable}
+        search={search}
+        setSearch={setSearch}
         onRowUpdate={(rowIndex, columnId, value) => {
-          // setOrders((old) =>
-          //   old.map((row, index) => {
-          //     if (index === rowIndex) {
-          //       return {
-          //         ...old[rowIndex],
-          //         [columnId]: value,
-          //       };
-          //     }
-          //     return row;
-          //   })
-          // );
+          setRecords((old) =>
+            old.map((row, index) => {
+              if (index === rowIndex) {
+                return {
+                  ...old[rowIndex],
+                  [columnId]: value,
+                };
+              }
+              return row;
+            })
+          );
         }}
         onRowDragEnd={(event: DragEndEvent) => {
           const { active, over } = event;
-          // if (active && over && active.id !== over.id) {
-          //   setOrders((data) => {
-          //     const oldIndex = ids.indexOf(String(active.id));
-          //     const newIndex = ids.indexOf(String(over.id));
-          //     return arrayMove(data, oldIndex, newIndex);
-          //   });
-          // }
+          if (active && over && active.id !== over.id) {
+            setRecords((data) => {
+              const oldIndex = ids.indexOf(String(active.id));
+              const newIndex = ids.indexOf(String(over.id));
+              return arrayMove(data, oldIndex, newIndex);
+            });
+          }
         }}
         actions={
           <>
@@ -111,12 +112,34 @@ const BomList = () => {
           <div className="flex gap-2 items-center">
             <Input
               placeholder="Search"
-              // value={search}
-              // onChange={(e) => setSearch(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
         }
-        // footer={<div>Selected rows {selectedRows.length ?? 0}</div>}
+        footer={
+          <>
+            <div>
+              <b>Lines selected:</b> {selectedRows.length ?? 0}/
+              {records.length ?? 0}
+            </div>
+            <div style={{ margin: '0 0 0 auto' }}>
+              <b>Quantity:</b> 0
+            </div>
+            <div>
+              <b>Cost:</b> $0
+            </div>
+            <div>
+              <b>Sell:</b> $0
+            </div>
+            <div>
+              <b>GP$:</b> $0
+            </div>
+            <div>
+              <b>GP%:</b> 0%
+            </div>
+          </>
+        }
       />
     </div>
   );

@@ -184,11 +184,11 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
           ))}
         </TableHeader>
         <TableBody>
-          <TableSidebar<T>
-            open={sidebarOpen}
-            setOpen={setSidebarOpen}
-            row={sidebarRow}
-          />
+          {/*<TableSidebar<T>*/}
+          {/*  open={sidebarOpen}*/}
+          {/*  setOpen={setSidebarOpen}*/}
+          {/*  row={sidebarRow}*/}
+          {/*/>*/}
           <SortableContext
             items={dataIds}
             strategy={verticalListSortingStrategy}
