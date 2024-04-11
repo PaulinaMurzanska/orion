@@ -7,13 +7,13 @@ import {
   StyledInnerContent,
 } from './StyledBomDialog';
 import { DndContext, closestCorners } from '@dnd-kit/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import BomDialogContent from '../dialog-content/BomDialogContent';
 import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
+import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
-import { handleHttpRequest } from '../../../workers/FileWorker';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
 
@@ -42,6 +42,9 @@ const fileObjEmpty: FileObjectType = {
 
 const BomCustomDialog = () => {
   const idInitial = nanoid(8);
+
+  const workerRef = useRef<any>(null);
+
   const initialObject = { ...fileObjEmpty };
   initialObject.id = idInitial;
   const [fileObjs, setFileObjs] = useState<FileObjectType[]>([initialObject]);
@@ -99,9 +102,9 @@ const BomCustomDialog = () => {
       }
       return updatedFileObjs;
     });
+
     const combinedItemLines = fileObjs.map((obj) => obj.itemLines).flat();
     setFilesCombined(combinedItemLines);
-    console.log('combinedItemLines', combinedItemLines);
     const id = nanoid(5);
     const combineArrayData = {
       lines: combinedItemLines,
@@ -138,10 +141,6 @@ const BomCustomDialog = () => {
           file.bomRecordID !== null
       );
 
-      if (changedRecords.length > 0) {
-        setFileObjs(changedRecords);
-      }
-
       setFileObjs((currentFileObjs) => {
         const updatedFileObjs = [...currentFileObjs];
         for (const [index, file] of updatedFileObjs.entries()) {
@@ -175,8 +174,8 @@ const BomCustomDialog = () => {
           }
           return updatedFileObjs;
         });
-
-        const promises = changedRecords.map((file) => {
+        const promises = [];
+        for (const [index, file] of changedRecords.entries()) {
           const reorderPayload = {
             action: 'edit',
             custrecord_bom_import_file_import_order: file.currentPosition,
@@ -184,11 +183,17 @@ const BomCustomDialog = () => {
             scriptID: 290,
             deploymentID: 1,
           };
-          return handleHttpRequest(reorderPayload, baseUrl);
-        });
-
+          console.log('start promise - ', index);
+          const promise = await initiateProcessPromise(
+            'updateNewFilesOrder',
+            reorderPayload,
+            null
+          );
+          promises.push(promise);
+        }
         try {
           const responses = await Promise.all(promises);
+
           if (responses) {
             setFileObjs((currentFileObjs) => {
               const updatedFileObjs = [...currentFileObjs];
@@ -229,6 +234,58 @@ const BomCustomDialog = () => {
       }
     }
   };
+  const handleRequestError = (message: string, key: string) => {
+    const err_msg = `Error on ${key} function: ${message}. We should implement here some action what we want to do if this error appears for this file.`;
+    alert(err_msg);
+  };
+
+  const initiateProcessPromise = async (
+    action: any,
+    payload: any,
+    defaultData: any
+  ) => {
+    return new Promise((resolve, reject) => {
+      const messageHandler = (e: any) => {
+        const { action: responseAction, data, error } = e.data;
+        if (responseAction === action) {
+          workerRef.current.removeEventListener('message', messageHandler);
+          if (error) {
+            reject(new Error(data.err_message));
+          } else {
+            resolve(data);
+          }
+        }
+      };
+      workerRef.current.addEventListener('message', messageHandler);
+      workerRef.current.postMessage({
+        action,
+        payload,
+        defaultData,
+        endpoint: baseUrl,
+        method: 'POST',
+      });
+    });
+  };
+
+  useEffect(() => {
+    workerRef.current = new WebWorker();
+    workerRef.current.onmessage = (e: any) => {
+      const { action, data, error } = e.data;
+
+      if (error) {
+        const err_msg = data.err_message;
+        handleRequestError(err_msg, action);
+        return;
+      }
+      switch (action) {
+        case 'updateNewFilesOrder':
+          console.log('File was successfully updated', data);
+          break;
+      }
+    };
+
+    return () => workerRef.current.terminate();
+  }, []);
 
   useEffect(() => {
     const isDataProcessing = fileObjs.some((file) => file.fileLoading === true);

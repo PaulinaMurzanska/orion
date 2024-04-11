@@ -38,6 +38,7 @@ const DropAndStatusArea = ({
       id={id}
     >
       <StyledCard>
+        <p>bomRecordID {file.bomRecordID}</p>
         <DragDrop fileObj={file} onDropFunction={onDropFunction} />
       </StyledCard>
       <StyledCard>

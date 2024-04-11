@@ -2,6 +2,7 @@ import Unfonts from 'unplugin-fonts/vite';
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { comlink } from "vite-plugin-comlink";
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -28,7 +29,6 @@ export default defineConfig({
 
   plugins: [
     react(),
-
     nxViteTsPaths(),
     Unfonts({
       google: {
