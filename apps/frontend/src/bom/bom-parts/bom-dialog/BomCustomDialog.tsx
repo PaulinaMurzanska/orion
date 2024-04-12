@@ -183,7 +183,6 @@ const BomCustomDialog = () => {
             scriptID: 290,
             deploymentID: 1,
           };
-          console.log('start promise - ', index);
           const promise = await initiateProcessPromise(
             'updateNewFilesOrder',
             reorderPayload,
