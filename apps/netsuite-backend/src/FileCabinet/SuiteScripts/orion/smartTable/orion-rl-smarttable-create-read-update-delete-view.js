@@ -6,57 +6,71 @@
  *
  */
 
-define(['N/record'], function (record) {
+define(['N/record', `N/query`], function (record, query) {
+  const get = async context => {
+    const loggerTitle = 'get'
+        
+    log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
+    const smartTableRecordID = context.smartTableRecordID
+    const suiteQL = `SELECT * FROM customrecord_orion_smarttable_view WHERE id = ${smartTableRecordID}`
+    const queryResults = new Promise(resolve => { resolve(query.runSuiteQL({query: suiteQL}).asMappedResults()) })
+
+    return queryResults
+  }
+
   const post = async context => {
     const loggerTitle = 'post'
-    try {
-      log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
-      const action = context.action
-      const editID = context.editID
-      const smarttableViewValues = context
-      // {
-      //   action: "create",
-      //   custrecord_bom_import_importd_file_url: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt",
-      //   custrecord_bom_import_json_importd_file: "/core/media/media.nl?id=199&c=2584332&h=aekfP4cHu3Hsb2QE-uvqstpt-shVUivg0EtyoPI_d4KbXE5V&mv=ltj3t6yo&_xt=.txt",
-      //   custrecord_bom_import_file_import_order: 1,
-      //   custrecord_bom_import_transaction: 123456,
-      //   custrecord_orion_bom_intialization_ident: "GmOBKvsQkQ4R3U2N"
-      // }
+    log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
+    const action = context.action
+    const editID = context.editID
+    const smartTableViewValues = context
+    // {
+    //   action: "create",
+    //   custrecord_orion_smarttable_view_type: 1, // 1 = Default, 2 = User Curated, 3 = Summary
+    //   custrecord_orion_view_json: "{}",
+    //   custrecord_orion_smarttable_icon: 1,
+    //   custrecord_orion_smarttable_position: 2,
+    //   custrecord_orion_smarttable_roles: [1, 2],
+    //   custrecord_orion_smarttable_current_user: 1,
+    // }
 
-      const recordID = await createCustomRecord(action, bomImportValues, editID)
+    const recordID = await createCustomRecord(action, smartTableViewValues, editID)
 
-      return {
-        bomRecordID: recordID
-      }
-
-    } catch (e) {
-      const errorString = e.toString()
-      // handle errors
-      log.error({
-        title: loggerTitle,
-        details: `Error: ${errorString}`
-      })
-
-      return ({
-        error: `Error: ${errorString}`
-      })
+    return {
+      smartTableViewID: recordID
     }
   }
+
+  const deleteReq = async context => {
+    const loggerTitle = 'delete'
+    log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
+    const recordID = context.smartTableRecordID
+    const recordType = 'customrecord_orion_smarttable_view'
+    const deleteRecord = await record.delete.promise({
+      type: recordType,
+      id: recordID
+    })
+
+    return {
+      smartTableViewID: recordID
+    }
+  }
+  
 
   /**
    * Creates or edits a custom record based on the provided action and values.
    * @param {string} action - The action to perform. Possible values are 'create' or 'edit'.
-   * @param {Object} bomImportValues - The values to set for the custom record.
+   * @param {Object} smartTableValues - The values to set for the custom record.
    * @returns {Object} - An object containing the error message if an error occurs, otherwise undefined.
    */
-  const createCustomRecord = async (action, bomImportValues, editID) => {
+  const createCustomRecord = async (action, smartTableValues, editID) => {
     const loggerTitle = 'createCustomRecord'
     try {
-      let bomImportID
+      let smartTableID
       switch (action) {
         case 'create':
           const customRecord = await record.create.promise({
-            type: 'customrecord_orion_bom_import'
+            type: 'customrecord_orion_smarttable_view'
           })
 
           customRecord.setValue({
@@ -65,27 +79,27 @@ define(['N/record'], function (record) {
           })
 
           // set field values
-          for (let key in bomImportValues) {
+          for (let key in smartTableValues) {
             customRecord.setValue({
               fieldId: key,
-              value: bomImportValues[key]
+              value: smartTableValues[key]
             })
           }
 
           // save values
-          bomImportID = await customRecord.save.promise()
+          smartTableID = await customRecord.save.promise()
           break
         case 'edit':
           // update values
-          bomImportID = await record.submitFields.promise({
-            type: 'customrecord_orion_bom_import',
+          smartTableID = await record.submitFields.promise({
+            type: 'customrecord_orion_smarttable_view',
             id: editID,
-            values: bomImportValues
+            values: smartTableValues
           })
           break
       }
 
-      return bomImportID
+      return smartTableID
 
     } catch (e) {
       const errorString = e.toString()
@@ -102,6 +116,8 @@ define(['N/record'], function (record) {
   }
 
   return {
-    post: post
+    get: get,
+    post: post,
+    delete: deleteReq
   }
 })
