@@ -2,7 +2,7 @@
     <files>
         <path>~/FileCabinet/SuiteScripts/orion/orionModules.json</path>
         <path>~/FileCabinet/SuiteScripts/orion/dataToJSON/*</path>
-        <path>~/FileCabinet/SuiteScripts/orion/smartTable/orion-ue-add-smart-table.js</path>
+        <path>~/FileCabinet/SuiteScripts/orion/smartTable/*</path>
         <path>~/FileCabinet/SuiteScripts/orion/bomImport/*</path>
         <path>~/FileCabinet/SuiteScripts/orion/frontend/*</path>
     </files>
