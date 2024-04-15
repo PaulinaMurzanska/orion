@@ -282,15 +282,15 @@
       <defaultchecked>F</defaultchecked>
       <defaultselection></defaultselection>
       <defaultvalue></defaultvalue>
-      <description></description>
+      <description>The URL for the icon file to be used for the view</description>
       <displayheight></displayheight>
-      <displaytype>NORMAL</displaytype>
+      <displaytype>HIDDEN</displaytype>
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
       <fieldtype>URL</fieldtype>
       <globalsearch>F</globalsearch>
-      <help></help>
+      <help>The URL for the icon file to be used for the view</help>
       <isformula>F</isformula>
       <ismandatory>F</ismandatory>
       <isparent>F</isparent>
@@ -314,4 +314,17 @@
       <subtab></subtab>
     </customrecordcustomfield>
   </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_59917_td2893635_696">
+      <custrecord_orion_smarttable_current_user>[ACCOUNT_SPECIFIC_VALUE]</custrecord_orion_smarttable_current_user>
+      <custrecord_orion_smarttable_icon>[/BoM Import Files/cloud-fog-svgrepo-com.svg]</custrecord_orion_smarttable_icon>
+      <custrecord_orion_smarttable_icon_url>/core/media/media.nl?id=2432&amp;c=TD2893635&amp;h=xYrqe4fqmigE7S8DQXtDZXeyPHMivDy3w6kzyEV5GhTnpch1&amp;_xt=.svg</custrecord_orion_smarttable_icon_url>
+      <custrecord_orion_smarttable_position>1</custrecord_orion_smarttable_position>
+      <custrecord_orion_smarttable_roles>ACCOUNTANT|ADMINISTRATOR</custrecord_orion_smarttable_roles>
+      <custrecord_orion_smarttable_view_type>[scriptid=customlist_orion_smarttable_view_type.val_59702_td2893635_839]</custrecord_orion_smarttable_view_type>
+      <custrecord_orion_view_json>[{}, {}]</custrecord_orion_view_json>
+      <isinactive>F</isinactive>
+      <name>View Area</name>
+    </instance>
+  </instances>
 </customrecordtype>
