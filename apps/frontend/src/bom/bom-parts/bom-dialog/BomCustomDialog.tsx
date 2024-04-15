@@ -1,4 +1,8 @@
 import {
+  BomCombinedArrayObjectType,
+  setBomImportFiles,
+} from '../../../../store/bomImportFilesSlice';
+import {
   CustomButton,
   CustomTriggerButton,
   StyledContentWrapper,
@@ -12,10 +16,11 @@ import { useEffect, useRef, useState } from 'react';
 import BomDialogContent from '../dialog-content/BomDialogContent';
 import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
-import WebWorker from '../../../workers/WebWorker?worker&inline';
+import WebWorker from '../../../workers/WebWorker?worker';
 import { arrayMove } from '@dnd-kit/sortable';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
+import { useDispatch } from 'react-redux';
 
 const baseUrl =
   'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
@@ -41,8 +46,9 @@ const fileObjEmpty: FileObjectType = {
 };
 
 const BomCustomDialog = () => {
-  const idInitial = nanoid(8);
+  const dispatch = useDispatch();
 
+  const idInitial = nanoid(8);
   const workerRef = useRef<any>(null);
 
   const initialObject = { ...fileObjEmpty };
@@ -53,6 +59,10 @@ const BomCustomDialog = () => {
 
   const setFilesDataArray = (filesArray: FileObjectType[]) => {
     setFileObjs(filesArray);
+  };
+
+  const handleSaveFilesGlobally = (newFiles: BomCombinedArrayObjectType[]) => {
+    dispatch(setBomImportFiles(newFiles));
   };
 
   const getFilePosition = (id: any) =>
@@ -105,6 +115,7 @@ const BomCustomDialog = () => {
 
     const combinedItemLines = fileObjs.map((obj) => obj.itemLines).flat();
     setFilesCombined(combinedItemLines);
+    handleSaveFilesGlobally(combinedItemLines);
     const id = nanoid(5);
     const combineArrayData = {
       lines: combinedItemLines,

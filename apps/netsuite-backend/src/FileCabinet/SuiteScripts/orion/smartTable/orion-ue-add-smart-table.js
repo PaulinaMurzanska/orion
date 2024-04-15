@@ -12,7 +12,7 @@ define(['N/ui/serverWidget', 'N/runtime'], (serverWidget, runtime) => {
    * @param {N/ui/serverWidget.Form} context.form - The NetSuite form object.
    */
   const beforeLoad = (context) => {
-    if (context.type === context.UserEventType.VIEW || context.type === context.UserEventType.EDIT) {
+    if (context.type === context.UserEventType.VIEW || context.type === context.UserEventType.EDIT  || context.type === context.UserEventType.CREATE) {
       const form = context.form
 
       const scriptContent = runtime.getCurrentScript().getParameter({

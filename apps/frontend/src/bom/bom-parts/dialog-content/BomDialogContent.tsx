@@ -32,7 +32,10 @@ const BomDialogContent = ({
 }: DialogContentProps) => {
   const [fileObjects, setFileObjs] = useState<FileObjectType[]>(fileObjs);
 
-  const workerRef = useRef<any>(null);
+  const queryParams = new URLSearchParams(location.search);
+  const urlParamId = queryParams.get('id');
+
+  const workerRef = useRef<Worker | null>(null);
 
   const handleAddNewDropZone = () => {
     const id = nanoid(8);
@@ -74,8 +77,35 @@ const BomDialogContent = ({
     terminate(index);
   };
 
+  const getIdentifier = (queryId: string | null) => {
+    let id;
+    let fromParam;
+    if (queryId === null) {
+      const initialStringIdElement = document.getElementById(
+        'created-string-id'
+      ) as HTMLElement | null;
+      if (initialStringIdElement) {
+        const dataCreateId =
+          initialStringIdElement.getAttribute('data-create-id');
+        id = dataCreateId;
+      } else {
+        console.warn('Element with ID "created-string-id" not found');
+        id = null;
+      }
+      fromParam = false;
+    } else {
+      id = queryId;
+      fromParam = true;
+    }
+    const idData = {
+      id,
+      fromParam,
+    };
+    return idData;
+  };
+
   const initiateProcess = (action: any, payload: any, defaultData: any) => {
-    workerRef.current.postMessage({
+    workerRef.current?.postMessage({
       action,
       payload,
       defaultData,
@@ -96,18 +126,25 @@ const BomDialogContent = ({
       };
       return updatedFileObjs;
     });
-    const bomImportCreateObj = {
+
+    const { id, fromParam } = getIdentifier(urlParamId);
+
+    const bomImportCreateObj: any = {
       action: 'create',
       custrecord_bom_import_importd_file_url: fileID,
       custrecord_bom_import_file_import_order:
         defaultPayload.fileCurrentPosition,
-      // don't include that custrecord_bom_import_transaction if record doesn't exist
-      custrecord_bom_import_transaction: 3, // capture transaction id from record if record is in edit mode  ---PM:what the actual value should be here???? - record exist - grab url param
-      // if record exist do not include that custrecord_orion_bom_intialization_ident
-      custrecord_orion_bom_intialization_ident: 'GmOBKvsQkQ4R3U2N', //capture the intialization identity number from the front end script  ---PM:what the actual value should be here????
       scriptID: 290,
       deploymentID: 1,
     };
+    if (fromParam) {
+      console.log('Transaction id grabbed from url:', id);
+      bomImportCreateObj.custrecord_bom_import_transaction = id;
+    } else {
+      console.log('Transaction id grabbed from dataset :', id);
+      bomImportCreateObj.custrecord_orion_bom_intialization_ident = id;
+    }
+
     initiateProcess('getBomRecordId', bomImportCreateObj, defaultPayload);
   };
 
@@ -305,7 +342,7 @@ const BomDialogContent = ({
       }
     };
 
-    return () => workerRef.current.terminate();
+    return () => workerRef.current?.terminate();
   }, []);
 
   useEffect(() => {
