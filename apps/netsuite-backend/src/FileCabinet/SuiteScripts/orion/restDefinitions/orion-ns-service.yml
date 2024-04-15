@@ -350,6 +350,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a SmartTable View record
+      tags:
+        - smartTable
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 302
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: smartTableRecordID
+          required: true
+          schema:
+            type: integer
+            description: The ID of the SmartTable view record
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSmartTableViewResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
                 
 components:
   schemas:
@@ -428,6 +466,16 @@ components:
         smartTableViewID:
           type: integer
           description: The ID of the SmartTable view record
+    
+    DeleteSmartTableViewResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "SUCCESS: SmartTable View record deleted successfully."
+        smartTableViewID:
+          type: integer
+          example: 108
             
     LineJSON:
       type: object
