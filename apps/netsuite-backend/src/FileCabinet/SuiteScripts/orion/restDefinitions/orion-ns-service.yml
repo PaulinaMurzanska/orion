@@ -306,6 +306,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create or edit a SmartTable view
+      tags:
+        - smartTable
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 302
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmartTableViewRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSmartTableViewResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
                 
 components:
   schemas:
@@ -373,7 +417,17 @@ components:
           type: string
           example: "SUCCESS: SmartTable view retrieved successfully."
         smartTableView:
-          $ref: '#/components/schemas/SmartTableView'  
+          $ref: '#/components/schemas/SmartTableView'
+
+    PostSmartTableViewResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        smartTableViewID:
+          type: integer
+          description: The ID of the SmartTable view record
             
     LineJSON:
       type: object
@@ -515,6 +569,36 @@ components:
           type: string
       required:
         - action
+
+    SmartTableViewRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          description: The action to perform (create or edit)
+        editID:
+          type: integer
+          description: The ID of the SmartTable view record to edit (required for edit action)
+        custrecord_orion_smarttable_view_type:
+          type: integer
+          description: The type of SmartTable view (1 = Default, 2 = User Curated, 3 = Summary)
+        custrecord_orion_view_json:
+          type: string
+          description: The JSON representation of the SmartTable view
+        custrecord_orion_smarttable_icon:
+          type: integer
+          description: The icon ID for the SmartTable view
+        custrecord_orion_smarttable_position:
+          type: integer
+          description: The position of the SmartTable view
+        custrecord_orion_smarttable_roles:
+          type: array
+          items:
+            type: integer
+          description: The roles associated with the SmartTable view
+        custrecord_orion_smarttable_current_user:
+          type: integer
+          description: The ID of the current user
         
     ErrorResponse:
       type: object
