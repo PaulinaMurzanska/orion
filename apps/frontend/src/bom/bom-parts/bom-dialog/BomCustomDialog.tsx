@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import BomDialogContent from '../dialog-content/BomDialogContent';
 import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
-import WebWorker from '../../../workers/WebWorker?worker';
+import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
