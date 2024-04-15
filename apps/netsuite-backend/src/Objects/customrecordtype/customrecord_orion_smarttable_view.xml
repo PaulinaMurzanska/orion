@@ -281,7 +281,7 @@
       <checkspelling>F</checkspelling>
       <defaultchecked>F</defaultchecked>
       <defaultselection></defaultselection>
-      <defaultvalue>{custrecord_orion_smarttable_icon.file}</defaultvalue>
+      <defaultvalue></defaultvalue>
       <description></description>
       <displayheight></displayheight>
       <displaytype>NORMAL</displaytype>
@@ -291,7 +291,7 @@
       <fieldtype>URL</fieldtype>
       <globalsearch>F</globalsearch>
       <help></help>
-      <isformula>T</isformula>
+      <isformula>F</isformula>
       <ismandatory>F</ismandatory>
       <isparent>F</isparent>
       <label>Icon URL</label>
@@ -310,7 +310,7 @@
       <sourcefilterby></sourcefilterby>
       <sourcefrom></sourcefrom>
       <sourcelist></sourcelist>
-      <storevalue>F</storevalue>
+      <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
   </customrecordcustomfields>

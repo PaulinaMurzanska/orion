@@ -3,11 +3,11 @@
  * @NScriptType UserEventScript
  * @NModuleScope SameAccount
  */
-define(['N/record', 'N/url'], (record, url) => {
+define(['N/record', 'N/file'], (record, file) => {
   const afterSubmit = context => {
     if (context.type === context.UserEventType.EDIT || context.type === context.UserEventType.CREATE) {
       switch (context.newRecord.type) {
-        case 'customrecord_orion_smarttable':
+        case 'customrecord_orion_smarttable_view':
           setURLField(context)
           break
       }
@@ -15,22 +15,29 @@ define(['N/record', 'N/url'], (record, url) => {
   }
 
   const setURLField = context => {
+    const loggerTitle = 'setURLField'
+    log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
     const newRecord = context.newRecord
     const oldRecord = context.oldRecord ? context.oldRecord : null
 
     // Check if the field has changed
-    if (!oldRecord || newRecord.getValue('	custrecord_orion_smarttable_icon') !== oldRecord.getValue('	custrecord_orion_smarttable_icon')) {
-      var fileId = newRecord.getValue('	custrecord_orion_smarttable_icon')
+    if (!oldRecord || newRecord.getValue('custrecord_orion_smarttable_icon') !== oldRecord.getValue('custrecord_orion_smarttable_icon')) {
+      var fileID = newRecord.getValue('custrecord_orion_smarttable_icon')
 
       // Get the file URL
-      var fileUrl = url.resolveRecord({
-        recordType: url.Type.FILE,
-        recordId: fileId,
-        isEditMode: false
+      var fileObj = file.load({
+        id: fileID
       })
 
-      // Update the URL field
-      newRecord.setValue('custrecord_orion_smarttable_icon', fileUrl)
+      var fileUrl = fileObj.url
+
+      record.submitFields({
+        type: newRecord.type,
+        id: newRecord.id,
+        values: {
+          custrecord_orion_smarttable_icon_url: fileUrl
+        }
+      })
     }
   }
 
