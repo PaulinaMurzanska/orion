@@ -263,7 +263,7 @@ paths:
                   $ref: '#/components/schemas/ErrorResponse'
   /*getSmarTableRecordDomain*/app/site/hosting/restlet.nl:
     get:
-      summary: Get a SmartTable view
+      summary: Get a SmartTable View record
       tags:
         - smartTable
       parameters:
@@ -307,7 +307,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     post:
-      summary: Create or edit a SmartTable view
+      summary: Create or edit a SmartTable View record
       tags:
         - smartTable
       parameters:
