@@ -31,12 +31,18 @@ define(['N/record', 'N/file'], (record, file) => {
 
       var fileUrl = fileObj.url
 
+      const valuesObj = {
+        custrecord_orion_smarttable_icon_url: fileUrl
+      }
+      
+      if (context.type === context.UserEventType.CREATE) {
+        valuesObj.name = `ST-${newRecord.id}`
+      }
+
       record.submitFields({
         type: newRecord.type,
         id: newRecord.id,
-        values: {
-          custrecord_orion_smarttable_icon_url: fileUrl
-        }
+        values: valuesObj
       })
     }
   }

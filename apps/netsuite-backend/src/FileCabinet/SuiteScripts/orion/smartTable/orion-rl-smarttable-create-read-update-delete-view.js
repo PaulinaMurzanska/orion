@@ -45,7 +45,7 @@ define(['N/record', 'N/query', 'N/error'], function (record, query, error) {
     //   custrecord_orion_smarttable_current_user: 1,
     // }
 
-    const recordID = await createCustomRecord(action, smartTableViewValues, editID)
+    const recordID = createCustomRecord(action, smartTableViewValues, editID)
 
     let message
 
@@ -66,17 +66,19 @@ define(['N/record', 'N/query', 'N/error'], function (record, query, error) {
     }
   }
 
-  const deleteReq = async context => {
+  const deleteReq = context => {
     const loggerTitle = 'delete'
+
     log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
     const recordID = context.smartTableRecordID
     const recordType = 'customrecord_orion_smarttable_view'
-    const deleteRecord = await record.delete.promise({
+    const deleteRecord = record.delete({
       type: recordType,
       id: recordID
     })
 
     return {
+      message: 'SUCCESS: SmartTable View record deleted successfully.',
       smartTableViewID: recordID
     }
   }
@@ -88,19 +90,19 @@ define(['N/record', 'N/query', 'N/error'], function (record, query, error) {
    * @param {Object} smartTableValues - The values to set for the custom record.
    * @returns {Object} - An object containing the error message if an error occurs, otherwise undefined.
    */
-  const createCustomRecord = async (action, smartTableValues, editID) => {
+  const createCustomRecord = (action, smartTableValues, editID) => {
     const loggerTitle = 'createCustomRecord'
     try {
       let smartTableID
       switch (action) {
         case 'create':
-          const customRecord = await record.create.promise({
+          const customRecord = record.create({
             type: 'customrecord_orion_smarttable_view'
           })
 
           customRecord.setValue({
             fieldId: 'name',
-            value: 'Intiated BoM Import'
+            value: 'Intiated SmartTable View Record'
           })
 
           // set field values
@@ -112,11 +114,11 @@ define(['N/record', 'N/query', 'N/error'], function (record, query, error) {
           }
 
           // save values
-          smartTableID = await customRecord.save.promise()
+          smartTableID = customRecord.save()
           break
         case 'edit':
           // update values
-          smartTableID = await record.submitFields.promise({
+          smartTableID = record.submitFields({
             type: 'customrecord_orion_smarttable_view',
             id: editID,
             values: smartTableValues
