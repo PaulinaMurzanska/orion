@@ -1,0 +1,22 @@
+<restlet scriptid="customscript_orion_st_get_view_recs">
+  <description>Returns SmartTable Views based on the user viewing them</description>
+  <isinactive>F</isinactive>
+  <name>Orion RL SmartTable Get View Records</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/orion/smartTable/orion-rl-get-view-records.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_orion_st_get_view_recs">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>Orion RL SmartTable Get View Records</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

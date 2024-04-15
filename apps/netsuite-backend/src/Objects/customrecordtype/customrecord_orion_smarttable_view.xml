@@ -132,7 +132,11 @@
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
+<<<<<<< HEAD
       <fieldtype>DOCUMENT</fieldtype>
+=======
+      <fieldtype>IMAGE</fieldtype>
+>>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
       <globalsearch>F</globalsearch>
       <help>This icon image for the Orion SmartTable View record</help>
       <isformula>F</isformula>
@@ -210,7 +214,11 @@
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
+<<<<<<< HEAD
       <fieldtype>MULTISELECT</fieldtype>
+=======
+      <fieldtype>SELECT</fieldtype>
+>>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
       <globalsearch>F</globalsearch>
       <help>Allowed roles for viewing the SmartTable</help>
       <isformula>F</isformula>
@@ -274,6 +282,7 @@
       <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
+<<<<<<< HEAD
     <customrecordcustomfield scriptid="custrecord_orion_smarttable_icon_url">
       <accesslevel>2</accesslevel>
       <allowquickadd>F</allowquickadd>
@@ -352,5 +361,7 @@
       <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
+=======
+>>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
   </customrecordcustomfields>
 </customrecordtype>

@@ -20,5 +20,6 @@
         <path>~/Objects/usereventscript/customscript_orion_ue_smarttable_logic.xml</path>
         <path>~/Objects/customlist/customlist_orion_smarttable_view_type.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_smarttable_view.xml</path>
+        <path>~/Objects/transactioncolumncustomfield/custcol_uuid.xml</path>
     </objects>
 </deploy>
