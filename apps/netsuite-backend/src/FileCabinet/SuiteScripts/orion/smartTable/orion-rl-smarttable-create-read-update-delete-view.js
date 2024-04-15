@@ -6,19 +6,30 @@
  *
  */
 
-define(['N/record', `N/query`], function (record, query) {
-  const get = async context => {
+define(['N/record', 'N/query', 'N/error'], function (record, query, error) {
+  const get = context => {
     const loggerTitle = 'get'
         
     log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
     const smartTableRecordID = context.smartTableRecordID
     const suiteQL = `SELECT * FROM customrecord_orion_smarttable_view WHERE id = ${smartTableRecordID}`
-    const queryResults = new Promise(resolve => { resolve(query.runSuiteQL({query: suiteQL}).asMappedResults()) })
+    const queryResults = query.runSuiteQL({query: suiteQL}).asMappedResults()
 
-    return queryResults
+    if (queryResults?.length > 0) {
+      return {
+        message: 'SUCCESS: SmartTable view retrieved successfully.',
+        smartTableView: queryResults[0]
+      }
+    } else {
+      throw error.create({
+        name: 'ORION_NO_SMARTTABLE_VIEW_FOUND',
+        message: 'ERROR: SmartTable view could not be retrieved.',
+        notifyOff: false
+      })
+    }
   }
 
-  const post = async context => {
+  const post = context => {
     const loggerTitle = 'post'
     log.debug(loggerTitle, `context: ${JSON.stringify(context)}`)
     const action = context.action
@@ -36,8 +47,22 @@ define(['N/record', `N/query`], function (record, query) {
 
     const recordID = await createCustomRecord(action, smartTableViewValues, editID)
 
-    return {
-      smartTableViewID: recordID
+    let message
+
+    switch (action) {
+      case 'create':
+        message = 'edited'
+        break
+      case 'edit':
+        message = 'edited'
+        break
+    }
+
+    if (recordID) {
+      return {
+        message: `SUCCESS: SmartTable view ${message} successfully.`,
+        smartTableViewID: recordID
+      }
     }
   }
 
