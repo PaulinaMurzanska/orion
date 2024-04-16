@@ -305,6 +305,7 @@ const BomCustomDialog = () => {
   return (
     <StyledDialog>
       <CustomTriggerButton
+        type="button"
         variant="outline"
         className="uppercase"
         onClick={handleClose}
