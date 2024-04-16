@@ -49,6 +49,7 @@ const StyledDragDrop = styled.div`
 `;
 
 const StyledDragTitle = styled.h2`
+  margin: 0 !important;
   font-weight: 700;
   font-size: 18px;
   line-height: 1;
@@ -56,6 +57,7 @@ const StyledDragTitle = styled.h2`
 `;
 
 const StyledDragTextSmall = styled.p`
+  margin: 0 !important;
   font-size: 14px;
   line-height: 20px;
   color: rgb(128, 128, 128);

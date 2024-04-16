@@ -13,14 +13,14 @@ const CustomButton = styled(Button)`
   height: 52px;
   transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   &:hover {
-    background-color: rgba(24, 103, 192, 0.05);
-    color: #1867c0;
+    background-color: rgba(24, 103, 192, 0.05) !important;
+    color: #1867c0 !important;
     transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 `;
 const CustomTriggerButton = styled(Button)`
-  background-color: rgb(24, 103, 192);
-  color: #fff;
+  background-color: rgb(24, 103, 192) !important;
+  color: #fff !important;
   text-transform: uppercase;
   font-size: 14px;
   letter-spacing: 1.25px;
@@ -35,9 +35,9 @@ const CustomTriggerButton = styled(Button)`
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    filter: brightness(1.2);
-    background-color: rgb(24, 103, 170);
-    color: white;
+    filter: brightness(1.2) !important;
+    background-color: rgb(24, 103, 170) !important;
+    color: white !important;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 8px -2px,
       rgba(0, 0, 0, 0.14) 0px 2px 8px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;
   }
