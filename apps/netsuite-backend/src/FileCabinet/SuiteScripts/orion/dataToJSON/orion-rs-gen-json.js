@@ -55,7 +55,7 @@ define(['N/file', 'N/error', 'orion/json', 'orion/helper'], (file, error, orionJ
     // generates the line JSON based on the file type
     const lineJSON = orionJSONLib.generateLineJSON(definition, textLoops, outDef, orionHelperLib)
 
-    log.error(loggerTitle, `lineJSON: ${JSON.stringify(lineJSON)}`)
+    log.debug(loggerTitle, `lineJSON: ${JSON.stringify(lineJSON)}`)
 
     if (lineJSON?.item?.items?.length > 0) {
       return {
