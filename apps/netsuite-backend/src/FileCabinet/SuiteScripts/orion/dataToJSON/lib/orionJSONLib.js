@@ -222,7 +222,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
           const regexResults = lineObj.match(keyRegex)
           if (regexResults?.length > 0) {
             // if the existance of piped values, run through discount calculation
-            const value = regexResults[2].indexOf('|') !== -1 ? orionHelperLib.retrieveValueFromDelimitedString(regexResults[2]) : regexResults[2]
+            const value = regexResults[2].indexOf('|') !== -1 ? orionHelperLib.retrieveValueFromDelimitedString(regexResults[2], '|') : regexResults[2]
             if (fileDef.id_maps[key]) {
               newOutputDefKeysLoop[key] = value
               itemList[key]?.length > 0 ? itemList[key].push({idx: idx, value: value}) : itemList[key] = [{idx: idx, value: value}]

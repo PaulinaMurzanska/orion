@@ -429,7 +429,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
     try {
       let resultValue = false
-      log.audit(loggerTitle, `str: ${str}`)
+      log.debug(loggerTitle, `str: ${str}`)
       const containsOnlyLetters = /^([^0-9]*)$/.test(str)
       const hasManufactureCode = itemObj[fileDef['manufacturer_code']]
       const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']] && itemObj[fileDef['manufacturer_code']].length > 3
@@ -501,11 +501,12 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
       let tiers = ppercent.split(splitterValue)
 
-      log.debug(loggerTitle, `tiers: ${JSON.stringify(tiers)}`)
-      if (tiers?.length > 1) {
-        if (tiers.length == 4) {
+      log.audit(loggerTitle, `tiers: ${JSON.stringify(tiers)}`)
+      if (tiers.length) {
+        if (tiers.length === 4) {
           // if there are 4 tiers the first is the actual numeric discount, and you can ignore the rest – go figure
-          ppercent = parseFloat(tiers[0]).toFixed(4)
+          discountpercent = parseFloat(tiers[0]).toFixed(4)
+          log.audit(loggerTitle, `discountpercent: ${discountpercent}`)
         } else {
           // tiered discounts: could be 1, 2 or 3 tiers. example: 40|40|40 or 40|15
           // 1st is percent off list: 40 in this example. cost will be 60% of list so far. The basis is now 100-40=60.
@@ -515,23 +516,22 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
           let basis = 0
 
           if (tiers[0] && tiers[0] > 0) {
-            discountpercent = tiers[0]
+            discountpercent = Number(tiers[0])
 
             basis = 100 - discountpercent
 
             if (tiers[1] && tiers[1] > 0) {
-              discountpercent += basis * (tiers[1] / 100)
+              discountpercent += basis * (Number(tiers[1]) / 100)
 
               basis = 100 - discountpercent
 
               if (tiers[2] && tiers[2] > 0) {
-                discountpercent += basis * (tiers[2] / 100)
+                discountpercent += basis * (Number(tiers[2]) / 100)
               }
             }
           }
         }
-      } 
-
+      }
       return discountpercent
     } catch (e) {
       log.error(loggerTitle, e)
@@ -589,40 +589,36 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   const calculateDiscount = (lineItem) => {
     let discountpercent = 0
 
-    if (ppercent.indexOf("|") != -1) {
-      let tiers = ppercent.split("|")
+    let tiers = ppercent.split("|")
 
-      if (tiers.length) {
-        if (tiers.length == 4) {
-          // if there are 4 tiers the first is the actual numeric discount, and you can ignore the rest – go figure
-          ppercent = parseFloat(tiers[0]).toFixed(4)
-        } else {
-          // tiered discounts: could be 1, 2 or 3 tiers. example: 40|40|40 or 40|15
-          // 1st is percent off list: 40 in this example. cost will be 60% of list so far. The basis is now 100-40=60.
-          // A 2nd tier of 40 again would add (basis * tier2/100), example: (60 * .4 = 24). Now the total discount so far is 64, and basis is now 36.
-          // A 3rd tier of 40 again would add (basis * tier3/100), example (36 * .4 = 14.4) to end up with a total discount of 78.4
+    if (tiers.length) {
+      if (tiers.length == 4) {
+        // if there are 4 tiers the first is the actual numeric discount, and you can ignore the rest – go figure
+        ppercent = parseFloat(tiers[0]).toFixed(4)
+      } else {
+        // tiered discounts: could be 1, 2 or 3 tiers. example: 40|40|40 or 40|15
+        // 1st is percent off list: 40 in this example. cost will be 60% of list so far. The basis is now 100-40=60.
+        // A 2nd tier of 40 again would add (basis * tier2/100), example: (60 * .4 = 24). Now the total discount so far is 64, and basis is now 36.
+        // A 3rd tier of 40 again would add (basis * tier3/100), example (36 * .4 = 14.4) to end up with a total discount of 78.4
 
-          let basis = 0
+        let basis = 0
 
-          if (tiers[0] && tiers[0] > 0) {
-            discountpercent = tiers[0]
+        if (tiers[0] && tiers[0] > 0) {
+          discountpercent = tiers[0]
+
+          basis = 100 - discountpercent
+
+          if (tiers[1] && tiers[1] > 0) {
+            discountpercent += basis * (tiers[1] / 100)
 
             basis = 100 - discountpercent
 
-            if (tiers[1] && tiers[1] > 0) {
-              discountpercent += basis * (tiers[1] / 100)
-
-              basis = 100 - discountpercent
-
-              if (tiers[2] && tiers[2] > 0) {
-                discountpercent += basis * (tiers[2] / 100)
-              }
+            if (tiers[2] && tiers[2] > 0) {
+              discountpercent += basis * (tiers[2] / 100)
             }
           }
         }
       }
-    } else if (!isNaN(ppercent)) {
-      discountpercent = ppercent
     }
 
     return discountpercent
