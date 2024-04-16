@@ -79,7 +79,7 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
           <StyledDragTextSmall>
             {fileObj.fileAdded ? 'Successfully Loaded' : 'Your File Here'}
           </StyledDragTextSmall>
-          <StyledDropButton>
+          <StyledDropButton type="button">
             {fileObj.fileAdded ? 'Change File' : 'Search for File'}
           </StyledDropButton>
         </StyledContentCentered>
