@@ -10,10 +10,8 @@ import { FileObjectType } from '../type';
 import { StyledContentWrapper } from './BomStyledDialogContent';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
+import { getUrl } from '@orionsuite/api-client';
 import { nanoid } from 'nanoid';
-
-const baseUrl =
-  'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
 interface DialogContentProps {
   setFilesDataArray: (files: FileObjectType[]) => void;
@@ -105,11 +103,13 @@ const BomDialogContent = ({
   };
 
   const initiateProcess = (action: any, payload: any, defaultData: any) => {
+    const script = import.meta.env.VITE_API_DEFAULT_SCRIPT;
+    const deploy = import.meta.env.VITE_API_DEFAULT_DEPLOY;
     workerRef.current?.postMessage({
       action,
       payload,
       defaultData,
-      endpoint: baseUrl,
+      endpoint: getUrl(deploy, script),
       method: 'POST',
     });
   };

@@ -18,12 +18,10 @@ import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
+import { getUrl } from '@orionsuite/api-client';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
 import { useDispatch } from 'react-redux';
-
-const baseUrl =
-  'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036';
 
 const fileObjEmpty: FileObjectType = {
   id: '',
@@ -254,6 +252,9 @@ const BomCustomDialog = () => {
     payload: any,
     defaultData: any
   ) => {
+    const script = import.meta.env.VITE_API_DEFAULT_SCRIPT;
+    const deploy = import.meta.env.VITE_API_DEFAULT_DEPLOY;
+
     return new Promise((resolve, reject) => {
       const messageHandler = (e: any) => {
         const { action: responseAction, data, error } = e.data;
@@ -271,7 +272,7 @@ const BomCustomDialog = () => {
         action,
         payload,
         defaultData,
-        endpoint: baseUrl,
+        endpoint: getUrl(deploy, script),
         method: 'POST',
       });
     });
