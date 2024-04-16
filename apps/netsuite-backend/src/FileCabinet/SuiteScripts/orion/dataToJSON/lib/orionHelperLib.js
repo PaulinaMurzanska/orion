@@ -484,7 +484,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
   }
 
   /**
-   * Retrieves a value from a delimited string based on the specified index. - Originally developed by Joe Keller
+   * Retrieves a value from a delimited string to calculate discount - Originally developed by Joe Keller
    *
    * @param {string} stringValue - The delimited string.
    * @param {string} splitterValue - The delimiter used to split the string.
