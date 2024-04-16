@@ -429,10 +429,10 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
     try {
       let resultValue = false
-      log.debug(loggerTitle, `str: ${str}`)
+      log.audit(loggerTitle, `str: ${str}`)
       const containsOnlyLetters = /^([^0-9]*)$/.test(str)
       const hasManufactureCode = itemObj[fileDef['manufacturer_code']]
-      const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']].length > 3
+      const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']] && itemObj[fileDef['manufacturer_code']].length > 3
       if (containsOnlyLetters && (!hasManufactureCode || manCodeGreaterThanThree)) {
         resultValue = true
       }
@@ -501,7 +501,8 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
 
       let tiers = ppercent.split(splitterValue)
 
-      if (tiers.length) {
+      log.debug(loggerTitle, `tiers: ${JSON.stringify(tiers)}`)
+      if (tiers?.length > 1) {
         if (tiers.length == 4) {
           // if there are 4 tiers the first is the actual numeric discount, and you can ignore the rest – go figure
           ppercent = parseFloat(tiers[0]).toFixed(4)

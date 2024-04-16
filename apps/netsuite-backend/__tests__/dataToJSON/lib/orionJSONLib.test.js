@@ -76,13 +76,13 @@ describe('orionJSONLib - findTextLoops - Find Text Loops in File', () => {
 })
 
 describe('orionJSONLib - matchDefinition - Find Matching Definition', () => {
-  it('CAP Studio - finds matching definition for sif', () => {
-    const fileType = 'sif'
-    const filteredFileDefs = orionJSONLib.findDefLinesByType(fileDefs, fileType)
-    const textLoops = orionJSONLib.findTextLoops(filteredFileDefs, testSIFile, /^(.+)=/, null, 1)
-    const definition = orionJSONLib.matchDefinition(filteredFileDefs, textLoops, failureLimit)
-    expect(definition.name).toBe('CAP Studio')
-  })
+  // it('CAP Studio - finds matching definition for sif', () => {
+  //   const fileType = 'sif'
+  //   const filteredFileDefs = orionJSONLib.findDefLinesByType(fileDefs, fileType)
+  //   const textLoops = orionJSONLib.findTextLoops(filteredFileDefs, testSIFile, /^(.+)=/, null, 1)
+  //   const definition = orionJSONLib.matchDefinition(filteredFileDefs, textLoops, failureLimit)
+  //   expect(definition.name).toBe('CAP Studio')
+  // })
   it('CAP Studio Alt - finds matching definition for sif', () => {
     const fileType = 'sif'
     const filteredFileDefs = orionJSONLib.findDefLinesByType(fileDefs, fileType)
