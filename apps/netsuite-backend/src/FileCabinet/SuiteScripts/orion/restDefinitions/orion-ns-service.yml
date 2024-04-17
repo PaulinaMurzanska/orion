@@ -123,7 +123,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
   /*fileCreationDomain*/app/site/hosting/restlet.nl:
     post:
-      summary: Process a file and generate JSON output
+      summary: Create a new file in the NetSuite file cabinet
       tags:
         - bomImport
       requestBody:
@@ -168,7 +168,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
   /*fileUpdateDomain*/app/site/hosting/restlet.nl:
     post:
-      summary: Process a file and generate JSON output
+      summary: Update file content of file in the NetSuite file cabinet
       tags:
         - bomImport
       requestBody:
@@ -184,7 +184,7 @@ paths:
           required: true
           schema:
             type: integer
-            default: 292
+            default: 307
         - name: deploy  
           in: query
           description: The deployment id of the RESTlet
