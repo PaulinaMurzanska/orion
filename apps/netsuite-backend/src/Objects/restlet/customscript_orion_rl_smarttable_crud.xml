@@ -1,0 +1,22 @@
+<restlet scriptid="customscript_orion_rl_smarttable_crud">
+  <description>Performs CRUD actions on SmartTable Views</description>
+  <isinactive>F</isinactive>
+  <name>Orion RL SmartTable CRUD</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/orion/smartTable/orion-rl-smarttable-create-read-update-delete-view.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_orion_rl_smarttable_crud">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>Orion RL SmartTable CRUD</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

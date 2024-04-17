@@ -13,18 +13,23 @@ import Icon from '@mdi/react';
 interface ActionBtnsProps {
   onAddClick: () => void;
   onActionClick: () => void;
+  uploadProgress: boolean;
 }
 
-const ActionBtns = ({ onAddClick, onActionClick }: ActionBtnsProps) => {
+const ActionBtns = ({
+  onAddClick,
+  onActionClick,
+  uploadProgress,
+}: ActionBtnsProps) => {
   return (
     <StyledActionBts>
-      <ActionBtn onClick={onAddClick}>
+      <ActionBtn onClick={onAddClick} type="button">
         <StyledActionIcon className="bg-green-600">
           <Icon path={mdiPlus} className="w-5 h-5" />
         </StyledActionIcon>
         <StyledActionLabel>Add Files</StyledActionLabel>
       </ActionBtn>
-      <ActionBtn onClick={onActionClick}>
+      <ActionBtn onClick={onActionClick} disabled={uploadProgress} type="button">
         <StyledActionIcon className="bg-pink-600">
           <Icon path={mdiArrowRight} className="w-5 h-5" />
         </StyledActionIcon>

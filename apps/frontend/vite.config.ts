@@ -1,8 +1,9 @@
+import Unfonts from 'unplugin-fonts/vite';
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import Unfonts from 'unplugin-fonts/vite';
+import { comlink } from "vite-plugin-comlink";
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   root: __dirname,
@@ -13,7 +14,8 @@ export default defineConfig({
     host: 'localhost',
     proxy: {
       '/netsuite': {
-        target: 'https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl',
+        target:
+          'https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/netsuite/, ''),
       },
@@ -27,7 +29,6 @@ export default defineConfig({
 
   plugins: [
     react(),
-
     nxViteTsPaths(),
     Unfonts({
       google: {
@@ -37,9 +38,9 @@ export default defineConfig({
   ],
 
   // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
+  worker: {
+   plugins: [ nxViteTsPaths() ],
+  },
 
   build: {
     outDir: '../../dist/apps/frontend',
