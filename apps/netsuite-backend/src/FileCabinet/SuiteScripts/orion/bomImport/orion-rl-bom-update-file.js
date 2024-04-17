@@ -13,7 +13,7 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
       // Parse the incoming JSON data from the request body
       const requestData = context
       const folderLocation = runtime.getCurrentScript().getParameter({
-        name: 'custscript_orion_bom_file_location'
+        name: 'custscript_orion_bom_file_upd_loc'
       })
 
       const fileID = requestData.fileID
@@ -23,6 +23,8 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
       })
 
       fileName = fileObj.name
+
+      log.debug(loggerTitle, `fileObj: ${JSON.stringify(fileObj)}`)
 
       // Create a new file
       let updatedfileObj = file.create({
