@@ -2,6 +2,7 @@ import {
   StyledAttachment,
   StyledAttachmentIcon,
   StyledContentCentered,
+  StyledDivider,
   StyledDragDrop,
   StyledDragTextSmall,
   StyledDragTitle,
@@ -83,17 +84,21 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
             {fileObj.fileExtension !== '' ? (
               <p className="text-2xl font-medium">{fileObj.fileExtension}</p>
             ) : (
-              <StyledAttachmentIcon path={mdiAttachment} size={2.5} />
+              <StyledAttachmentIcon path={mdiAttachment} size={1.5} />
             )}
           </StyledAttachment>
-          <StyledDragTitle className="font-bold text-lg m-0 leading-none">
+          <StyledDragTitle className="font-bold leading-none">
             {fileObj.fileName}
           </StyledDragTitle>
           <StyledDragTextSmall>
             {fileObj.fileAdded ? 'Successfully Loaded' : 'Your File Here'}
           </StyledDragTextSmall>
+          <StyledDivider />
+          <StyledDragTextSmall>
+            {fileObj.fileAdded ? '' : 'or'}
+          </StyledDragTextSmall>
           <StyledDropButton type="button">
-            {fileObj.fileAdded ? 'Change File' : 'Search for File'}
+            {fileObj.fileAdded ? 'Change File' : 'Search for File on PC'}
           </StyledDropButton>
         </StyledContentCentered>
       </StyledDragDrop>

@@ -1,4 +1,5 @@
 import { Button, Card } from '@orionsuite/shared-components';
+import { colors, shadows } from '../../../../styles/variables';
 
 import Icon from '@mdi/react';
 import styled from 'styled-components';
@@ -17,50 +18,59 @@ const StyledContentCentered = styled.div`
 `;
 
 const StyledAttachment = styled.div<DragDropProps>`
-  width: 100px;
-  height: 100px;
-  border-radius: 2vh;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
   color: white;
-  background-color: ${(props) =>
-    props.extension === '' ? '#2db1ba' : 'rgb(45, 186, 135)'};
+  background-color: ${colors.grey_700};
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
+  p {
+    font-size: 20px;
+    margin: 0;
+  }
 `;
 
 const StyledAttachmentIcon = styled(Icon)`
   transform: scaleX(-1) scaleY(-1);
+  width: 37px;
 `;
 
 const StyledDropButton = styled(Button)`
-  margin-top: 20px;
   width: 100%;
-  border-radius: 10px;
-  text-transform: uppercase;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  font-weight: 500;
+  font-weight: 700;
+  padding: 12px 24px;
+  font-size: 12px;
+  background-color: ${colors.blue_primary};
+  margin-top: 8px;
+  box-shadow: ${shadows.drop_shadow_black};
+  &:hover {
+    background-color: ${colors.blue_primary_hover};
+  }
 `;
 
 const StyledDragDrop = styled.div`
-  font-family: 'Inter';
   position: relative;
+  padding: 16px 16px 11px;
 `;
 
 const StyledDragTitle = styled.h2`
   margin: 0 !important;
   font-weight: 700;
-  font-size: 18px;
-  line-height: 1;
+  font-size: 16px;
+  line-height: 1.4;
   margin-bottom: 2px;
+  color: ${colors.dark_blue};
 `;
 
 const StyledDragTextSmall = styled.p`
   margin: 0 !important;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 12px;
+  line-height: 1.4;
   color: rgb(128, 128, 128);
+  height: 17px;
 `;
 
 const StyledStatusZoneTextNormal = styled.p`
@@ -73,7 +83,7 @@ const StyledStatusZoneTextNormal = styled.p`
 `;
 
 const StyledDropArea = styled.div`
-  width: 200px;
+  width: 196px;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
@@ -85,8 +95,15 @@ const StyledDropArea = styled.div`
 const StyledCard = styled(Card)`
   width: 100%;
   min-height: 200px;
-  border-radius: 2vh;
-  padding: 20px;
+  border-radius: 12px;
+  box-shadow: ${shadows.drop_shadow_black};
+`;
+
+const StyledDivider = styled.div`
+  width: 100%;
+  height: 2px;
+  background-color: ${colors.grey_100};
+  margin: 8px 0 0;
 `;
 
 export {
@@ -100,4 +117,5 @@ export {
   StyledStatusZoneTextNormal,
   StyledDropArea,
   StyledCard,
+  StyledDivider,
 };
