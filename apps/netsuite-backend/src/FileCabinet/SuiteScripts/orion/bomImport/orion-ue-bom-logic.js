@@ -93,9 +93,6 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
       // get the created string from the freeform text field
       const createdString = currentRecord.getValue('custpage_created_data_code_field_text')
 
-      // find the JSON file by name
-      const jsonFile = findJSONFile(createdString)
-
       // query for the BOM records that have the created string
       const getBOMRecordsQL = `
         SELECT id
@@ -190,7 +187,7 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
     const fileSQL = `
       SELECT id
       FROM file
-      WHERE name = '${fileName}.json'
+      WHERE name = '${createdString}.json'
     `
     let resultID
 
@@ -201,8 +198,8 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
     
     if (resultID) {
       // Update the record with the JSON file ID
-      const recordID = await record.submitFields.promise({
-        type: context.currentRecord.type,
+      const savedRecordID = await record.submitFields.promise({
+        type: currentRecord.type,
         id: recordID,
         values: {
           custbody_json_file: resultID
