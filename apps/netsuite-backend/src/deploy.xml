@@ -21,5 +21,6 @@
         <path>~/Objects/customlist/customlist_orion_smarttable_view_type.xml</path>
         <path>~/Objects/customrecordtype/customrecord_orion_smarttable_view.xml</path>
         <path>~/Objects/transactioncolumncustomfield/custcol_uuid.xml</path>
+        <path>~/Objects/restlet/customscript_orion_rl_bom_upd_file.xml</path>
     </objects>
 </deploy>
