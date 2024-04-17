@@ -214,7 +214,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
   /*getImportRecordDomain*/app/site/hosting/restlet.nl:
       get:
-        summary: Get BOM import records
+        summary: Get BOM import record by id
         tags:
           - bomImport
         parameters:
@@ -261,6 +261,135 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
+  /*getSmarTableRecordDomain*/app/site/hosting/restlet.nl:
+    get:
+      summary: Get a SmartTable View record
+      tags:
+        - smartTable
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 302
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: smartTableRecordID
+          required: true
+          schema:
+            type: integer
+            description: The ID of the SmartTable view record
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSmartTableViewResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create or edit a SmartTable View record
+      tags:
+        - smartTable
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 302
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmartTableViewRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSmartTableViewResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a SmartTable View record
+      tags:
+        - smartTable
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 302
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: smartTableRecordID
+          required: true
+          schema:
+            type: integer
+            description: The ID of the SmartTable view record
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSmartTableViewResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+=======
   /*getSmartTableViewRecordDomain*/app/site/hosting/restlet.nl:
       get:
         summary: Get SmartTable View records
@@ -300,6 +429,7 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
+>>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
                 
 components:
   schemas:
@@ -358,7 +488,36 @@ components:
           bomRecs:
             type: array
             items:
-              $ref: '#/components/schemas/BOMRecord'     
+              $ref: '#/components/schemas/BOMRecord'
+
+    GetSmartTableViewResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "SUCCESS: SmartTable view retrieved successfully."
+        smartTableView:
+          $ref: '#/components/schemas/SmartTableView'
+
+    PostSmartTableViewResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+        smartTableViewID:
+          type: integer
+          description: The ID of the SmartTable view record
+    
+    DeleteSmartTableViewResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "SUCCESS: SmartTable View record deleted successfully."
+        smartTableViewID:
+          type: integer
+          example: 108
             
     LineJSON:
       type: object
@@ -459,6 +618,64 @@ components:
       properties:
         id:
           type: string
+    
+    SmartTableView:
+      type: object
+      properties:
+        owner:
+          type: integer
+          example: 12
+        isinactive:
+          type: string
+          example: "F"
+        custrecord_orion_smarttable_current_user:
+          type: integer
+          example: 12
+        custrecord_orion_view_json:
+          type: string
+          example: '[{}, {}]'
+        created:
+          type: string
+          example: '04/11/2024'
+        externalid:
+          type: string
+          nullable: true
+        lastmodifiedby:
+          type: integer
+          example: 12
+        custrecord_orion_smarttable_view_type:
+          type: integer
+          example: 1
+        custrecord_orion_smarttable_position:
+          type: integer
+          example: 1
+        abbreviation:
+          type: string
+          nullable: true
+        scriptid:
+          type: string
+          example: 'VAL_59917_TD2893635_696'
+        custrecord_orion_smarttable_view_title:
+          type: string
+          example: 'View Area'
+        recordid:
+          type: integer
+          example: 1
+        custrecord_orion_smarttable_icon_url:
+          type: string
+          example: '/core/media/media.nl?id=2432&c=TD2893635&h=xYrqe4fqmigE7S8DQXtDZXeyPHMivDy3w6kzyEV5GhTnpch1&_xt=.svg'
+        lastmodified:
+          type: string
+          example: '04/15/2024'
+        name:
+          type: string
+          example: 'ST-1'
+        id:
+          type: integer
+          example: 1
+        custrecord_orion_smarttable_roles:
+          type: string
+          example: '1, 3'
 
     BOMImportRequest:
       type: object
@@ -481,6 +698,37 @@ components:
       required:
         - action
 
+<<<<<<< HEAD
+    SmartTableViewRequest:
+      type: object
+      properties:
+        action:
+          type: string
+          description: The action to perform (create or edit)
+        editID:
+          type: integer
+          description: The ID of the SmartTable view record to edit (required for edit action)
+        custrecord_orion_smarttable_view_type:
+          type: integer
+          description: The type of SmartTable view (1 = Default, 2 = User Curated, 3 = Summary)
+        custrecord_orion_view_json:
+          type: string
+          description: The JSON representation of the SmartTable view
+        custrecord_orion_smarttable_icon:
+          type: integer
+          description: The icon ID for the SmartTable view
+        custrecord_orion_smarttable_position:
+          type: integer
+          description: The position of the SmartTable view
+        custrecord_orion_smarttable_roles:
+          type: array
+          items:
+            type: integer
+          description: The roles associated with the SmartTable view
+        custrecord_orion_smarttable_current_user:
+          type: integer
+          description: The ID of the current user
+=======
     TableViewSuccessResponse:
       type: object
       properties:
@@ -509,6 +757,7 @@ components:
               id: 1
               custrecord_orion_smarttable_roles: "1, 3"
 
+>>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
         
     ErrorResponse:
       type: object
