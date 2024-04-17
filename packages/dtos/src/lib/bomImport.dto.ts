@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 const RecordSchema = z.object({
   id: z.number(),
+  line: z.number(),
   owner: z.number(),
   isinactive: z.string(),
   created: z.string(),
@@ -22,7 +23,7 @@ const RecordSchema = z.object({
 
 const GetRecordsResponseSchema = z.object({
   message: z.string(),
-  bomRecs: z.array(RecordSchema),
+  content: z.string(),
 });
 
 const GetRecordsDtoSchema = z.object({

@@ -13,3 +13,4 @@ export * from './dialog/DialogComponents';
 export * from './card/Card';
 export * from './dropdown/Dropdown';
 export * from './sheet/Sheet';
+export * from './theme/ThemeProvider';

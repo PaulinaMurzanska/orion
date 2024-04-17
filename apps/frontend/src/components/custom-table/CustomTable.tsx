@@ -1,7 +1,6 @@
 import {
   IndeterminateCheckbox,
   RowObject,
-  Separator,
   Table,
 } from '@orionsuite/shared-components';
 import { Column, createColumnHelper } from '@tanstack/react-table';
@@ -17,6 +16,7 @@ interface Props<T> {
   onRowDragEnd?: (event: DragEndEvent) => void;
   onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
   editable?: boolean;
+  isLoading?: boolean;
   header: ReactNode;
   actions?: ReactNode;
   footer?: ReactNode;
@@ -32,8 +32,21 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div<{ width: number }>`
-  height: 75vh;
-  width: calc(100vw - 4.5rem);
+  position: sticky;
+  height: 78vh;
+  width: calc(100vw - 150px);
+`;
+
+const Footer = styled.div`
+  background: #2b2b2e;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: white;
+  padding: 10px;
+  gap: 5px;
+  margin: 10px 0 0 0;
 `;
 
 export function CustomTable<T extends RowObject>({
@@ -120,28 +133,29 @@ export function CustomTable<T extends RowObject>({
   }, []);
 
   return (
-    <Container ref={containerRef}>
-      <div className="flex justify-between mb-4">
-        {header && header}
-        {actions && <div className="flex gap-1 justify-end">{actions}</div>}
-      </div>
-      {filters && <div className="flex justify-between mb-4">{filters}</div>}
+    <>
+      <Container ref={containerRef}>
+        <div className="flex justify-between mb-4">
+          {header && header}
+          {actions && <div className="flex gap-1 justify-end">{actions}</div>}
+        </div>
+        {filters && <div className="flex justify-between mb-4">{filters}</div>}
 
-      <TableContainer width={containerWidth}>
-        <Table
-          onRowDragEnd={onRowDragEnd}
-          data={data}
-          columns={columnDef}
-          onRowSelectionChange={onRowSelectionChange}
-          onRowUpdate={onRowUpdate}
-          search={search}
-          setSearch={setSearch}
-          editable={editable}
-        />
-      </TableContainer>
-      <Separator className="mt-5 mb-2" />
-      {footer && <div className="flex">{footer}</div>}
-    </Container>
+        <TableContainer width={containerWidth}>
+          <Table
+            onRowDragEnd={onRowDragEnd}
+            data={data}
+            columns={columnDef}
+            onRowSelectionChange={onRowSelectionChange}
+            onRowUpdate={onRowUpdate}
+            search={search}
+            setSearch={setSearch}
+            editable={editable}
+          />
+        </TableContainer>
+      </Container>
+      {footer && <Footer>{footer}</Footer>}
+    </>
   );
 }
 
