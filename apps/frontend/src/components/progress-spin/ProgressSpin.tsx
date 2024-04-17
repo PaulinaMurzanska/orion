@@ -24,7 +24,6 @@ interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
 const ProgressSpin = ({ variant, size, className = '' }: SpinnerProps) => {
   const baseSize = size || 6;
   const sizeClass = `w-${baseSize} h-${baseSize}`;
-  console.log('sizeClass', sizeClass);
   return (
     <div>
       <Icons.spinner

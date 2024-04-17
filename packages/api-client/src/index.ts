@@ -1,7 +1,8 @@
 import { api as baseApi } from './lib/apiClient';
-import { ordersApi } from './lib/order';
-import { dataToJsonApi } from './lib/dataToJson';
 import { bomImportApi } from './lib/bomImport';
+import { dataToJsonApi } from './lib/dataToJson';
+import { getUrl } from './lib/urls';
+import { ordersApi } from './lib/order';
 
 const api = {
   ...baseApi,
@@ -10,4 +11,4 @@ const api = {
   ...bomImportApi,
 };
 
-export { api };
+export { api, getUrl };

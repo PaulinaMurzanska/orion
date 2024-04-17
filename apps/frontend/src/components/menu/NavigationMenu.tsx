@@ -1,16 +1,19 @@
-import { DashboardIcon, GearIcon, PersonIcon } from '@radix-ui/react-icons';
-
-import { MenuElement } from './types';
 import NavigationMenuItem from './NavigationMenuItem';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Logo from './Logo';
+import { Separator } from '@orionsuite/shared-components';
+import { config } from './config';
+import { useMemo } from 'react';
 
 const Container = styled.div`
-  height: 100vh;
+  background: #2b2b2e;
 
-  background: #e0e0e0;
-  padding: 20px 30px;
+  height: calc(100vh - 20px);
+  padding: 20px 20px;
   position: sticky;
+  border-radius: 12px;
+  margin: 10px 0 10px 10px;
 
   display: flex;
   flex-direction: column;
@@ -20,65 +23,25 @@ const Container = styled.div`
 const MenuSection = styled.div`
   display: flex;
   flex-direction: column;
-
+  align-items: center;
   gap: 15px;
 `;
 
 const NavigationMenu = () => {
   const navigate = useNavigate();
-
-  const topConfig = [
-    {
-      name: 'Orders',
-      onClick: () => {
-        navigate('/orders');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
-      name: 'BOM list',
-      onClick: () => {
-        navigate('/bom');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
-      name: 'Components Library',
-      onClick: () => {
-        navigate('/components');
-      },
-      icon: <DashboardIcon width="18px" height="18px" />,
-    },
-    {
-      name: 'BOM Tool',
-      onClick: () => {
-        navigate('/bom-import');
-      },
-      icon: <DashboardIcon width="18px" height="18px" />,
-    },
-  ] as MenuElement[];
-
-  const bottomConfig = [
-    {
-      name: 'Settings',
-      onClick: () => {
-        navigate('/');
-      },
-      icon: <GearIcon width="18px" height="18px" />,
-    },
-  ] as MenuElement[];
+  const menuElements = useMemo(() => config({ navigate }), [navigate]);
 
   return (
     <Container>
       <MenuSection>
-        {topConfig.map((item) => (
-          <NavigationMenuItem key={item.name} item={item} />
-        ))}
-      </MenuSection>
-      <MenuSection style={{ justifyContent: 'flex-end' }}>
-        {bottomConfig.map((item) => (
-          <NavigationMenuItem key={item.name} item={item} />
-        ))}
+        <Logo />
+        <Separator />
+        {menuElements.map((item) => {
+          if (item.separator) {
+            return <Separator />;
+          }
+          return <NavigationMenuItem key={item.name} item={item} />;
+        })}
       </MenuSection>
     </Container>
   );

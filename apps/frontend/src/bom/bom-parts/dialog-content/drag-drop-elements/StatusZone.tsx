@@ -14,7 +14,7 @@ const StatusZone = ({ fileObj }: StatusZoneProps) => {
   return (
     <StyledContentCentered>
       <StyledStatusZoneTextNormal className="mb-4">
-        {fileObj.fileLoading ? 'Reading File' : ''}
+        {fileObj.loaderText}
       </StyledStatusZoneTextNormal>
       {fileObj.fileLoading && <ProgressSpin variant={'gray'} size={8} />}
     </StyledContentCentered>

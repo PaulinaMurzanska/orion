@@ -10,7 +10,7 @@ export default createHashRouter([
     path: '/',
     element: <Root />,
     children: [
-      { path: '/', element: <Navigate to="/orders" /> },
+      { path: '/', element: <Navigate to="/bom" /> },
       {
         path: '/bom',
         element: <BomList />,
