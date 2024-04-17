@@ -132,7 +132,7 @@
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
-      <fieldtype>IMAGE</fieldtype>
+      <fieldtype>DOCUMENT</fieldtype>
       <globalsearch>F</globalsearch>
       <help>This icon image for the Orion SmartTable View record</help>
       <isformula>F</isformula>
@@ -210,7 +210,7 @@
       <displaywidth></displaywidth>
       <dynamicdefault></dynamicdefault>
       <encryptatrest>F</encryptatrest>
-      <fieldtype>SELECT</fieldtype>
+      <fieldtype>MULTISELECT</fieldtype>
       <globalsearch>F</globalsearch>
       <help>Allowed roles for viewing the SmartTable</help>
       <isformula>F</isformula>
@@ -274,5 +274,174 @@
       <storevalue>T</storevalue>
       <subtab></subtab>
     </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_orion_smarttable_icon_url">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description>The URL for the icon file to be used for the view</description>
+      <displayheight></displayheight>
+      <displaytype>HIDDEN</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>URL</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help>The URL for the icon file to be used for the view</help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>F</isparent>
+      <label>Icon URL</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>F</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_orion_smarttable_view_title">
+      <accesslevel>2</accesslevel>
+      <allowquickadd>F</allowquickadd>
+      <applyformatting>F</applyformatting>
+      <checkspelling>F</checkspelling>
+      <defaultchecked>F</defaultchecked>
+      <defaultselection></defaultselection>
+      <defaultvalue></defaultvalue>
+      <description>The title to be used for the SmartTable View</description>
+      <displayheight></displayheight>
+      <displaytype>NORMAL</displaytype>
+      <displaywidth></displaywidth>
+      <dynamicdefault></dynamicdefault>
+      <encryptatrest>F</encryptatrest>
+      <fieldtype>TEXT</fieldtype>
+      <globalsearch>F</globalsearch>
+      <help>The title to be used for the SmartTable View</help>
+      <isformula>F</isformula>
+      <ismandatory>F</ismandatory>
+      <isparent>F</isparent>
+      <label>Title</label>
+      <linktext></linktext>
+      <maxlength></maxlength>
+      <maxvalue></maxvalue>
+      <minvalue></minvalue>
+      <onparentdelete></onparentdelete>
+      <parentsubtab></parentsubtab>
+      <rolerestrict>F</rolerestrict>
+      <searchcomparefield></searchcomparefield>
+      <searchdefault></searchdefault>
+      <searchlevel>2</searchlevel>
+      <selectrecordtype></selectrecordtype>
+      <showinlist>F</showinlist>
+      <sourcefilterby></sourcefilterby>
+      <sourcefrom></sourcefrom>
+      <sourcelist></sourcelist>
+      <storevalue>T</storevalue>
+      <subtab></subtab>
+    </customrecordcustomfield>
   </customrecordcustomfields>
+  <instances>
+    <instance scriptid="val_59917_td2893635_696">
+      <custrecord_orion_smarttable_current_user>[ACCOUNT_SPECIFIC_VALUE]</custrecord_orion_smarttable_current_user>
+      <custrecord_orion_smarttable_icon></custrecord_orion_smarttable_icon>
+      <custrecord_orion_smarttable_icon_url>/core/media/media.nl?id=2432&amp;c=TD2893635&amp;h=xYrqe4fqmigE7S8DQXtDZXeyPHMivDy3w6kzyEV5GhTnpch1&amp;_xt=.svg</custrecord_orion_smarttable_icon_url>
+      <custrecord_orion_smarttable_position>1</custrecord_orion_smarttable_position>
+      <custrecord_orion_smarttable_roles></custrecord_orion_smarttable_roles>
+      <custrecord_orion_smarttable_view_title>Pricing</custrecord_orion_smarttable_view_title>
+      <custrecord_orion_smarttable_view_type>[scriptid=customlist_orion_smarttable_view_type.val_59702_td2893635_839]</custrecord_orion_smarttable_view_type>
+      <custrecord_orion_view_json>{&#xd;
+  &quot;id&quot;: &quot;_default&quot;,&#xd;
+  &quot;columns&quot;: [&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;item&quot;,&#xd;
+          &quot;label&quot;: &quot;Item&quot;,&#xd;
+          &quot;data_type&quot;: &quot;integer&quot;,&#xd;
+          &quot;display_type&quot;: &quot;number&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;description&quot;,&#xd;
+          &quot;label&quot;: &quot;Description&quot;,&#xd;
+          &quot;data_type&quot;: &quot;string&quot;,&#xd;
+          &quot;display_type&quot;: &quot;string&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;quantity&quot;,&#xd;
+          &quot;label&quot;: &quot;Qty&quot;,&#xd;
+          &quot;data_type&quot;: &quot;integer&quot;,&#xd;
+          &quot;display_type&quot;: &quot;number&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;povendor&quot;,&#xd;
+          &quot;label&quot;: &quot;Vendor&quot;,&#xd;
+          &quot;data_type&quot;: &quot;list&quot;,&#xd;
+          &quot;display_type&quot;: &quot;list&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;custcol_pintel_listprice&quot;,&#xd;
+          &quot;label&quot;: &quot;Price&quot;,&#xd;
+          &quot;data_type&quot;: &quot;currency&quot;,&#xd;
+          &quot;display_type&quot;: &quot;number&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;custcol_pintel_dealerdisc&quot;,&#xd;
+          &quot;label&quot;: &quot;Dealer Discount&quot;,&#xd;
+          &quot;data_type&quot;: &quot;currency&quot;,&#xd;
+          &quot;display_type&quot;: &quot;number&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;custcol_pintel_custdiscount&quot;,&#xd;
+          &quot;label&quot;: &quot;Customer Discount&quot;,&#xd;
+          &quot;data_type&quot;: &quot;currency&quot;,&#xd;
+          &quot;display_type&quot;: &quot;number&quot;&#xd;
+      }&#xd;
+  ]&#xd;
+}</custrecord_orion_view_json>
+      <isinactive>F</isinactive>
+      <name>ST-1</name>
+    </instance>
+    <instance scriptid="val_60077_td2893635_413">
+      <custrecord_orion_smarttable_current_user>[ACCOUNT_SPECIFIC_VALUE]</custrecord_orion_smarttable_current_user>
+      <custrecord_orion_smarttable_icon></custrecord_orion_smarttable_icon>
+      <custrecord_orion_smarttable_icon_url>/core/media/media.nl?id=1&amp;c=TD2893635&amp;h=wJMvdi2z2_Of4rvZRNkrfzC_kiW92aaCMCwj_TxlK4Hxu_Fc&amp;mv=n5hdopqw&amp;_xt=.js</custrecord_orion_smarttable_icon_url>
+      <custrecord_orion_smarttable_position>2</custrecord_orion_smarttable_position>
+      <custrecord_orion_smarttable_roles></custrecord_orion_smarttable_roles>
+      <custrecord_orion_smarttable_view_title>Test View 2</custrecord_orion_smarttable_view_title>
+      <custrecord_orion_smarttable_view_type>[scriptid=customlist_orion_smarttable_view_type.val_59703_td2893635_477]</custrecord_orion_smarttable_view_type>
+      <custrecord_orion_view_json>{&#xd;
+  &quot;id&quot;: &quot;_default&quot;,&#xd;
+  &quot;icon&quot;: &quot;star.jpg&quot;,&#xd;
+  &quot;label&quot;: &quot;Pricing&quot;,&#xd;
+  &quot;view_group&quot;: &quot;&quot;,&#xd;
+  &quot;columns&quot;: [&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;custcol_qty&quot;,&#xd;
+          &quot;label&quot;: &quot;Quantity&quot;,&#xd;
+          &quot;data_type&quot;: &quot;integer&quot;,&#xd;
+          &quot;display_type&quot;: &quot;number&quot;&#xd;
+      },&#xd;
+      {&#xd;
+          &quot;id&quot;: &quot;custcol_address&quot;,&#xd;
+          &quot;label&quot;: &quot;Ship To&quot;,&#xd;
+          &quot;data_type&quot;: &quot;list&quot;,&#xd;
+          &quot;display_type&quot;: &quot;filterList&quot;&#xd;
+      }&#xd;
+  ]&#xd;
+}</custrecord_orion_view_json>
+      <isinactive>F</isinactive>
+      <name>ST-107</name>
+    </instance>
+  </instances>
 </customrecordtype>
