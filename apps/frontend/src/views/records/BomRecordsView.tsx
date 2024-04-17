@@ -1,15 +1,16 @@
-import { Button, Input } from '@orionsuite/shared-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import CustomTable from '../components/custom-table/CustomTable';
-import { Order, Record } from '@orionsuite/dtos';
+import CustomTable from '../../components/custom-table/CustomTable';
+import { Record } from '@orionsuite/dtos';
 import { api } from '@orionsuite/api-client';
 import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import ProgressSpin from '../components/progress-spin/ProgressSpin';
-import _ from 'lodash';
+import ProgressSpin from '../../components/progress-spin/ProgressSpin';
+import Footer from './table/Footer';
+import Filters from './table/Filters';
+import Actions from './table/Actions';
 
-const BomList = () => {
+const BomRecordsView = () => {
   const { data, isLoading } = api.useGetRecordsQuery({
     script: 220,
     deploy: 1,
@@ -26,14 +27,18 @@ const BomList = () => {
     [records]
   );
 
-  const onRowSelectionChange = (selectedRows: Record[]) => {
+  const onRowSelectionChange = useCallback((selectedRows: Record[]) => {
     setSelectedRows(selectedRows);
-  };
+  }, []);
 
   useEffect(() => {
     if (data && data.content) {
       const parsed = JSON.parse(data.content ?? '{}');
-      const items = parsed?.lineJSON?.item?.items?.slice(0, 100) ?? [];
+      const items =
+        parsed?.lineJSON?.item?.items?.slice(0, 50).map((item: any) => ({
+          ...item,
+          id: `${item.itemid}/${item.line}`, // TODO: Use UUID when available
+        })) ?? [];
       const columns = Object.keys(items[0]).map((key) => ({
         id: key,
         header: key,
@@ -61,6 +66,7 @@ const BomList = () => {
         editable={editable}
         search={search}
         setSearch={setSearch}
+        selectedRows={selectedRows}
         onRowUpdate={(rowIndex, columnId, value) => {
           setRecords((old) =>
             old.map((row, index) => {
@@ -84,65 +90,12 @@ const BomList = () => {
             });
           }
         }}
-        actions={
-          <>
-            {!editable && (
-              <Button variant="ghost" onClick={() => setEditable(!editable)}>
-                Edit
-              </Button>
-            )}
-            {editable && (
-              <>
-                <Button variant="ghost" onClick={() => setEditable(!editable)}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => setEditable(!editable)}
-                >
-                  Save
-                </Button>
-              </>
-            )}
-            <Button variant="secondary">Export to PDF</Button>
-            <Button variant="secondary">Customer invoice</Button>
-          </>
-        }
-        filters={
-          <div className="flex gap-2 items-center">
-            <Input
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        }
-        footer={
-          <>
-            <div>
-              <b>Lines selected:</b> {selectedRows.length ?? 0}/
-              {records.length ?? 0}
-            </div>
-            <div style={{ margin: '0 0 0 auto' }}>
-              <b>Quantity:</b> 0
-            </div>
-            <div>
-              <b>Cost:</b> $0
-            </div>
-            <div>
-              <b>Sell:</b> $0
-            </div>
-            <div>
-              <b>GP$:</b> $0
-            </div>
-            <div>
-              <b>GP%:</b> 0%
-            </div>
-          </>
-        }
+        actions={<Actions editable={editable} setEditable={setEditable} />}
+        filters={<Filters setSearch={setSearch} search={search} />}
+        footer={<Footer records={records} selectedRows={selectedRows} />}
       />
     </div>
   );
 };
 
-export default BomList;
+export default BomRecordsView;

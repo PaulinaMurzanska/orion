@@ -21,8 +21,8 @@ interface Props<T> {
 
 const ColumnMenu = <T extends object>({ column }: Props<T>) => {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>...</DropdownMenuTrigger>
+    <DropdownMenu >
+      <DropdownMenuTrigger className="ml-auto">...</DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Column Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />

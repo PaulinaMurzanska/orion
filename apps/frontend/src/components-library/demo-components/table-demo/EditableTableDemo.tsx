@@ -1,9 +1,9 @@
 import { Button, Input } from '@orionsuite/shared-components';
 import { useMemo, useState } from 'react';
 
-import CustomTableWithCustomInputDemo from './CustomTableWithCustomInputDemo';
 import { Order } from '@orionsuite/dtos';
 import { inputVariants } from '../../../components/custom-input/type';
+import CustomTable from '../../../components/custom-table/CustomTable';
 
 type TableDemoDataType = {
   id: string;
@@ -122,7 +122,7 @@ const EditableTableDemo = () => {
             </li>
           </ul>
         </div>
-        <CustomTableWithCustomInputDemo<TableDemoDataType>
+        <CustomTable<TableDemoDataType>
           data={data ?? []}
           columns={columns}
           onRowSelectionChange={onRowSelectionChange}
@@ -131,15 +131,11 @@ const EditableTableDemo = () => {
           search={search}
           setSearch={setSearch}
           onRowUpdate={(rowIndex, columnId, value) => {
-            console.log('Row updated', rowIndex, columnId, value);
             const newData = [...data];
             newData[rowIndex] = {
               ...newData[rowIndex],
               [columnId]: value,
             };
-            console.log('newData:', newData);
-
-            // setData(newData); //this makes the focus is lost, we can't use Tab to switch focus from field to field, don't know what is the reason.
           }}
           actions={
             <>

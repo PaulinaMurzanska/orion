@@ -7,22 +7,16 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { Row as RowType } from '@tanstack/react-table';
 import { TableRow as Row } from './TableComponents';
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { RowObject } from './types';
 
 interface Props<T> {
   row: RowType<T>;
+  index: number;
   editable?: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  setSidebarRow: (row: T) => void;
 }
 
-const TableRow = <T extends RowObject>({
-  row,
-  setSidebarRow,
-  setSidebarOpen,
-  editable,
-}: Props<T>) => {
+const TableRow = <T extends RowObject>({ row, index, editable }: Props<T>) => {
   const {
     transform,
     transition,
@@ -40,17 +34,16 @@ const TableRow = <T extends RowObject>({
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 1 : 0,
     position: 'relative',
+    border: row.getIsSelected() ? '2px solid #1F64E9' : '',
   };
 
-  const rowProps = editable
-    ? {}
-    : {
-        className: 'cursor-pointer',
-        onClick: () => {
-          setSidebarOpen(true);
-          setSidebarRow(row.original);
-        },
-      };
+  const rowProps = useMemo(() => {
+    return editable
+      ? {
+          className: 'cursor-pointer',
+        }
+      : {};
+  }, [editable]);
 
   return (
     <Row {...rowProps} style={style} ref={setNodeRef}>
@@ -64,7 +57,10 @@ const TableRow = <T extends RowObject>({
           <TableCell
             {...cellProps}
             key={cell.id}
-            style={{ ...getCommonPinningStyles<T>(cell.column) }}
+            style={{
+              ...getCommonPinningStyles<T>(cell.column),
+              background: index % 2 === 0 ? '#F4F4F4' : '',
+            }}
           >
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>

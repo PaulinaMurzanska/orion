@@ -18,7 +18,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import ColumnMenu from './ColumnMenu';
 import { getCommonPinningStyles } from './styles';
-import TableSidebar from './TableSidebar';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import TableRow from './TableRow';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -37,6 +36,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { RowObject } from './types';
+import { ArrowDownIcon, ArrowUpIcon } from '@radix-ui/react-icons';
+import { ArrowDown } from 'lucide-react';
 
 interface TableProps<T> {
   data: T[];
@@ -77,8 +78,6 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
     onRowDragEnd,
   } = props;
   const [rowSelection, setRowSelection] = useState({});
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarRow, setSidebarRow] = useState<T | undefined>(undefined);
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 
   const fuzzyFilter: FilterFn<T> = (row, columnId, value, addMeta) => {
@@ -119,7 +118,7 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
       globalFilter: search,
     },
     autoResetPageIndex,
-    debugTable: true,
+    // debugTable: true,
     meta: {
       updateData: (rowIndex: number, columnId: string, value: T) => {
         // Skip page index reset until after next rerender
@@ -158,9 +157,14 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
                   style={{ ...getCommonPinningStyles(header.column) }}
                 >
                   <div
+                    style={{
+                      background: header.column.getIsSorted() ? '#F1F5F9' : '',
+                      borderRadius: '4px',
+                      padding: header.column.getIsSorted() ? '8px' : '',
+                    }}
                     {...{
                       className: header.column.getCanSort()
-                        ? 'flex justify-between items-center cursor-pointer select-none'
+                        ? `flex justify-between items-center cursor-pointer select-none gap-2`
                         : '',
                       onClick: header.column.getToggleSortingHandler(),
                     }}
@@ -170,8 +174,8 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
                       header.getContext()
                     )}
                     {{
-                      asc: '▲',
-                      desc: '▼',
+                      asc: <ArrowUpIcon />,
+                      desc: <ArrowDownIcon />,
                     }[header.column.getIsSorted() as string] ?? null}
 
                     {!['checkbox', 'row-drag'].includes(header.column.id) && (
@@ -183,27 +187,18 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
             </ShadcnRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {/*<TableSidebar<T>*/}
-          {/*  open={sidebarOpen}*/}
-          {/*  setOpen={setSidebarOpen}*/}
-          {/*  row={sidebarRow}*/}
-          {/*/>*/}
-          <SortableContext
-            items={dataIds}
-            strategy={verticalListSortingStrategy}
-          >
-            {table.getRowModel().rows.map((row) => (
+        <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
+          <TableBody>
+            {table.getRowModel().rows.map((row, index) => (
               <TableRow
+                index={index}
                 row={row}
                 key={row.original.id}
-                setSidebarOpen={setSidebarOpen}
-                setSidebarRow={setSidebarRow}
                 editable={editable}
               />
             ))}
-          </SortableContext>
-        </TableBody>
+          </TableBody>
+        </SortableContext>
       </ShadcnTable>
     </DndContext>
   );

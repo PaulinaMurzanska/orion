@@ -8,6 +8,8 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { DragEndEvent } from '@dnd-kit/core';
 import CustomEditableCell from '../custom-table-cell/CustomEditableCell';
+import TableSidebar from './sidebar/TableSidebar';
+import { motion } from 'framer-motion';
 
 interface Props<T> {
   data: T[];
@@ -15,6 +17,7 @@ interface Props<T> {
   onRowSelectionChange?: CallableFunction;
   onRowDragEnd?: (event: DragEndEvent) => void;
   onRowUpdate?: (rowIndex: number, columnId: string, value: T) => void;
+  selectedRows?: T[];
   editable?: boolean;
   isLoading?: boolean;
   header: ReactNode;
@@ -26,15 +29,6 @@ interface Props<T> {
 }
 
 const Container = styled.div`
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  padding: 15px;
-`;
-
-const TableContainer = styled.div<{ width: number }>`
-  position: sticky;
-  height: 78vh;
-  width: calc(100vw - 150px);
 `;
 
 const Footer = styled.div`
@@ -62,10 +56,11 @@ export function CustomTable<T extends RowObject>({
   search,
   setSearch,
   onRowDragEnd,
+  selectedRows,
 }: Props<T>) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState<number>(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const columnHelper = createColumnHelper<T>();
+
   const columnDef = useMemo(() => {
     const checkbox = {
       id: 'checkbox',
@@ -122,40 +117,47 @@ export function CustomTable<T extends RowObject>({
     ];
   }, [columnHelper, columns, editable]);
 
-  // Resize table to allow horizontal scrolling
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const resizeObserver = new ResizeObserver((event) => {
-      setContainerWidth(event[0].contentBoxSize[0].inlineSize);
-    });
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, []);
-
   return (
-    <>
-      <Container ref={containerRef}>
-        <div className="flex justify-between mb-4">
-          {header && header}
-          {actions && <div className="flex gap-1 justify-end">{actions}</div>}
-        </div>
-        {filters && <div className="flex justify-between mb-4">{filters}</div>}
+    <div className="flex">
+      <div className="flex flex-col">
+        <Container>
+          <div className="flex justify-between mb-4">
+            {header && header}
+            {actions && <div className="flex gap-1 justify-end">{actions}</div>}
+          </div>
+          {filters && (
+            <div className="flex justify-between mb-4">{filters}</div>
+          )}
 
-        <TableContainer width={containerWidth}>
-          <Table
-            onRowDragEnd={onRowDragEnd}
-            data={data}
-            columns={columnDef}
-            onRowSelectionChange={onRowSelectionChange}
-            onRowUpdate={onRowUpdate}
-            search={search}
-            setSearch={setSearch}
-            editable={editable}
-          />
-        </TableContainer>
-      </Container>
-      {footer && <Footer>{footer}</Footer>}
-    </>
+          <motion.div
+            style={{ position: 'sticky' }}
+            animate={{
+              width: sidebarOpen
+                ? 'calc(100vw - 575px)'
+                : 'calc(100vw - 175px)',
+              height: 'calc(100vh - 225px)',
+            }}
+          >
+            <Table
+              onRowDragEnd={onRowDragEnd}
+              data={data}
+              columns={columnDef}
+              onRowSelectionChange={onRowSelectionChange}
+              onRowUpdate={onRowUpdate}
+              search={search}
+              setSearch={setSearch}
+              editable={editable}
+            />
+          </motion.div>
+        </Container>
+        {footer && <Footer>{footer}</Footer>}
+      </div>
+      <TableSidebar<T>
+        open={sidebarOpen}
+        setOpen={setSidebarOpen}
+        selectedRows={selectedRows}
+      />
+    </div>
   );
 }
 
