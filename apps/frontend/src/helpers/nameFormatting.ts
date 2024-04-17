@@ -9,16 +9,21 @@ const formatFileName = (fileName: string) => {
 
 const extractFileNameAndExtension = (fullFileName: string) => {
   const lastDotIndex = fullFileName.lastIndexOf('.');
-  let fileName = fullFileName;
+  let fileNameShort = fullFileName;
   let extension = '';
+  let fileNameJson = '';
 
   if (lastDotIndex > 0) {
-    fileName = fullFileName.substring(0, lastDotIndex);
+    fileNameShort = fullFileName.substring(0, lastDotIndex);
     extension = fullFileName.substring(lastDotIndex);
+    fileNameJson =
+      lastDotIndex !== -1
+        ? fullFileName.substring(0, lastDotIndex) + '.json'
+        : fullFileName + '.json';
   }
 
-  fileName = formatFileName(fileName);
+  fileNameShort = formatFileName(fileNameShort);
 
-  return { fileName, extension };
+  return { fileNameShort, fileNameJson, extension };
 };
 export { extractFileNameAndExtension, formatFileName };

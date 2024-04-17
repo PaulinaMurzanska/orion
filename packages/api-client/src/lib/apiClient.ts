@@ -1,16 +1,17 @@
 import {
+  BaseQueryApi,
   BaseQueryFn,
+  EndpointBuilder,
+  EndpointDefinitions,
   FetchArgs,
   FetchBaseQueryError,
   createApi,
   fetchBaseQuery,
-  EndpointBuilder,
-  BaseQueryApi,
-  EndpointDefinitions,
 } from '@reduxjs/toolkit/query/react';
-import { createSlice } from '@reduxjs/toolkit';
-import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
+
 import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers';
+import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
+import { createSlice } from '@reduxjs/toolkit';
 
 export const api = createApi({
   reducerPath: 'api',

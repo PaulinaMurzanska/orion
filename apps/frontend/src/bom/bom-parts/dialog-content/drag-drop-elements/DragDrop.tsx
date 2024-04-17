@@ -34,8 +34,11 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
   }, []);
 
   const showRejectedAlert = (err: string) => {
-    window.alert(`File can not be uploaded: ${err}`);
-    setRejected([]);
+    if (rejected.length > 0) {
+      const error = rejected[0].errors[0].message;
+      window.alert(`File cannot be uploaded: ${error}`);
+      setRejected([]);
+    }
   };
 
   useEffect(() => {
@@ -44,15 +47,25 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
     }
   }, [rejected]);
 
+  const fileTypeValidator = (file: any) => {
+    const allowedExtensions = ['.sif', '.pmx', '.xml', '.xls', '.csv'];
+    const extension = '.' + file.name.split('.').pop();
+
+    if (!allowedExtensions.includes(extension)) {
+      return {
+        code: 'invalid-extension',
+        message: `File extension '${extension}' is not allowed. Allowed extensions are: ${allowedExtensions.join(
+          ', '
+        )}`,
+      };
+    }
+
+    return null;
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      // '.sif': ['.sif'],  // format not supported with accept property, different validation needed
-      // '.pmx': ['.pmx'],  // format not supported with accept property, different validation needed
-      'application/xml': ['.xml'],
-      'application/vnd.ms-excel': ['.xls', '.csv'],
-    },
-    maxSize: 1024 * 1000,
+    validator: fileTypeValidator,
   });
 
   return (
@@ -79,7 +92,7 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
           <StyledDragTextSmall>
             {fileObj.fileAdded ? 'Successfully Loaded' : 'Your File Here'}
           </StyledDragTextSmall>
-          <StyledDropButton>
+          <StyledDropButton type="button">
             {fileObj.fileAdded ? 'Change File' : 'Search for File'}
           </StyledDropButton>
         </StyledContentCentered>

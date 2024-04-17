@@ -33,8 +33,27 @@ const ActionBtn = styled.button`
   justify-content: center;
   row-gap: 5px;
   background-color: #989898;
+  position: relative;
+  cursor: pointer;
   &:last-child {
     border-bottom: none;
+  }
+
+  &:after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff7d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+  }
+  &:disabled {
+    pointer-events: none;
+    &:after {
+      display: block;
+    }
   }
 `;
 

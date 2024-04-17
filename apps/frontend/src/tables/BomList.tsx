@@ -1,14 +1,21 @@
 import { Button, Input } from '@orionsuite/shared-components';
+import { Order, Record } from '@orionsuite/dtos';
 import { useEffect, useMemo, useState } from 'react';
 
 import CustomTable from '../components/custom-table/CustomTable';
-import { Order, Record } from '@orionsuite/dtos';
-import { api } from '@orionsuite/api-client';
 import { DragEndEvent } from '@dnd-kit/core';
+import { RootState } from 'apps/frontend/store';
+import { api } from '@orionsuite/api-client';
 import { arrayMove } from '@dnd-kit/sortable';
+import { useSelector } from 'react-redux';
 
 const BomList = () => {
   const { data } = api.useGetRecordsQuery({ script: 220, deploy: 1 });
+
+  const bomImportFiles = useSelector(
+    (state: RootState) => state.bomImportFiles
+  );
+  console.log('bomImportFiles', bomImportFiles);
 
   const [editable, setEditable] = useState<boolean | undefined>();
   // const [search, setSearch] = useState<string | undefined>();
