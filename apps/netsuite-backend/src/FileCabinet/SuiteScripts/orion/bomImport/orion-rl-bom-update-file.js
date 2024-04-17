@@ -18,12 +18,21 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
 
       const fileID = requestData.fileID
 
-      // Create a new file
-      let fileObj = file.load({ 
+      const fileObj = file.load({
         id: fileID
       })
 
-      fileObj.contents = requestData.fileContent
+      fileName = fileObj.name
+
+      // Create a new file
+      let fileObj = file.create({
+        name: fileName,
+        fileType: file.Type.PLAINTEXT,
+        contents: requestData.fileContent,
+        description: 'File created from BOM Uploader tool',
+        folder: folderLocation,
+        isOnline: true
+      })
 
       // Save the file
       const fileID = fileObj.save()
@@ -36,7 +45,7 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
 
       // Log the fileId or do any further processing
       log.debug({
-        title: 'File Updated',
+        title: 'File Created',
         details: `File ID: ${fileID}`
       })
 
