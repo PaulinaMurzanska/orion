@@ -131,7 +131,52 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RequestBody'
+              $ref: '#/components/schemas/FileCreateRequestBody'
+      parameters:
+        - name: script
+          in: query
+          description: The script id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 292
+        - name: deploy  
+          in: query
+          description: The deployment id of the RESTlet
+          required: true
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/FileCreationResponse'
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /*fileUpdateDomain*/app/site/hosting/restlet.nl:
+    post:
+      summary: Process a file and generate JSON output
+      tags:
+        - bomImport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileUpdateRequestBody'
       parameters:
         - name: script
           in: query
@@ -303,7 +348,7 @@ paths:
                 
 components:
   schemas:
-    RequestBody:
+    FileCreateRequestBody:
       type: object
       properties:
         fileContent:
@@ -311,6 +356,16 @@ components:
           description: The content of the file to be processed
         fileName:
           type: string
+          description: The name of the file to be processed
+
+    FileUpdateRequestBody:
+      type: object
+      properties:
+        fileContent:
+          type: string
+          description: The content of the file to be processed
+        fileID:
+          type: integer
           description: The name of the file to be processed
     
     ProxyPostRequestBody:
