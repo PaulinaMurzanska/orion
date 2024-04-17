@@ -1,0 +1,22 @@
+<restlet scriptid="customscript_orion_rl_bom_upd_file">
+  <description>Provides the ability to update file content in the Sandbox</description>
+  <isinactive>F</isinactive>
+  <name>Orion RL BoM Update File</name>
+  <notifyadmins>F</notifyadmins>
+  <notifyemails></notifyemails>
+  <notifyowner>T</notifyowner>
+  <notifyuser>F</notifyuser>
+  <scriptfile>[/SuiteScripts/orion/bomImport/orion-rl-bom-update-file.js]</scriptfile>
+  <scriptdeployments>
+    <scriptdeployment scriptid="customdeploy_orion_rl_bom_upd_file">
+      <allemployees>F</allemployees>
+      <allpartners>F</allpartners>
+      <allroles>T</allroles>
+      <audslctrole></audslctrole>
+      <isdeployed>T</isdeployed>
+      <loglevel>ERROR</loglevel>
+      <status>RELEASED</status>
+      <title>Orion RL BoM Update File</title>
+    </scriptdeployment>
+  </scriptdeployments>
+</restlet>

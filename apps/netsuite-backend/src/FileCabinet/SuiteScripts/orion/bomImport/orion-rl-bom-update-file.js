@@ -25,7 +25,7 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
       fileName = fileObj.name
 
       // Create a new file
-      let fileObj = file.create({
+      let updatedfileObj = file.create({
         name: fileName,
         fileType: file.Type.PLAINTEXT,
         contents: requestData.fileContent,
@@ -35,13 +35,13 @@ define(['N/file', 'N/runtime'], function (file, runtime) {
       })
 
       // Save the file
-      const fileID = fileObj.save()
+      const resultFileID = updatedfileObj.save()
 
-      fileObj = file.load({
-        id: fileID
+      const resultfileObj = file.load({
+        id: resultFileID
       })
 
-      const fileURL = fileObj.url
+      const fileURL = resultfileObj.url
 
       // Log the fileId or do any further processing
       log.debug({
