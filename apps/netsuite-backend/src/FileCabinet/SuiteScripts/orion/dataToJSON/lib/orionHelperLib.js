@@ -636,9 +636,9 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     } else {
       if (lineItem.custcol_ori_discount_dealer && lineItem.custcol_ori_discount_dealer.toString().indexOf('|') > -1) {
         let discount = calculateDiscount(Number(lineItem.custcol_ori_discount_dealer))
-        return lineItem.custcol_ori_list_price * ((100 - discount) / 100)
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - discount) / 100))
       } else {
-        return lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_dealer)) / 100)
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_dealer)) / 100))
       }
     }
   }
@@ -655,9 +655,9 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     } else {
       if (lineItem.custcol_ori_discount_customer && lineItem.custcol_ori_discount_customer.toString().indexOf('|') > -1) {
         let discount = calculateDiscount(Number(lineItem.custcol_ori_discount_customer))
-        return lineItem.custcol_ori_list_price * ((100 - discount) / 100)
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - discount) / 100))
       } else {
-        return lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_customer)) / 100)
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_customer)) / 100))
       }
     }
   }
