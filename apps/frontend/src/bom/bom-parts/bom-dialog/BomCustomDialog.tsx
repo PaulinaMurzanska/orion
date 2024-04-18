@@ -3,11 +3,12 @@ import {
   setBomImportFiles,
 } from '../../../../store/bomImportFilesSlice';
 import {
-  CustomButton,
   CustomTriggerButton,
+  StyledCloseIcon,
   StyledContentWrapper,
   StyledDialog,
   StyledDialogOpen,
+  StyledEmail,
   StyledInnerContent,
 } from './StyledBomDialog';
 import { DndContext, closestCorners } from '@dnd-kit/core';
@@ -16,6 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import BomDialogContent from '../dialog-content/BomDialogContent';
 import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
+import { Icons } from '../../../assets/icons/Icons';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
 import { getUrl } from '@orionsuite/api-client';
@@ -329,9 +331,11 @@ const BomCustomDialog = () => {
                 uploadProgress={uploadProgress}
               />
             </StyledInnerContent>
-            <CustomButton type="button" variant="ghost" onClick={handleClose}>
-              Close
-            </CustomButton>
+            <StyledEmail>
+              <Icons.envelope />
+              <span>Email yourself or Others When Complete</span>
+            </StyledEmail>
+            <StyledCloseIcon onClick={handleClose} />
           </DndContext>
         </StyledContentWrapper>
       </StyledDialogOpen>

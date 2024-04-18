@@ -3,7 +3,7 @@ import { colors, shadows } from '../../../../styles/variables';
 import styled from 'styled-components';
 
 interface ActionProps {
-  onAdd?: boolean;
+  addIcon?: boolean;
 }
 
 const StyledActionIcon = styled.div<ActionProps>`
@@ -16,18 +16,18 @@ const StyledActionIcon = styled.div<ActionProps>`
   height: 37px;
   box-shadow: ${shadows.drop_shadow_black};
   background-color: ${(props) =>
-    props.onAdd ? colors.lime_500 : colors.blue_primary};
+    props.addIcon ? colors.lime_500 : colors.blue_primary};
 `;
 
 const StyledActionBts = styled.div`
   min-width: 86px;
+  min-height: 372px;
   margin-left: 10px;
   display: flex;
   flex-flow: column wrap;
   border-radius: 5px;
   overflow: hidden;
   background-color: ${colors.grey_400};
-  padding: 0 9px;
 `;
 
 const ActionBtn = styled.button`
@@ -39,8 +39,8 @@ const ActionBtn = styled.button`
   align-items: center;
   justify-content: center;
   row-gap: 5px;
-  /* background-color: #989898; */
   position: relative;
+  padding: 0 9px;
   cursor: pointer;
   &:last-child {
     border-bottom: none;
@@ -66,12 +66,12 @@ const ActionBtn = styled.button`
 
 const StyledActionLabel = styled.span`
   display: block;
-  font-size: 13px;
-  width: 70px;
+  font-size: 14px;
+  width: 50px;
   line-height: 20px;
   text-align: center;
   color: white;
-  font-weight: 300;
+  font-weight: 700;
 `;
 
 export { StyledActionIcon, ActionBtn, StyledActionBts, StyledActionLabel };

@@ -1,11 +1,15 @@
 import { Button, Card } from '@orionsuite/shared-components';
 import { colors, shadows } from '../../../../styles/variables';
+import styled, { css } from 'styled-components';
 
 import Icon from '@mdi/react';
-import styled from 'styled-components';
+import { Icons } from '../../../../assets/icons/Icons';
 
 interface DragDropProps {
   extension?: string | null;
+  listHeader?: boolean;
+  listItem?: boolean;
+  listFooter?: boolean;
 }
 
 const StyledContentCentered = styled.div`
@@ -51,9 +55,13 @@ const StyledDropButton = styled(Button)`
   }
 `;
 
-const StyledDragDrop = styled.div`
+const StyledDragDrop = styled(Card)`
   position: relative;
   padding: 16px 16px 11px;
+  border-radius: 12px;
+  box-shadow: ${shadows.drop_shadow_black};
+  width: 100%;
+  border-radius: 12px;
 `;
 
 const StyledDragTitle = styled.h2`
@@ -74,12 +82,15 @@ const StyledDragTextSmall = styled.p`
 `;
 
 const StyledStatusZoneTextNormal = styled.p`
-  font-size: 16px;
-  line-height: 1;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
   color: rgba(0, 0, 0, 0.87);
   white-space: pre;
   text-wrap: wrap;
   text-align: center;
+  margin: 18px auto 0;
+  width: 80%;
 `;
 
 const StyledDropArea = styled.div`
@@ -94,9 +105,7 @@ const StyledDropArea = styled.div`
 
 const StyledCard = styled(Card)`
   width: 100%;
-  min-height: 200px;
   border-radius: 12px;
-  box-shadow: ${shadows.drop_shadow_black};
 `;
 
 const StyledDivider = styled.div`
@@ -104,6 +113,84 @@ const StyledDivider = styled.div`
   height: 2px;
   background-color: ${colors.grey_100};
   margin: 8px 0 0;
+`;
+const StyledDropZone = styled.div`
+  position: relative;
+  text-align: center;
+  height: 100%;
+`;
+
+const StyledStatusCard = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 9px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 12px;
+`;
+
+const StyledListWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledStatusList = styled.div`
+  flex: 1;
+  margin-top: 4px;
+`;
+
+const StyledRow = styled.div<DragDropProps>`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid
+    ${(props) =>
+      props.listHeader
+        ? colors.cyan_400
+        : props.listItem
+        ? colors.grey_090
+        : 'none'};
+  p {
+    color: #000;
+    line-height: 1.4;
+    font-size: 13px;
+    font-weight: 400;
+
+    ${(props) =>
+      props.listHeader &&
+      css`
+        font-size: 13px;
+      `}
+
+    ${(props) =>
+      props.listItem &&
+      css`
+        font-size: 11px;
+      `}
+
+    ${(props) =>
+      props.listFooter &&
+      css`
+        font-weight: 700;
+      `}
+  }
+`;
+
+const StyledPackageIcon = styled(Icons.package)`
+  width: 50px;
+  height: 50px;
+  color: ${colors.grey_400};
+  margin: 10px auto;
+`;
+
+const StyledStatusZone = styled(Card)`
+  height: 100%;
+  position: relative;
+  width: 100%;
+  min-height: 137px;
+  border-radius: 12px;
 `;
 
 export {
@@ -118,4 +205,11 @@ export {
   StyledDropArea,
   StyledCard,
   StyledDivider,
+  StyledDropZone,
+  StyledStatusCard,
+  StyledStatusList,
+  StyledListWrapper,
+  StyledRow,
+  StyledPackageIcon,
+  StyledStatusZone,
 };

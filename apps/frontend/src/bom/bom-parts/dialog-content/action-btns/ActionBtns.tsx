@@ -24,7 +24,7 @@ const ActionBtns = ({
   return (
     <StyledActionBts>
       <ActionBtn onClick={onAddClick} type="button">
-        <StyledActionIcon onAdd={true}>
+        <StyledActionIcon addIcon={true}>
           <Icon path={mdiPlus} className="w-5 h-5" />
         </StyledActionIcon>
         <StyledActionLabel>Add Files</StyledActionLabel>
@@ -34,10 +34,10 @@ const ActionBtns = ({
         disabled={uploadProgress}
         type="button"
       >
-        <StyledActionIcon>
+        <StyledActionIcon addIcon={false}>
           <Icon path={mdiArrowRight} className="w-5 h-5" />
         </StyledActionIcon>
-        <StyledActionLabel>Import Lines</StyledActionLabel>
+        <StyledActionLabel>Begin Upload</StyledActionLabel>
       </ActionBtn>
     </StyledActionBts>
   );

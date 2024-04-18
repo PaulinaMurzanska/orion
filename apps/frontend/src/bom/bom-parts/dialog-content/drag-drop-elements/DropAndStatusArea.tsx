@@ -1,9 +1,8 @@
-import { StyledCard, StyledDropArea } from './StyledDragDrop';
-
 import { CSS } from '@dnd-kit/utilities';
 import DragDrop from './DragDrop';
 import { FileObjectType } from '../../type';
 import StatusZone from './StatusZone';
+import { StyledDropArea } from './StyledDragDrop';
 import { useSortable } from '@dnd-kit/sortable';
 
 interface Props {
@@ -37,12 +36,8 @@ const DropAndStatusArea = ({
       style={style}
       id={id}
     >
-      <StyledCard>
-        <DragDrop fileObj={file} onDropFunction={onDropFunction} />
-      </StyledCard>
-      <StyledCard>
-        <StatusZone fileObj={file} />
-      </StyledCard>
+      <DragDrop fileObj={file} onDropFunction={onDropFunction} />
+      <StatusZone fileObj={file} />
     </StyledDropArea>
   );
 };

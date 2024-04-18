@@ -78,7 +78,7 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
         id={fileObj.id}
         ref={dropzoneRef}
       >
-        <StyledContentCentered>
+        <StyledContentCentered className="justify-center">
           <input {...getInputProps()} />
           <StyledAttachment extension={fileObj.fileExtension}>
             {fileObj.fileExtension !== '' ? (

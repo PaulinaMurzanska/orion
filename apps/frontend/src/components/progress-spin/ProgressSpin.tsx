@@ -1,11 +1,10 @@
 import { SpinnerContainer, SpinningIcon } from './StyledProgressSpin';
 
-import { cn } from '../../utils/tailwind';
 import { colors } from '../../styles/variables';
 
 export interface ProgressSpinProps {
   size?: number;
-  variant?: 'primary' | 'white' | 'gray' | 'orange';
+  variant?: 'primary' | 'white' | 'gray' | 'orange' | 'pink';
   className?: string;
   animationDuration?: string;
   customColor?: string;
@@ -13,7 +12,7 @@ export interface ProgressSpinProps {
 
 const ProgressSpin = ({
   size = 24,
-  variant = 'orange',
+  variant = 'pink',
   className = '',
   animationDuration = '2s',
   customColor = '',
@@ -23,6 +22,7 @@ const ProgressSpin = ({
     white: '#fff',
     gray: colors.grey_400,
     orange: colors.orange,
+    pink: colors.pink,
   };
 
   const color = customColor ? customColor : colorMap[variant];
