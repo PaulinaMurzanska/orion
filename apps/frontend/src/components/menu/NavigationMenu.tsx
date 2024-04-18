@@ -5,6 +5,7 @@ import Logo from './Logo';
 import { Separator } from '@orionsuite/shared-components';
 import { config } from './config';
 import { useMemo } from 'react';
+import { api } from '@orionsuite/api-client';
 
 const Container = styled.div`
   background: #2b2b2e;
@@ -29,7 +30,12 @@ const MenuSection = styled.div`
 
 const NavigationMenu = () => {
   const navigate = useNavigate();
-  const menuElements = useMemo(() => config({ navigate }), [navigate]);
+  const { data } = api.useGetViewsQuery();
+
+  const menuElements = useMemo(
+    () => config({ navigate, tableViews: data?.tableViews ?? [] }),
+    [data?.tableViews, navigate]
+  );
 
   return (
     <Container>

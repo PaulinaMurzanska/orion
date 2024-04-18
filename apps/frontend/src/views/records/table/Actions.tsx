@@ -25,7 +25,7 @@ const Actions = ({ editable, setEditable }: Props) => {
       )}
       <Button variant="default" className="bg-blue-600 hover:bg-blue-500">Export to:</Button>
       <Button variant="default" className="bg-blue-600 hover:bg-blue-500">Generate PO</Button>
-      <Button variant="default" className="bg-blue-600 hover:bg-blue-500">PDF Composer</Button>
+      <Button variant="default" className="bg-purple-600 hover:bg-purple-500">PDF Composer</Button>
     </>
   );
 };

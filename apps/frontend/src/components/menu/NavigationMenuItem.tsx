@@ -41,6 +41,38 @@ const MenuItem = ({ item }: { item: MenuElement }) => {
     return location.pathname.includes(item.route);
   }, [item.route, location.pathname]);
 
+  // require(['N/search'],function(search){console.log(search.lookupFields({
+  //   type: search.Type.SALES_ORDER,
+  //   id: '3',
+  //   columns: ['custbody_json_file']
+  // }))})
+  // 1304
+  // [7:22 PM] Luke Abbott
+  // 1304
+  // [7:23 PM] Luke Abbott
+  // Update: /app/site/hosting/restlet.nl?script=307&deploy=1
+
+  // {
+  //   "id": "_default",
+  //   "icon": "star.jpg",
+  //   "label": "Pricing",
+  //   "view_group": "",
+  //   "columns": [
+  //   {
+  //     "id": "custcol_qty",
+  //     "label": "Quantity",
+  //     "data_type": "integer",
+  //     "display_type": "number"
+  //   },
+  //   {
+  //     "id": "custcol_address",
+  //     "label": "Ship To",
+  //     "data_type": "list",
+  //     "display_type": "filterList"
+  //   }
+  // ]
+  // }
+
   return (
     <DropdownMenu>
       <Container onClick={onClick} placeholder={name} aria-placeholder={name} >
