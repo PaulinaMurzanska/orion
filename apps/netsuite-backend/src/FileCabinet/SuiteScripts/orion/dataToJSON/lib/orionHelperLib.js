@@ -624,6 +624,44 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return discountpercent
   }
 
+  /**
+   * Calculates the dealer cost for a given line item.
+   *
+   * @param {Object} lineItem - The line item object.
+   * @returns {number} The calculated dealer cost.
+   */
+  const dealerCostCalculate = (lineItem) => {
+    if (lineItem.porate) {
+      return lineItem.porate
+    } else {
+      if (lineItem.custcol_ori_discount_dealer && lineItem.custcol_ori_discount_dealer.toString().indexOf('|') > -1) {
+        let discount = calculateDiscount(Number(lineItem.custcol_ori_discount_dealer))
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - discount) / 100))
+      } else {
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_dealer)) / 100))
+      }
+    }
+  }
+
+  /**
+   * Calculates the cost for a customer based on the line item.
+   *
+   * @param {Object} lineItem - The line item object.
+   * @returns {number} - The calculated cost for the customer.
+   */
+  const customerCostCalculator = (lineItem) => {
+    if (lineItem.rate) {
+      return lineItem.rate
+    } else {
+      if (lineItem.custcol_ori_discount_customer && lineItem.custcol_ori_discount_customer.toString().indexOf('|') > -1) {
+        let discount = calculateDiscount(Number(lineItem.custcol_ori_discount_customer))
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - discount) / 100))
+      } else {
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_customer)) / 100))
+      }
+    }
+  }
+
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
@@ -634,6 +672,8 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     retrieveValueFromDelimitedString: retrieveValueFromDelimitedString,
     addUUIDToItemLines: addUUIDToItemLines,
     calculateDiscount: calculateDiscount,
+    dealerCostCalculate: dealerCostCalculate,
+    customerCostCalculator: customerCostCalculator
   }
 
 })
