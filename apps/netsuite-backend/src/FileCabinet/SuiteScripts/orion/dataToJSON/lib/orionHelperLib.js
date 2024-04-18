@@ -624,6 +624,19 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     return discountpercent
   }
 
+  const dealerCostCalculate = (lineItem) => {
+    if (lineItem.rate) {
+      return lineItem.rate
+    } else {
+      if (lineItem.custcol_pintel_dealerdisc?.indexOf('|') > -1) {
+        let discount = calculateDiscount(lineItem.custcol_pintel_dealerdisc)
+        return lineItem.custcol_pintel_listprice * ((100 - discount) / 100)
+      } else {
+        return lineItem.custcol_pintel_listprice * ((100 - lineItem.custcol_pintel_dealerdisc) / 100)
+      }
+    }
+  }
+
   return {
     findIDByField: findIDByField,
     xmlToJSON: xmlToJSON,
