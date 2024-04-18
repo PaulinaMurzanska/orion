@@ -24,7 +24,7 @@
         "custcol_ori_option_codes": "ON - OD"
       },
       "identifiers": "PN, PD, MC, QT, PP, SP, PL",
-      "manufacturer_code": "custcol_pintel_mancode",
+      "manufacturer_code": "custcol_ori_mc",
       "id_maps": {
         "item": {
           "type": "item",
@@ -51,7 +51,7 @@
               "soundex": false
             }
           ],
-          "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
+          "map_field": ["custcol_ori_ec", "custcol_ori_mc"],
           "field_join": "AND"
         }
       }
@@ -79,7 +79,7 @@
         "custcol_ori_option_codes": "ON - OD"
       },
       "identifiers": "PN, PD, MC, QT, P%, S-, PL",
-      "manufacturer_code": "custcol_pintel_mancode",
+      "manufacturer_code": "custcol_ori_mc",
       "id_maps": {
         "item": {
           "type": "item",
@@ -106,7 +106,7 @@
               "soundex": false
             }
           ],
-          "map_field": ["custcol_pintel_entcode", "custcol_pintel_mancode"],
+          "map_field": ["custcol_ori_ec", "custcol_ori_mc"],
           "field_join": "AND"
         }
       }
