@@ -236,9 +236,11 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
           }
         }
 
-
         newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
-        newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item'] 
+        newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item']
+
+        newOutputDefKeysLoop['porate'] = orionHelperLib.dealerCostCalculate(newOutputDefKeysLoop)
+        newOutputDefKeysLoop['rate'] = orionHelperLib.customerCostCalculator(newOutputDefKeysLoop)
 
         log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
 
