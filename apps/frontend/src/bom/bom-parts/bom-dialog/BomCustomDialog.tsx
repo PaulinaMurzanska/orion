@@ -147,7 +147,7 @@ const BomCustomDialog = () => {
 
     for (const data of combinedDataArr) {
       for (const prop of summaryProps) {
-        summarizedData[prop] = (summarizedData[prop] || 0) + data[prop];
+        summarizedData[prop] = (summarizedData[prop] || 0) + Number(data[prop]);
       };
     };
 
