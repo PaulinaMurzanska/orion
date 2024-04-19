@@ -138,6 +138,20 @@ const BomCustomDialog = () => {
       'The request should be made in this place, temporarily, we are going to save file in global store - not created yet at this point'
     );
     console.log('payload:', combineArrayData);
+    const summarizedData = summarizeData(combinedItemLines, ['quantity', 'porate', 'rate']);
+    console.log('summarizedData:', summarizedData);
+  };
+
+  const summarizeData = (combinedDataArr: Array<Object>, summaryProps: Array<string>) => {
+    let summarizedData: { [key: string]: any } = {};
+
+    for (const data of combinedDataArr) {
+      for (const prop of summaryProps) {
+        summarizedData[prop] = (summarizedData[prop] || 0) + data[prop];
+      };
+    };
+
+    return summarizedData;
   };
 
   const onImportLines = async () => {
