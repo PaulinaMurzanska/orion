@@ -13,9 +13,18 @@ interface StatusZoneProps {
 }
 
 const StatusZone = ({ fileObj }: StatusZoneProps) => {
+  const { fileLoading, fileAdded, createArrayProgress, arrayCreated } = fileObj;
   return (
     <StyledStatusZone>
-      {fileObj.fileLoading && (
+      {!fileLoading && !fileAdded && (
+        <StyledStatusZoneTextNormal className="mb-4">
+          Files Are Not Selected
+          <StyledPackageIcon />
+        </StyledStatusZoneTextNormal>
+        // <StatusInfo fileObj={fileObj} />
+      )}
+
+      {fileLoading && (
         <>
           <StyledStatusZoneTextNormal className="mb-5">
             {fileObj.loaderText}
@@ -23,14 +32,18 @@ const StatusZone = ({ fileObj }: StatusZoneProps) => {
           <ProgressSpin size={35} className="m-auto mt-3" />
         </>
       )}
-      {!fileObj.fileLoading && !fileObj.fileAdded && (
-        <StyledStatusZoneTextNormal className="mb-4">
-          Files Are Not Selected
-          <StyledPackageIcon />
-        </StyledStatusZoneTextNormal>
-      )}
-      {!fileObj.fileLoading && fileObj.fileAdded && (
+      {!fileLoading && fileAdded && !createArrayProgress && !arrayCreated && (
         <StatusInfo fileObj={fileObj} />
+      )}
+      {!fileLoading && fileAdded && !createArrayProgress && arrayCreated && (
+        <>
+          <StyledStatusZoneTextNormal className="mb-5">
+            {fileObj.loaderText}
+          </StyledStatusZoneTextNormal>
+          <div className="flex items-center justify-center ">
+            <p className="text-xs text-center">Your can close the dialog now</p>
+          </div>
+        </>
       )}
     </StyledStatusZone>
   );

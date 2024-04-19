@@ -9,8 +9,11 @@ import {
 } from './StyledBomDialog';
 import { DndContext, closestCorners } from '@dnd-kit/core';
 import {
+  removeInvalidFiles,
+  setDisableBeginBtn,
   setFileUploadProgress,
   setUploadedFilesArr,
+  updateFileDetails,
   updateFilePositions,
   updateFilesLoading,
 } from '../../../../store/bom-store/bomSlice';
@@ -88,16 +91,16 @@ const BomCustomDialog = () => {
   };
 
   const createCombinedFilesArr = async () => {
-    dispatch(
-      updateFilesLoading({
-        updates: uploadedFilesArr.map((file) => ({
+    uploadedFilesArr.forEach((file) => {
+      dispatch(
+        updateFileDetails({
           id: file.id,
           fileLoading: true,
           loaderText: 'Adding file to combined array',
-        })),
-      })
-    );
-
+          createArrayProgress: true,
+        })
+      );
+    });
     const combinedItemLines = uploadedFilesArr
       .map((obj) => obj.itemLines)
       .flat();
@@ -108,45 +111,40 @@ const BomCustomDialog = () => {
     const param = isDevEnv ? 3 : urlParamId;
     const { transactionId, transactionExists } = getTransactionId(param);
 
+    let payload: any = {
+      fileContent: JSON.stringify(combinedItemLines),
+      deploymentID: 1,
+    };
+    let url;
+    console.log('transaction exist?', transactionExists, transactionId);
     if (transactionExists) {
-      console.log('TRANSACTION EXISTS');
       const transactionVal = await getTransactionVal(3);
-      const payload = {
-        fileID: transactionVal,
-        fileContent: JSON.stringify(combinedItemLines),
-        scriptID: 307,
-        deploymentID: 1,
-      };
-
-      const url =
+      payload = { ...payload, scriptID: 307, fileID: transactionVal };
+      url =
         'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=307&deploymentID=1';
-
-      initiateProcessPromise('finalizeUpload', payload, null, url);
-      console.log('payload:', payload);
     } else {
-      console.log("TRANSACTION DOESN'T EXISTS");
-      const payload = {
-        fileName:
-          transactionId === null ? 'dataset id not found' : transactionId,
-        fileContent: JSON.stringify(combinedItemLines),
-        scriptID: 292,
-        deploymentID: 1,
-      };
-      console.log('payload:', payload);
-      initiateProcessPromise('finalizeUpload', payload, null);
+      const fileName =
+        transactionId === null ? 'dataset id not found' : transactionId;
+      payload = { ...payload, scriptID: 292, fileName: fileName };
+      url = null;
     }
+
+    const data: any = await initiateProcessPromise('', payload, null, url);
+    finalizeUpload(data.output.fileID);
   };
 
-  const finalizeUpload = () => {
-    dispatch(
-      updateFilesLoading({
-        updates: uploadedFilesArr.map((file) => ({
+  const finalizeUpload = (id: string) => {
+    uploadedFilesArr.forEach((file) => {
+      dispatch(
+        updateFileDetails({
           id: file.id,
           fileLoading: false,
-          loaderText: 'files added to array and uploaded to NS',
-        })),
-      })
-    );
+          loaderText: `File is saved in NS under transaction ID : ${id}`,
+          createArrayProgress: false,
+          arrayCreated: true,
+        })
+      );
+    });
   };
 
   const onImportLines = async () => {
@@ -158,6 +156,7 @@ const BomCustomDialog = () => {
           file.initialPosition !== file.currentPosition &&
           file.bomRecordID !== null
       );
+
       dispatch(updateFilePositions());
       dispatch(
         updateFilesLoading({
@@ -169,24 +168,24 @@ const BomCustomDialog = () => {
         })
       );
 
+      dispatch(removeInvalidFiles());
       if (changedRecords.length === 0) {
         createCombinedFilesArr();
       } else {
-        const updates = uploadedFilesArr
-          .filter(
-            (file) =>
-              file.initialPosition !== file.currentPosition &&
-              file.bomRecordID !== null
-          )
-          .map((file) => ({
-            id: file.id,
-            fileLoading: true,
-            loaderText: 'The order of the file changed, updating order',
-          }));
-
-        if (updates.length > 0) {
-          dispatch(updateFilesLoading({ updates }));
-        }
+        uploadedFilesArr.forEach((file) => {
+          if (
+            file.initialPosition !== file.currentPosition &&
+            file.bomRecordID !== null
+          ) {
+            dispatch(
+              updateFileDetails({
+                id: file.id,
+                fileLoading: true,
+                loaderText: 'The order of the file changed, updating order',
+              })
+            );
+          }
+        });
 
         const promises = [];
         for (const [index, file] of changedRecords.entries()) {
@@ -208,21 +207,20 @@ const BomCustomDialog = () => {
           const responses = await Promise.all(promises);
 
           if (responses) {
-            const updates = uploadedFilesArr
-              .filter(
-                (file) =>
-                  file.initialPosition !== file.currentPosition &&
-                  file.bomRecordID !== null
-              )
-              .map((file) => ({
-                id: file.id,
-                fileLoading: false,
-                loaderText: 'The file was updated',
-              }));
-
-            if (updates.length > 0) {
-              dispatch(updateFilesLoading({ updates }));
-            }
+            uploadedFilesArr.forEach((file) => {
+              if (
+                file.initialPosition !== file.currentPosition &&
+                file.bomRecordID !== null
+              ) {
+                dispatch(
+                  updateFileDetails({
+                    id: file.id,
+                    fileLoading: false,
+                    loaderText: 'The file was updated',
+                  })
+                );
+              }
+            });
             createCombinedFilesArr();
           }
         } catch (error) {
@@ -255,7 +253,7 @@ const BomCustomDialog = () => {
     action: any,
     payload: any,
     defaultData: any,
-    url?: string
+    url?: any
   ) => {
     const script = import.meta.env.VITE_API_DEFAULT_SCRIPT;
     const deploy = import.meta.env.VITE_API_DEFAULT_DEPLOY;
@@ -291,6 +289,8 @@ const BomCustomDialog = () => {
     workerRef.current.onmessage = (e: any) => {
       const { action, data, error } = e.data;
 
+      console.log('event in use eff', e);
+
       if (error) {
         const err_msg = data.err_message;
         handleRequestError(err_msg, action);
@@ -302,9 +302,8 @@ const BomCustomDialog = () => {
           break;
       }
       switch (action) {
-        case 'finalizeUpload':
-          console.log('File was successfully upload', data);
-          finalizeUpload();
+        case 'finish':
+          console.log('finish');
           break;
       }
     };
@@ -318,6 +317,11 @@ const BomCustomDialog = () => {
     );
 
     dispatch(setFileUploadProgress(isDataProcessing));
+    if (uploadedFilesArr.length === 1 && !uploadedFilesArr[0].fileAdded) {
+      dispatch(setDisableBeginBtn(true));
+    } else {
+      dispatch(setDisableBeginBtn(false));
+    }
   }, [uploadedFilesArr]);
 
   return (
@@ -345,10 +349,10 @@ const BomCustomDialog = () => {
             </StyledInnerContent>
             <StyledEmail>
               <Icons.envelope />
-              {/* <span
+              <span
                 id="created-string-id"
                 data-create-id="ABCD-TEST-XYZ"
-              ></span> */}
+              ></span>
               <span>Email yourself or Others When Complete</span>
               {/* <div>
                 <pre>{JSON.stringify(uploadedFilesArr, null, 2)}</pre>

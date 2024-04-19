@@ -21,6 +21,9 @@ const ActionBtns = ({ onAddClick, onActionClick }: ActionBtnsProps) => {
   const fileUploadProgress = useSelector(
     (state: RootState) => state.bom.fileUploadProgress
   );
+  const disableBeginBtn = useSelector(
+    (state: RootState) => state.bom.disableBeginBtn
+  );
 
   return (
     <StyledActionBts>
@@ -32,7 +35,7 @@ const ActionBtns = ({ onAddClick, onActionClick }: ActionBtnsProps) => {
       </ActionBtn>
       <ActionBtn
         onClick={onActionClick}
-        disabled={fileUploadProgress}
+        disabled={fileUploadProgress || disableBeginBtn}
         type="button"
       >
         <StyledActionIcon addIcon={false}>
