@@ -9,6 +9,11 @@ import {
 } from './StyledBomDialog';
 import { DndContext, closestCorners } from '@dnd-kit/core';
 import {
+  getExistingTransactionValueUrl,
+  getUpdateExistingTransactionUrl,
+  getUrl,
+} from '@orionsuite/api-client';
+import {
   removeInvalidFiles,
   setDisableBeginBtn,
   setFileUploadProgress,
@@ -26,7 +31,6 @@ import { RootState } from 'apps/frontend/store';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
 import { getTransactionId } from '../../../helpers/getTransactionId';
-import { getUrl } from '@orionsuite/api-client';
 import { initialFile } from '../../../../store/bom-store/bomInitialStates';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
@@ -82,11 +86,9 @@ const BomCustomDialog = () => {
   };
 
   const getTransactionVal = async (paramId: any) => {
-    console.log(
-      'Make a call to API to get the value, it return just temporary value'
-    );
-    const tempValue = '1304';
-    return tempValue;
+    const url = getExistingTransactionValueUrl(paramId);
+    const data: any = await initiateProcessPromise('', null, null, url, 'GET');
+    return data.fileID;
   };
 
   const createCombinedFilesArr = async () => {
@@ -115,12 +117,15 @@ const BomCustomDialog = () => {
       deploymentID: 1,
     };
     let url;
-    console.log('transaction exist?', transactionExists, transactionId);
     if (transactionExists) {
-      const transactionVal = await getTransactionVal(3);
-      payload = { ...payload, scriptID: 307, fileID: transactionVal };
-      url =
-        'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=307&deploymentID=1';
+      const transactionVal = await getTransactionVal(transactionId);
+      payload = {
+        ...payload,
+        scriptID: 307,
+        fileID: transactionVal.value,
+        fileName: transactionVal.text,
+      };
+      url = getUpdateExistingTransactionUrl();
     } else {
       const fileName =
         transactionId === null ? 'dataset id not found' : transactionId;
@@ -252,13 +257,13 @@ const BomCustomDialog = () => {
     action: any,
     payload: any,
     defaultData: any,
-    url?: any
+    url?: any,
+    method?: any
   ) => {
     const script = import.meta.env.VITE_API_DEFAULT_SCRIPT;
     const deploy = import.meta.env.VITE_API_DEFAULT_DEPLOY;
 
     const endpoint = url ? url : getUrl(deploy, script);
-    console.log('endpoint', endpoint);
 
     return new Promise((resolve, reject) => {
       const messageHandler = (e: any) => {
@@ -278,7 +283,7 @@ const BomCustomDialog = () => {
         payload,
         defaultData,
         endpoint: endpoint,
-        method: 'POST',
+        method: method ? method : 'POST',
       });
     });
   };
@@ -287,9 +292,6 @@ const BomCustomDialog = () => {
     workerRef.current = new WebWorker();
     workerRef.current.onmessage = (e: any) => {
       const { action, data, error } = e.data;
-
-      console.log('event in use eff', e);
-
       if (error) {
         const err_msg = data.err_message;
         handleRequestError(err_msg, action);
@@ -297,12 +299,10 @@ const BomCustomDialog = () => {
       }
       switch (action) {
         case 'updateNewFilesOrder':
-          console.log('File was successfully updated', data);
           break;
       }
       switch (action) {
         case 'finish':
-          console.log('finish');
           break;
       }
     };
@@ -353,9 +353,6 @@ const BomCustomDialog = () => {
                 data-create-id="ABCD-TEST-XYZ"
               ></span> */}
               <span>Email yourself or Others When Complete</span>
-              {/* <div>
-                <pre>{JSON.stringify(uploadedFilesArr, null, 2)}</pre>
-              </div> */}
             </StyledEmail>
             <StyledCloseIcon onClick={handleClose} />
           </DndContext>

@@ -1,7 +1,6 @@
 self.addEventListener('message', async (e) => {
   const { action, payload, defaultData, endpoint, method } = e.data;
 
-  console.log('e', e);
   try {
     const response = await fetch(endpoint, {
       method: method || 'POST',
