@@ -1,7 +1,12 @@
+import {
+  getExistingTransactionValueUrl,
+  getUpdateExistingTransactionUrl,
+  getUrl,
+} from './lib/urls';
+
 import { api as baseApi } from './lib/apiClient';
 import { bomImportApi } from './lib/bomImport';
 import { dataToJsonApi } from './lib/dataToJson';
-import { getUrl } from './lib/urls';
 import { ordersApi } from './lib/order';
 
 const api = {
@@ -11,4 +16,9 @@ const api = {
   ...bomImportApi,
 };
 
-export { api, getUrl };
+export {
+  api,
+  getUrl,
+  getExistingTransactionValueUrl,
+  getUpdateExistingTransactionUrl,
+};

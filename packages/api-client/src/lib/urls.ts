@@ -30,3 +30,13 @@ export const getUrl = (
 
   return `${baseUrl}/app/site/hosting/scriptlet.nl?script=${script}&deploy=${deploy}&compid=${compid}&h=${h}${params}`;
 };
+
+export const getExistingTransactionValueUrl = (transactionId: any) => {
+  const url = `https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=308&deploymentID=1&recordID=${transactionId}`;
+  return url;
+};
+
+export const getUpdateExistingTransactionUrl = () => {
+  const url = `https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=307&deploymentID=1`;
+  return url;
+};

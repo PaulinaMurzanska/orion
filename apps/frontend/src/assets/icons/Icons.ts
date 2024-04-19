@@ -1,5 +1,12 @@
-import { Loader2 } from 'lucide-react';
+import { Armchair, Loader, PackageOpen, XCircle } from 'lucide-react';
+
+import { EnvelopeIcon } from './EnvelopeIcon';
 
 export const Icons = {
-  spinner: Loader2,
+  spinner: Loader,
+  package: PackageOpen,
+  envelope: EnvelopeIcon,
+  closeX: XCircle,
+
+  armchair: Armchair,
 };
