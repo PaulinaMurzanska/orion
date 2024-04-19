@@ -6,7 +6,7 @@ export interface ProgressSpinProps {
   size?: number;
   variant?: 'primary' | 'white' | 'gray' | 'orange' | 'pink';
   className?: string;
-  animationDuration?: string;
+  duration?: string;
   customColor?: string;
 }
 
@@ -14,7 +14,7 @@ const ProgressSpin = ({
   size = 24,
   variant = 'pink',
   className = '',
-  animationDuration = '2s',
+  duration = '2s',
   customColor = '',
 }: ProgressSpinProps) => {
   const colorMap = {
@@ -29,7 +29,7 @@ const ProgressSpin = ({
 
   return (
     <SpinnerContainer size={size} color={color} className={className}>
-      <SpinningIcon animationDuration={animationDuration} />
+      <SpinningIcon duration={duration} />
     </SpinnerContainer>
   );
 };

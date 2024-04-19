@@ -25,7 +25,7 @@ const SpinnerContainer = styled.div<ProgressSpinProps>`
 const SpinningIcon = styled(Icons.spinner)<ProgressSpinProps>`
   animation: ${(props) =>
     css`
-      ${spin} ${props.animationDuration || '1s'} linear infinite
+      ${spin} ${props.duration || '1s'} linear infinite
     `};
   width: 100%;
   height: 100%;

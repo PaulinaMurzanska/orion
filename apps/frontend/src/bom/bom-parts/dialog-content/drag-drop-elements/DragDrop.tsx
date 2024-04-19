@@ -50,15 +50,17 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
 
   const fileTypeValidator = (file: any) => {
     const allowedExtensions = ['.sif', '.pmx', '.xml', '.xls', '.csv'];
-    const extension = '.' + file.name.split('.').pop();
+    if (file.name) {
+      const extension = '.' + file.name.split('.').pop();
 
-    if (!allowedExtensions.includes(extension)) {
-      return {
-        code: 'invalid-extension',
-        message: `File extension '${extension}' is not allowed. Allowed extensions are: ${allowedExtensions.join(
-          ', '
-        )}`,
-      };
+      if (!allowedExtensions.includes(extension)) {
+        return {
+          code: 'invalid-extension',
+          message: `File extension '${extension}' is not allowed. Allowed extensions are: ${allowedExtensions.join(
+            ', '
+          )}`,
+        };
+      }
     }
 
     return null;

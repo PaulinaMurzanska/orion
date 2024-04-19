@@ -10,17 +10,17 @@ const ProgressSpinDemo = () => {
         <div>
           <p className="font-bold">Primary - default </p>
           <br />
-          <ProgressSpin animationDuration="4s" variant="orange" />
+          <ProgressSpin duration="4s" variant="orange" />
         </div>
         <div>
           <p className="font-bold">Gray - 8 </p>
           <br />
-          <ProgressSpin animationDuration="3s" variant="primary" />
+          <ProgressSpin duration="3s" variant="primary" />
         </div>
         <div>
           <p className="font-bold">Custom class - 34px </p>
           <br />
-          <ProgressSpin animationDuration="6s" size={58} customColor="red" />
+          <ProgressSpin duration="6s" size={58} customColor="red" />
         </div>
       </div>
     </div>
