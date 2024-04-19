@@ -1,4 +1,4 @@
-import { Loader, PackageOpen, XCircle } from 'lucide-react';
+import { Armchair, Loader, PackageOpen, XCircle } from 'lucide-react';
 
 import { EnvelopeIcon } from './EnvelopeIcon';
 
@@ -7,4 +7,6 @@ export const Icons = {
   package: PackageOpen,
   envelope: EnvelopeIcon,
   closeX: XCircle,
+
+  armchair: Armchair,
 };

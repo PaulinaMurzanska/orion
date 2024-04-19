@@ -1,5 +1,6 @@
 import {
   CustomTriggerButton,
+  StyledArmchairWrapper,
   StyledCloseIcon,
   StyledContentWrapper,
   StyledDialog,
@@ -331,8 +332,10 @@ const BomCustomDialog = () => {
         className="uppercase"
         onClick={handleClose}
       >
-        <Icon path={mdiSofaSingle} size={1} />
-        bom import tool
+        <StyledArmchairWrapper>
+          <Icons.armchair />
+        </StyledArmchairWrapper>
+        BOM Import
       </CustomTriggerButton>
       <StyledDialogOpen dialogOpen={dialogOpen}>
         <StyledContentWrapper>
@@ -348,10 +351,6 @@ const BomCustomDialog = () => {
             </StyledInnerContent>
             <StyledEmail>
               <Icons.envelope />
-              {/* <span
-                id="created-string-id"
-                data-create-id="ABCD-TEST-XYZ"
-              ></span> */}
               <span>Email yourself or Others When Complete</span>
             </StyledEmail>
             <StyledCloseIcon onClick={handleClose} />

@@ -12,6 +12,7 @@ const colors = {
   lime_500: '#76D748',
   orange: '#FF7A00',
   pink: '#FF00E5',
+  pink_2: '#A81FE9',
 };
 
 const shadows = {

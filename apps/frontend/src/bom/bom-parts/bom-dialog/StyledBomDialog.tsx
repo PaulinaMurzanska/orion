@@ -9,27 +9,36 @@ interface DialogProps {
 }
 
 const CustomTriggerButton = styled(Button)`
-  background-color: rgb(24, 103, 192) !important;
+  background-color: ${colors.pink_2} !important;
+  text-transform: none !important;
+  width: 137px !important;
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  column-gap: 10px;
   color: #fff !important;
-  text-transform: uppercase;
-  font-size: 14px;
-  letter-spacing: 1.25px;
-  height: 36px;
-  column-gap: 16px;
-  border-radius: 4px;
-  border: none;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px,
-    rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
-  transition-property: box-shadow, filter;
-  transition-duration: 0.3s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  transition-property: background-color !important;
+  transition-duration: 0.3s !important;
+  transition-timing-function: ${transitions.bezier_hover} !important;
+  border-radius: 6px !important;
 
   &:hover {
-    filter: brightness(1.2) !important;
-    background-color: rgb(24, 103, 170) !important;
+    background-color: #a956d0 !important;
     color: white !important;
-    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 8px -2px,
-      rgba(0, 0, 0, 0.14) 0px 2px 8px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;
+  }
+`;
+
+const StyledArmchairWrapper = styled.div`
+  display: flex;
+  color: white;
+  svg {
+    width: 18px;
+    height: 18px;
   }
 `;
 
@@ -118,4 +127,5 @@ export {
   StyledDialogOpen,
   StyledEmail,
   StyledCloseIcon,
+  StyledArmchairWrapper,
 };
