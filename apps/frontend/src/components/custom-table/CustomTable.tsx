@@ -135,7 +135,7 @@ export function CustomTable<T extends RowObject>({
               width: sidebarOpen
                 ? 'calc(100vw - 575px)'
                 : 'calc(100vw - 175px)',
-              height: 'calc(100vh - 225px)',
+              height: 'calc(100vh - 150px)',
             }}
           >
             <Table
