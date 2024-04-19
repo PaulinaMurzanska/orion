@@ -9,16 +9,6 @@ import { api } from '@orionsuite/api-client';
 import ProgressSpin from '../progress-spin/ProgressSpin';
 import { useDispatch } from 'react-redux';
 
-// require(['N/search'], function (search) {
-//   console.log(
-//     search.lookupFields({
-//       type: search.Type.SALES_ORDER,
-//       id: '3',
-//       columns: ['custbody_json_file'],
-//     })
-//   );
-// });
-
 const Container = styled.div`
   background: #2b2b2e;
 
@@ -45,7 +35,6 @@ const NavigationMenu = () => {
   const navigate = useNavigate();
   const { data, isLoading } = api.useGetViewsQuery();
   const [updateRecord] = api.useUpdateRecordMutation();
-  //?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=308&deploymentID=1&recordID=3 // get
 
   const menuElements = useMemo(
     () =>
