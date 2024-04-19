@@ -150,6 +150,22 @@ const BomCustomDialog = () => {
         })
       );
     });
+
+    console.log('payload:', combineArrayData);
+    const summarizedData = summarizeData(combinedItemLines, ['quantity', 'porate', 'rate']);
+    console.log('summarizedData:', summarizedData);
+  };
+
+  const summarizeData = (combinedDataArr: Array<Object>, summaryProps: Array<string>) => {
+    let summarizedData: { [key: string]: any } = {};
+
+    for (const data of combinedDataArr) {
+      for (const prop of summaryProps) {
+        summarizedData[prop] = (summarizedData[prop] || 0) + Number(data[prop]);
+      };
+    };
+
+    return summarizedData;
   };
 
   const onImportLines = async () => {
