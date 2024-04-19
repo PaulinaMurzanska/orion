@@ -19,6 +19,7 @@ type FileObjectType = {
   currentPosition?: number;
   transactionId?: any;
   transactionExist?: boolean;
+  addedToArray?: boolean;
 };
 
 export { FileObjectType };

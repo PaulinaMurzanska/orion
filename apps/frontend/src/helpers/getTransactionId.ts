@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const getTransactionId = (queryId: string | null) => {
+const getTransactionId = (queryId: any) => {
   let transactionId;
   let transactionExists;
   if (queryId === null) {

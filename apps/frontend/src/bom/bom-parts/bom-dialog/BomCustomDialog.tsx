@@ -104,39 +104,48 @@ const BomCustomDialog = () => {
     setFilesCombined(combinedItemLines);
     dispatch(setBomImportFiles(combinedItemLines));
 
-    const { transactionId, transactionExists } = getTransactionId(urlParamId);
+    const isDevEnv = import.meta.env.MODE === 'development';
+    const param = isDevEnv ? 3 : urlParamId;
+    const { transactionId, transactionExists } = getTransactionId(param);
 
-    if (!transactionExists) {
+    if (transactionExists) {
+      console.log('TRANSACTION EXISTS');
       const transactionVal = await getTransactionVal(3);
       const payload = {
-        fileId: transactionVal,
+        fileID: transactionVal,
         fileContent: JSON.stringify(combinedItemLines),
         scriptID: 307,
         deploymentID: 1,
       };
+
+      const url =
+        'https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=307&deploymentID=1';
+
+      initiateProcessPromise('finalizeUpload', payload, null, url);
       console.log('payload:', payload);
     } else {
+      console.log("TRANSACTION DOESN'T EXISTS");
       const payload = {
-        fileName: transactionId,
+        fileName:
+          transactionId === null ? 'dataset id not found' : transactionId,
         fileContent: JSON.stringify(combinedItemLines),
         scriptID: 292,
         deploymentID: 1,
       };
       console.log('payload:', payload);
-      initiateProcessPromise('', payload, null);
+      initiateProcessPromise('finalizeUpload', payload, null);
     }
+  };
 
+  const finalizeUpload = () => {
     dispatch(
       updateFilesLoading({
         updates: uploadedFilesArr.map((file) => ({
           id: file.id,
           fileLoading: false,
-          loaderText: 'files added to array',
+          loaderText: 'files added to array and uploaded to NS',
         })),
       })
-    );
-    console.log(
-      'The request should be made in this place, temporarily, we are going to save file in global store - not created yet at this point'
     );
   };
 
@@ -245,10 +254,14 @@ const BomCustomDialog = () => {
   const initiateProcessPromise = async (
     action: any,
     payload: any,
-    defaultData: any
+    defaultData: any,
+    url?: string
   ) => {
     const script = import.meta.env.VITE_API_DEFAULT_SCRIPT;
     const deploy = import.meta.env.VITE_API_DEFAULT_DEPLOY;
+
+    const endpoint = url ? url : getUrl(deploy, script);
+    console.log('endpoint', endpoint);
 
     return new Promise((resolve, reject) => {
       const messageHandler = (e: any) => {
@@ -267,7 +280,7 @@ const BomCustomDialog = () => {
         action,
         payload,
         defaultData,
-        endpoint: getUrl(deploy, script),
+        endpoint: endpoint,
         method: 'POST',
       });
     });
@@ -286,6 +299,12 @@ const BomCustomDialog = () => {
       switch (action) {
         case 'updateNewFilesOrder':
           console.log('File was successfully updated', data);
+          break;
+      }
+      switch (action) {
+        case 'finalizeUpload':
+          console.log('File was successfully upload', data);
+          finalizeUpload();
           break;
       }
     };
