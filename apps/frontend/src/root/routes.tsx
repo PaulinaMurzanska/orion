@@ -1,23 +1,18 @@
 import BomImportTool from '../bom/BomImportTool';
 import ComponentsLibrary from '../components-library/ComponentsLibrary';
-import OrdersTable from '../tables/OrdersTable';
 import Root from './Root';
 import { createHashRouter, Navigate } from 'react-router-dom';
-import BomList from '../tables/BomList';
+import RecordsView from '../views/records/RecordsView';
 
 export default createHashRouter([
   {
     path: '/',
     element: <Root />,
     children: [
-      { path: '/', element: <Navigate to="/bom" /> },
+      { path: '/', element: <Navigate to="/records" /> },
       {
-        path: '/bom',
-        element: <BomList />,
-      },
-      {
-        path: '/orders',
-        element: <OrdersTable />,
+        path: `/records/:id`,
+        element: <RecordsView />,
       },
       {
         path: '/components',

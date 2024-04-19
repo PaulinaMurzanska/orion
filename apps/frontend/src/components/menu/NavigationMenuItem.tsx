@@ -41,9 +41,11 @@ const MenuItem = ({ item }: { item: MenuElement }) => {
     return location.pathname.includes(item.route);
   }, [item.route, location.pathname]);
 
+  // @ts-ignore
+
   return (
     <DropdownMenu>
-      <Container onClick={onClick} placeholder={name} aria-placeholder={name} >
+      <Container onClick={onClick} placeholder={name} aria-placeholder={name}>
         <DropdownMenuTrigger
           asChild
           className={`${
@@ -68,8 +70,9 @@ const MenuItem = ({ item }: { item: MenuElement }) => {
             <DropdownMenuLabel>{dropdown.header}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {dropdown.items.map((item) => (
+              {dropdown.items.map((item, index) => (
                 <DropdownMenuItem
+                  key={index}
                   onClick={item.onClick}
                   className="cursor-pointer"
                 >

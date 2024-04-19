@@ -7,13 +7,15 @@ import {
   DropdownMenuTrigger,
 } from '@orionsuite/shared-components';
 import {
+  ChevronDownIcon,
   CrossCircledIcon,
   DrawingPinFilledIcon,
   DrawingPinIcon,
   PinBottomIcon,
-  PinTopIcon,
+  PinTopIcon
 } from '@radix-ui/react-icons';
 import { Column } from '@tanstack/react-table';
+import ChevronDownUpIcon from 'mdi-react/ChevronDownUpIcon';
 
 interface Props<T> {
   column: Column<T, unknown>;
@@ -21,8 +23,10 @@ interface Props<T> {
 
 const ColumnMenu = <T extends object>({ column }: Props<T>) => {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>...</DropdownMenuTrigger>
+    <DropdownMenu >
+      <DropdownMenuTrigger>
+        <ChevronDownIcon />
+      </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Column Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
