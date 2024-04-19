@@ -2,104 +2,70 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import {
+  setUploadedFilesArr,
+  updateFileDetails,
+} from '../../../../store/bom-store/bomSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 
 import ActionBtns from './action-btns/ActionBtns';
 import DropAndStatusArea from './drag-drop-elements/DropAndStatusArea';
 import { FileObjectType } from '../type';
+import { RootState } from 'apps/frontend/store';
 import { StyledContentWrapper } from './BomStyledDialogContent';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
+import { getTransactionId } from '../../../helpers/getTransactionId';
 import { getUrl } from '@orionsuite/api-client';
 import { nanoid } from 'nanoid';
 
 interface DialogContentProps {
-  setFilesDataArray: (files: FileObjectType[]) => void;
   onImportLines: () => void;
-  fileObjs: FileObjectType[];
   emptyObject: FileObjectType;
-  uploadProgress: boolean;
 }
 
 const BomDialogContent = ({
-  fileObjs,
-  setFilesDataArray,
   emptyObject,
   onImportLines,
-  uploadProgress,
 }: DialogContentProps) => {
-  const [fileObjects, setFileObjs] = useState<FileObjectType[]>(fileObjs);
+  const dispatch = useDispatch();
+  const uploadedFilesArr = useSelector(
+    (state: RootState) => state.bom.uploadedFilesArr
+  );
 
   const queryParams = new URLSearchParams(location.search);
   const urlParamId = queryParams.get('id');
-
   const workerRef = useRef<Worker | null>(null);
 
   const handleAddNewDropZone = () => {
     const id = nanoid(8);
     const dropzone = { ...emptyObject };
-    const positionToSet = fileObjects.length + 1;
+    const positionToSet = uploadedFilesArr.length + 1;
     dropzone.initialPosition = positionToSet;
     dropzone.currentPosition = positionToSet;
     dropzone.id = id;
 
-    const newArray = [...fileObjects, dropzone];
-    setFileObjs(newArray);
-  };
-
-  const handleDeleteDropZone = (id: number | string) => {
-    if (fileObjects.length > 1) {
-      const newArray = fileObjects.filter(
-        (item: FileObjectType) => item.id !== id
-      );
-      setFilesDataArray(newArray);
-    }
+    const newArray = [...uploadedFilesArr, dropzone];
+    dispatch(setUploadedFilesArr(newArray));
   };
 
   const terminate = (index: number) => {
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
+    const recordId = uploadedFilesArr[index].id;
+    dispatch(
+      updateFileDetails({
+        id: recordId,
         fileAdded: true,
         fileLoading: false,
         loaderText: 'Upload was terminated due to errors',
-      };
-      return updatedFileObjs;
-    });
+      })
+    );
   };
 
   const handleRequestError = (message: string, index: number, key: string) => {
     const err_msg = `Error on ${key} function: ${message}. We should implement here some action what we want to do if this error appears for this file.`;
     alert(err_msg);
     terminate(index);
-  };
-
-  const getIdentifier = (queryId: string | null) => {
-    let id;
-    let fromParam;
-    if (queryId === null) {
-      const initialStringIdElement = document.getElementById(
-        'created-string-id'
-      ) as HTMLElement | null;
-      if (initialStringIdElement) {
-        const dataCreateId =
-          initialStringIdElement.getAttribute('data-create-id');
-        id = dataCreateId;
-      } else {
-        console.warn('Element with ID "created-string-id" not found');
-        id = null;
-      }
-      fromParam = false;
-    } else {
-      id = queryId;
-      fromParam = true;
-    }
-    const idData = {
-      id,
-      fromParam,
-    };
-    return idData;
   };
 
   const initiateProcess = (action: any, payload: any, defaultData: any) => {
@@ -116,18 +82,16 @@ const BomDialogContent = ({
 
   const proceedToGetBomRecordId = (data: any) => {
     const { defaultPayload, fileID } = data;
-    setFileObjs((currentFileObjs) => {
-      const index = defaultPayload.index;
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
+    const index = defaultPayload.index;
+    const recordId = defaultPayload.dropzoneId;
+    dispatch(
+      updateFileDetails({
+        id: recordId,
         fileId: fileID,
         loaderText: `Created file id : ${fileID}`,
-      };
-      return updatedFileObjs;
-    });
-
-    const { id, fromParam } = getIdentifier(urlParamId);
+      })
+    );
+    defaultPayload.fileId = fileID;
 
     const bomImportCreateObj: any = {
       action: 'create',
@@ -137,29 +101,32 @@ const BomDialogContent = ({
       scriptID: 290,
       deploymentID: 1,
     };
-    if (fromParam) {
-      console.log('Transaction id grabbed from url:', id);
-      bomImportCreateObj.custrecord_bom_import_transaction = id;
+    const { transactionId, transactionExists } = getTransactionId(urlParamId);
+    if (transactionExists) {
+      console.log('Transaction id grabbed from url:', transactionId);
+      bomImportCreateObj.custrecord_bom_import_transaction = transactionId;
     } else {
-      console.log('Transaction id grabbed from dataset :', id);
-      bomImportCreateObj.custrecord_orion_bom_intialization_ident = id;
+      console.log('Transaction id grabbed from dataset :', transactionId);
+      bomImportCreateObj.custrecord_orion_bom_intialization_ident =
+        transactionId;
     }
-
     initiateProcess('getBomRecordId', bomImportCreateObj, defaultPayload);
   };
 
   const proceedToCreateJson = (data: any) => {
     const { defaultPayload, bomRecordID } = data;
     const index = defaultPayload.index;
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
+    const recordId = defaultPayload.dropzoneId;
+
+    dispatch(
+      updateFileDetails({
+        id: recordId,
         loaderText: `Created BOM Record Id : ${bomRecordID}`,
-        bomRecordID,
-      };
-      return updatedFileObjs;
-    });
+        bomRecordID: bomRecordID,
+      })
+    );
+
+    defaultPayload.bomRecordID = bomRecordID;
     const payload = {
       fileContent: defaultPayload.fileContent,
       fileName: defaultPayload.fullFileName,
@@ -172,14 +139,14 @@ const BomDialogContent = ({
   const proceedToUpdateFileWithJson = (data: any) => {
     const { fileJSON, defaultPayload, itemLines } = data;
     const index = defaultPayload.index;
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
-        itemLines,
-      };
-      return updatedFileObjs;
-    });
+    const recordId = defaultPayload.dropzoneId;
+    dispatch(
+      updateFileDetails({
+        id: recordId,
+        itemLines: itemLines,
+      })
+    );
+
     const payload = {
       ...fileJSON,
       scriptID: 292,
@@ -192,21 +159,13 @@ const BomDialogContent = ({
   const proceedToGetBomIdAfterJsonCreated = (data: any) => {
     const defaultPayload = data;
     const index = defaultPayload.index;
-    let fileID;
-    let bomRecordID;
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
-      };
-      fileID = updatedFileObjs[index].fileId;
-      bomRecordID = updatedFileObjs[index].bomRecordID;
+    const recordId = defaultPayload.dropzoneId;
+    const fileId = defaultPayload.fileId;
+    const bomRecordID = defaultPayload.bomRecordID;
 
-      return updatedFileObjs;
-    });
     const dataToEditRecord = {
       action: 'edit',
-      custrecord_bom_import_json_importd_file: fileID,
+      custrecord_bom_import_json_importd_file: fileId,
       editID: bomRecordID,
       scriptID: 290,
       deploymentID: 1,
@@ -218,32 +177,22 @@ const BomDialogContent = ({
     const { defaultPayload, bomRecordId } = data;
     const index = defaultPayload.index;
     const finalRecId = bomRecordId;
-    let bomRecordID;
-
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
-      };
-      bomRecordID = updatedFileObjs[index].bomRecordID;
-      return updatedFileObjs;
-    });
-
-    if (finalRecId === bomRecordID) {
-      setFileObjs((currentFileObjs) => {
-        const updatedFileObjs = [...currentFileObjs];
-        updatedFileObjs[index] = {
-          ...updatedFileObjs[index],
+    const recordId = defaultPayload.dropzoneId;
+    if (finalRecId === defaultPayload.bomRecordID) {
+      dispatch(
+        updateFileDetails({
+          id: recordId,
           fileLoading: false,
           loaderText: 'File was successfully uploaded',
-        };
-        return updatedFileObjs;
-      });
+        })
+      );
     }
   };
 
   const onDropFunction = (dropzoneId: string, file: any) => {
-    const index = fileObjects.findIndex((obj: any) => obj.id === dropzoneId);
+    const index = uploadedFilesArr.findIndex(
+      (obj: any) => obj.id === dropzoneId
+    );
     if (index === -1) return;
 
     const fileData = extractFileNameAndExtension(file.name);
@@ -252,57 +201,47 @@ const BomDialogContent = ({
     const fileNameJson = fileData.fileNameJson;
     const fileExtension = fileData.extension;
     const loaderText = 'Reading File';
-    const fileCurrentPosition = fileObjects[index].currentPosition;
+    const fileCurrentPosition = uploadedFilesArr[index].currentPosition;
 
-    // assign known values to the object
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      updatedFileObjs[index] = {
-        ...updatedFileObjs[index],
-        file,
+    dispatch(
+      updateFileDetails({
+        id: dropzoneId,
         fileAdded: true,
         fileLoading: true,
-        fileName,
-        fullFileName,
-        fileNameJson,
-        loaderText,
-        fileExtension,
-      };
-      return updatedFileObjs;
-    });
-
+        fileName: fileName,
+        fullFileName: fullFileName,
+        fileNameJson: fileNameJson,
+        loaderText: loaderText,
+        fileExtension: fileExtension,
+      })
+    );
     const reader = new FileReader();
-
     reader.onload = async (e: ProgressEvent<FileReader>) => {
       const fileContent = (e.target as FileReader).result;
-
-      setFileObjs((currentFileObjs) => {
-        const updatedFileObjs = [...currentFileObjs];
-        updatedFileObjs[index] = {
-          ...updatedFileObjs[index],
-          fileContent,
-        };
-        return updatedFileObjs;
-      });
-
+      dispatch(
+        updateFileDetails({
+          id: dropzoneId,
+          fileContent: fileContent,
+        })
+      );
       const fileDataObj = {
-        fileContent: (e.target as FileReader).result,
+        fileContent,
         fileName: fullFileName,
         scriptID: 292,
         deploymentID: 1,
       };
-
       const defaultPayload = {
+        dropzoneId,
         index,
         fileCurrentPosition,
         fileContent,
         fullFileName,
         fileNameJson,
+        fileId: null,
+        bomRecordID: null,
       };
-
       initiateProcess('getFileId', fileDataObj, defaultPayload);
     };
-
     reader.readAsText(file, 'UTF-8');
   };
 
@@ -345,22 +284,17 @@ const BomDialogContent = ({
     return () => workerRef.current?.terminate();
   }, []);
 
-  useEffect(() => {
-    setFilesDataArray(fileObjects);
-  }, [fileObjects]);
-
   return (
     <StyledContentWrapper>
       <SortableContext
-        items={fileObjs}
+        items={uploadedFilesArr}
         strategy={horizontalListSortingStrategy}
       >
-        {fileObjs.map((obj) => (
+        {uploadedFilesArr.map((obj: any) => (
           <DropAndStatusArea
             key={obj.id}
             file={obj}
-            fileObjects={fileObjs}
-            handleDeleteDropZone={handleDeleteDropZone}
+            fileObjects={uploadedFilesArr}
             onDropFunction={onDropFunction}
           />
         ))}
@@ -368,7 +302,6 @@ const BomDialogContent = ({
       <ActionBtns
         onAddClick={handleAddNewDropZone}
         onActionClick={onImportLines}
-        uploadProgress={uploadProgress}
       />
     </StyledContentWrapper>
   );
