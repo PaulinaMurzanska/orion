@@ -348,10 +348,10 @@ const BomCustomDialog = () => {
             </StyledInnerContent>
             <StyledEmail>
               <Icons.envelope />
-              <span
+              {/* <span
                 id="created-string-id"
                 data-create-id="ABCD-TEST-XYZ"
-              ></span>
+              ></span> */}
               <span>Email yourself or Others When Complete</span>
               {/* <div>
                 <pre>{JSON.stringify(uploadedFilesArr, null, 2)}</pre>
