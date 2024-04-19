@@ -20,7 +20,7 @@ define(['N/query', 'N/runtime', 'N/error'], (query, runtime, error) => {
     const findRecordsSuiteQL = `
       SELECT *
       FROM customrecord_orion_smarttable_view
-      WHERE (BUILTIN.MNFILTER(custrecord_orion_smarttable_roles, 'MN_INCLUDE', '', 'FALSE', NULL, ${Number(currentRole)}) = 'T' OR custrecord_orion_smarttable_current_user = ${currentUser.id}) AND isinactive = 'F'
+      WHERE (BUILTIN.MNFILTER(custrecord_orion_smarttable_roles, 'MN_INCLUDE', '', 'FALSE', NULL, '${Number(currentRole)}') = 'T' OR custrecord_orion_smarttable_current_user = '${currentUser.id}') AND isinactive = 'F'
     `
 
     log.debug(loggerTitle, `findRecordsSuiteQL: ${findRecordsSuiteQL}`)

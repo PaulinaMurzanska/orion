@@ -231,14 +231,16 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
             }
           }
           // build out options 
-          if (key === 'custcol_pintel_optioncodedescription') {
+          if (key === 'custcol_ori_option_codes') {
             newOutputDefKeysLoop[key] = generateSIFOptions(fileDef, lineObj, '{var}=(.+)', 1)
           }
         }
 
-
         newOutputDefKeysLoop['product'] = !orionHelperLib.isServiceValue(newOutputDefKeysLoop['item'], newOutputDefKeysLoop, fileDef)
-        newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item'] 
+        newOutputDefKeysLoop['itemid'] = newOutputDefKeysLoop['item']
+
+        newOutputDefKeysLoop['porate'] = orionHelperLib.dealerCostCalculate(newOutputDefKeysLoop)
+        newOutputDefKeysLoop['rate'] = orionHelperLib.customerCostCalculator(newOutputDefKeysLoop)
 
         log.debug(loggerTitle, `itemList: ${JSON.stringify(itemList)}`)
 
@@ -287,7 +289,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
       newOutputDefKeysLoop['line'] = idx
       // Loop through each file mapping
       for (let key in fileMaps) {
-        if (key === 'custcol_pintel_optioncodedescription') {
+        if (key === 'custcol_ori_option_codes') {
           newOutputDefKeysLoop[key] = generateXMLOptions(fileDef, jsonLineObject)
         } else {
           const value = orionHelperLib.buildObjectFromString(jsonLineObject, fileMaps[key])
@@ -330,7 +332,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
     const loggerTitle = 'generateSIFOptions'
     try {
       lineObj = lineObj.split('\r\n')
-      const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
+      const optionParams = fileDef.mapping.custcol_ori_option_codes.split(' - ')
       const optionName = optionParams[0]
       const optValue = optionParams[1]
       
@@ -371,7 +373,7 @@ define(['N/log', 'N/query', './orionHelperLib'], function(log, query, orionHelpe
    */
   const generateXMLOptions = (fileDef, jsonObj) => {
     const loggerTitle = 'generateXMLOptions'
-    const optionParams = fileDef.mapping.custcol_pintel_optioncodedescription.split(' - ')
+    const optionParams = fileDef.mapping.custcol_ori_option_codes.split(' - ')
     const optNamePath = optionParams[0].split('[]')[1]
     const optValuePath = optionParams[1].split('[]')[1]
     const optionRoot = optionParams[0].split('[]')[0]

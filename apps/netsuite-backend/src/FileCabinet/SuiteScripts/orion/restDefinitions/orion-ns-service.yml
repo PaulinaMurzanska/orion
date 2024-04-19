@@ -306,7 +306,6 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
-<<<<<<< HEAD
   /*getSmarTableRecordDomain*/app/site/hosting/restlet.nl:
     get:
       summary: Get a SmartTable View record
@@ -434,8 +433,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-=======
-  /*getSmartTableViewRecordDomain*/app/site/hosting/restlet.nl:
+  /*getSmartTableViewRecordsDomain*/app/site/hosting/restlet.nl:
       get:
         summary: Get SmartTable View records
         tags:
@@ -474,7 +472,6 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/ErrorResponse'
->>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
                 
 components:
   schemas:
@@ -753,7 +750,6 @@ components:
       required:
         - action
 
-<<<<<<< HEAD
     SmartTableViewRequest:
       type: object
       properties:
@@ -783,7 +779,6 @@ components:
         custrecord_orion_smarttable_current_user:
           type: integer
           description: The ID of the current user
-=======
     TableViewSuccessResponse:
       type: object
       properties:
@@ -812,7 +807,6 @@ components:
               id: 1
               custrecord_orion_smarttable_roles: "1, 3"
 
->>>>>>> fa5788a3d90214708e45e177cfc75de22f5bc636
         
     ErrorResponse:
       type: object

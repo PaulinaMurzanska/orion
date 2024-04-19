@@ -32,6 +32,7 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
             break
           case 'salesorder':
             await setAfterDataValue(context)
+            await setJSONFile(context)
             break
         }
       }
@@ -67,7 +68,7 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
         displayType : serverWidget.FieldDisplayType.HIDDEN
       })
       // generate random string
-      const createdString = generateRandomString(20)
+      const createdString = `${Date.now()}-${generateRandomString(20)}`
       // write the random string to the inline HTML field
       inlineHtmlField.defaultValue = `<span id="created-string-id" data-create-id="${createdString}"></span>`
       // write the random string to the freeform text field to be accessed after submit
@@ -170,6 +171,42 @@ define(['N/record', 'N/query', 'N/ui/serverWidget'], (record, query, serverWidge
         name: `BOM-${recordId}`
       }
     })
+  }
+
+  /**
+   * Finds a JSON file in the file cabinet by its name.
+   *
+   * @param {string} fileName - The name of the JSON file to find.
+   * @returns {Promise<Object|null>} - A Promise that resolves to the first matching file object, or null if no file is found.
+   */
+  const setJSONFile = async context => {
+    const currentRecord = context.newRecord
+    const recordID = currentRecord.id
+
+    const createdString = currentRecord.getValue('custpage_created_data_code_field_text')
+    const fileSQL = `
+      SELECT id
+      FROM file
+      WHERE name = '${createdString}.json'
+    `
+    let resultID
+
+    // Query for the JSON file by name
+    const fileResults = await new Promise(resolve => { resolve(query.runSuiteQL(fileSQL).asMappedResults()) })
+    
+    resultID = fileResults?.length > 0 ? fileResults[0].id : null
+    
+    if (resultID) {
+      // Update the record with the JSON file ID
+      const savedRecordID = await record.submitFields.promise({
+        type: currentRecord.type,
+        id: recordID,
+        values: {
+          custbody_json_file: resultID
+        }
+      })
+    }
+    
   }
 
   return {
