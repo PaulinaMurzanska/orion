@@ -37,7 +37,9 @@ export const config = ({
       id: group[0].id,
       icon: (
         <img
-          src={`/assets/${group[0].custrecord_orion_smarttable_icon_url}`}
+          src={`${import.meta.env.VITE_API_ASSETS_URL}/${
+            group[0].custrecord_orion_smarttable_icon_url
+          }`}
           alt=""
         />
       ),
@@ -50,6 +52,7 @@ export const config = ({
           name: view.custrecord_orion_smarttable_view_title,
           id: view.id,
           onClick: () => {
+            console.log('JSON', JSON.parse(view.custrecord_orion_view_json));
             const columns =
               JSON.parse(view.custrecord_orion_view_json)?.columns ?? [];
 

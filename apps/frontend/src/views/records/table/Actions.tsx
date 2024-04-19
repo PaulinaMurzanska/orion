@@ -2,6 +2,9 @@ import { Button } from '@orionsuite/shared-components';
 import { BomCustomDialog } from '../../../bom/bom-parts/bom-dialog/BomCustomDialog';
 import { Edit2Icon, SaveIcon } from 'lucide-react';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
+import { useSelector } from 'react-redux';
+import { RootState } from 'apps/frontend/store';
+import { api } from '@orionsuite/api-client';
 
 interface Props {
   editable?: boolean;
@@ -9,6 +12,24 @@ interface Props {
 }
 
 const Actions = ({ editable, setEditable }: Props) => {
+  const { records } = useSelector((state: RootState) => state.recordsSlice);
+
+  const [updateRecords] = api.useUpdateRecordMutation();
+
+  const onCommit = () => {
+    console.log('START COMMIT');
+    updateRecords({
+      script: 220,
+      deploy: 1,
+      fileContent: JSON.stringify(records),
+      fileID: 1304,
+    })
+      .then((res) => {
+        console.log('RESPONSE', res);
+      })
+      .catch((e) => console.log('ERR', e));
+  };
+
   return (
     <>
       <Button
@@ -23,7 +44,7 @@ const Actions = ({ editable, setEditable }: Props) => {
       <Button
         disabled={!editable}
         className="flex gap-1 bg-blue-600 hover:bg-blue-500"
-        onClick={() => setEditable(!editable)}
+        onClick={onCommit}
       >
         <SaveIcon width="18px" height="18px" />
         Commit changes

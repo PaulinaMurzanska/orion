@@ -37,7 +37,6 @@ import {
 } from '@dnd-kit/sortable';
 import { RowObject } from './types';
 import { ArrowDownIcon, ArrowUpIcon } from '@radix-ui/react-icons';
-import { ArrowDown } from 'lucide-react';
 
 interface TableProps<T> {
   data: T[];

@@ -27,11 +27,16 @@ export const bomImportApi = api.injectEndpoints({
 
     updateRecord: builder.mutation<UpdateRecordResponse, any>({
       query: (dto: any) => {
+        console.log(
+          `?scriptID=307&deploymentID=${dto.deploy}&script=${dto.script}&deploy=${dto.deploy}&compid=TD2893635&h=2666e10fd32e93612036&fileId=1304`
+        );
         return {
           // url: `?script=${dto.script}&deploy=${dto.deploy}`,
           url: `?scriptID=307&deploymentID=${dto.deploy}&script=${dto.script}&deploy=${dto.deploy}&compid=TD2893635&h=2666e10fd32e93612036&fileId=1304`,
           method: 'POST',
           body: {
+            scriptID: 307,
+            deploymentID: dto.deploy,
             fileContent: dto.fileContent,
             fileID: dto.fileID,
           },
