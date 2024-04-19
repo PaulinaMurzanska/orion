@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import { Separator } from '@orionsuite/shared-components';
 import { config } from './config';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { api } from '@orionsuite/api-client';
 import ProgressSpin from '../progress-spin/ProgressSpin';
 import { useDispatch } from 'react-redux';
+import { setColumns } from '../../views/records/recordsSlice';
 
 const Container = styled.div`
   background: #2b2b2e;
@@ -46,6 +47,25 @@ const NavigationMenu = () => {
       }),
     [data?.tableViews, dispatch, navigate, updateRecord]
   );
+  //
+  // useEffect(() => {
+  //   if (data && data.tableViews) {
+  //     const firstView = data?.tableViews[0];
+  //     console.log('FIRST VIEW', firstView, data);
+  //     const columns =
+  //       JSON.parse(firstView?.custrecord_orion_view_json ?? '{}')?.columns ??
+  //       [];
+  //     dispatch(
+  //       setColumns(
+  //         columns.map((col: any) => ({
+  //           ...col,
+  //           header: col.label,
+  //         }))
+  //       )
+  //     );
+  //     navigate(`/records/${firstView?.scriptid}`);
+  //   }
+  // }, [data, dispatch, navigate]);
 
   return (
     <Container>

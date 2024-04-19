@@ -9,7 +9,7 @@ export default createHashRouter([
     path: '/',
     element: <Root />,
     children: [
-      { path: '/', element: <Navigate to="/records" /> },
+      { path: '/', element: <Navigate to="/components" /> },
       {
         path: `/records/:id`,
         element: <RecordsView />,

@@ -1,13 +1,18 @@
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store';
+
 interface Props {
   selectedRows: any[];
   records: any[];
 }
 
 const Footer = ({ selectedRows, records }: Props) => {
+  const { columns } = useSelector((state: RootState) => state.recordsSlice);
   const totalQuantity = selectedRows.reduce(
     (acc, row) => acc + Number(row.quantity),
     0
   );
+
 
   return (
     <>

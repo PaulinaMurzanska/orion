@@ -37,13 +37,15 @@ const RecordsView = () => {
   useEffect(() => {
     if (data && data.content) {
       try {
-        const parsed = JSON.parse(data.content ?? '{}');
-        const items =
-          parsed?.slice(0, 50).map((item: any) => ({
-            ...item,
-            // id: `${item.itemid}/${item.line}`, // TODO: Use UUID when available
-          })) ?? [];
-        dispatch(setRecords(items));
+        const parsed = JSON.parse(data.content ?? '[]');
+        if (typeof parsed.slice === 'function') {
+          const items =
+            parsed?.slice(0, 50).map((item: any) => ({
+              ...item,
+              id: `${item.custcol_uuid}`, // TODO: Use UUID when available
+            })) ?? [];
+          dispatch(setRecords(items));
+        }
       } catch (e: any) {
         console.error(e);
         setError(e.toString());
