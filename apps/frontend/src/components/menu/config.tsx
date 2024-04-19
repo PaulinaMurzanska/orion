@@ -1,142 +1,94 @@
 import {
-  BadgeDollarSignIcon,
-  ClipboardListIcon,
   ClipboardSignatureIcon,
-  LandmarkIcon,
-  LayersIcon,
   SaveIcon,
-  TruckIcon,
   UserCircle2Icon,
 } from 'lucide-react';
 import { MenuElement } from './types';
 import { NavigateFunction } from 'react-router-dom';
+import { groupBy } from 'lodash';
+import { setColumns } from '../../views/records/recordsSlice';
 
 export const config = ({
   navigate,
   tableViews,
+  dispatch,
 }: {
   navigate: NavigateFunction;
+  dispatch: (x: any) => void;
   tableViews: any[];
 }): MenuElement[] => {
-  console.log('tableViews', tableViews);
+  const elements: MenuElement[] = [];
+  const groups = groupBy(
+    tableViews,
+    (view) => JSON.parse(view.custrecord_orion_view_json)?.view_group
+  );
+  const sortedGroups = Object.values(groups).sort((a, b) => {
+    return (
+      a[0].custrecord_orion_smarttable_position -
+      b[0].custrecord_orion_smarttable_position
+    );
+  });
 
-  return [
-    ...tableViews.map((view) => ({
-      name: view.custrecord_orion_smarttable_view_title,
-      columns: JSON.parse(view.custrecord_orion_view_json)?.columns ?? [],
+  sortedGroups.forEach((group, index) => {
+    elements.push({
+      route: 'bom',
+      id: group[0].id,
       icon: (
         <img
-          src={`/assets${view.custrecord_orion_smarttable_icon_url}`}
-          alt={view.custrecord_orion_smarttable_view_title}
+          src={`/assets/${group[0].custrecord_orion_smarttable_icon_url}`}
+          alt=""
         />
       ),
-      onClick: () => {
-        navigate('/bom');
+      dropdown: {
+        header:
+          JSON.parse(group[0].custrecord_orion_view_json)?.view_group ??
+          'Uncategorized',
+        columns: [],
+        items: group.map((view) => ({
+          name: view.custrecord_orion_smarttable_view_title,
+          id: view.id,
+          onClick: () => {
+            const columns =
+              JSON.parse(view.custrecord_orion_view_json)?.columns ?? [];
+
+            dispatch(
+              setColumns(
+                columns.map((col: any) => ({
+                  ...col,
+                  header: col.label,
+                }))
+              )
+            );
+            navigate(`/records/${group[0].scriptid}`);
+          },
+        })),
       },
-    })),
-    // {
-    //   name: 'Records',
-    //   icon: <BadgeDollarSignIcon width="20px" height="20px" />,
-    //   route: 'bom',
-    //   dropdown: {
-    //     header: 'Quick views',
-    //     items: [
-    //       {
-    //         name: 'Pricing',
-    //         onClick: () => {
-    //           navigate('/bom');
-    //         },
-    //       },
-    //       {
-    //         name: 'PO/ACK',
-    //         onClick: () => {
-    //           navigate('/bom');
-    //         },
-    //       },
-    //       {
-    //         name: 'Operations',
-    //         onClick: () => {
-    //           navigate('/bom');
-    //         },
-    //       },
-    //       {
-    //         name: 'Punch',
-    //         onClick: () => {
-    //           navigate('/bom');
-    //         },
-    //       },
-    //       {
-    //         name: 'Accounting',
-    //         onClick: () => {
-    //           navigate('/bom');
-    //         },
-    //       },
-    //       {
-    //         name: 'Backlog',
-    //         onClick: () => {
-    //           navigate('/bom');
-    //         },
-    //       },
-    //     ],
-    //   },
-    // },
-    // {
-    //   name: 'Components Library',
-    //   onClick: () => {
-    //     navigate('/components');
-    //   },
-    //   route: 'components',
-    //   icon: <ClipboardSignatureIcon width="20px" height="20px" />,
-    // },
-    // {
-    //   name: 'Components Library',
-    //   onClick: () => {
-    //     navigate('/bom-import');
-    //   },
-    //   icon: <TruckIcon width="20px" height="20px" />,
-    // },
-    // {
-    //   name: 'BOM Tool',
-    //   onClick: () => {
-    //     navigate('/orders');
-    //   },
-    //   icon: <ClipboardListIcon width="20px" height="20px" />,
-    // },
-    // {
-    //   name: 'BOM list',
-    //   onClick: () => {
-    //     navigate('/bom');
-    //   },
-    //   icon: <LandmarkIcon width="20px" height="20px" />,
-    // },
-    // {
-    //   separator: true,
-    // },
-    // {
-    //   name: 'Summary',
-    //   icon: <LayersIcon width="20px" height="20px" />,
-    //   dropdown: {
-    //     header: 'Summary views',
-    //     items: [
-    //       {
-    //         name: 'Pricing summary',
-    //         onClick: () => {},
-    //       },
-    //     ],
-    //   },
-    // },
-    // {
-    //   separator: true,
-    // },
-    // {
-    //   name: 'Settings',
-    //   onClick: () => {},
-    //   icon: <UserCircle2Icon width="20px" height="20px" />,
-    // },
-    // {
-    //   name: 'Save',
-    //   onClick: () => {},
-    //   icon: <SaveIcon width="20px" height="20px" />,
-    // },
+    });
+    elements.push({ separator: true });
+  });
+
+  return [
+    ...elements,
+    {
+      name: 'Components Library',
+      onClick: () => {
+        navigate('/components');
+      },
+      route: 'components',
+      icon: <ClipboardSignatureIcon width="20px" height="20px" />,
+    },
+    { separator: true },
+    {
+      name: 'Settings',
+      onClick: () => {},
+      icon: <UserCircle2Icon width="20px" height="20px" />,
+    },
+    {
+      name: 'Save',
+      onClick: () => {
+
+      },
+      icon: <SaveIcon width="20px" height="20px" />,
+    },
   ];
 };

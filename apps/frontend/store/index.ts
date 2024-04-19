@@ -13,6 +13,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { api } from '@orionsuite/api-client';
 import bomImportFilesReducer from './bomImportFilesSlice';
 import storage from 'redux-persist/lib/storage';
+import recordsSlice from '../src/views/records/recordsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -23,6 +24,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   [api.reducerPath]: api.reducer,
   bomImportFiles: bomImportFilesReducer,
+  recordsSlice: recordsSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

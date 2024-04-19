@@ -9,19 +9,24 @@ import ProgressSpin from '../../components/progress-spin/ProgressSpin';
 import Footer from './table/Footer';
 import Filters from './table/Filters';
 import Actions from './table/Actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { setRecords } from './recordsSlice';
+import { RootState } from '../../../store';
 
-const BomRecordsView = () => {
+const RecordsView = () => {
+  const dispatch = useDispatch();
   const { data, isLoading } = api.useGetRecordsQuery({
     script: 220,
     deploy: 1,
   });
 
+  const { records, columns } = useSelector(
+    (state: RootState) => state.recordsSlice
+  );
+  const [error, setError] = useState<string | undefined>();
   const [editable, setEditable] = useState<boolean | undefined>();
   const [search, setSearch] = useState<string | undefined>();
   const [selectedRows, setSelectedRows] = useState<Record[]>([]);
-
-  const [records, setRecords] = useState<Record[]>([]);
-  const [columns, setColumns] = useState<any[]>([]);
   const ids = useMemo(
     () => records?.map(({ id }) => String(id)) ?? [],
     [records]
@@ -33,20 +38,21 @@ const BomRecordsView = () => {
 
   useEffect(() => {
     if (data && data.content) {
-      const parsed = JSON.parse(data.content ?? '{}');
-      const items =
-        parsed?.lineJSON?.item?.items?.slice(0, 50).map((item: any) => ({
-          ...item,
-          id: `${item.itemid}/${item.line}`, // TODO: Use UUID when available
-        })) ?? [];
-      const columns = Object.keys(items[0]).map((key) => ({
-        id: key,
-        header: key,
-      }));
-      setRecords(items);
-      setColumns(columns);
+      try {
+        const parsed = JSON.parse(data.content ?? '{}');
+        const items =
+          parsed?.map((item: any) => ({
+            ...item,
+            // id: `${item.itemid}/${item.line}`, // TODO: Use UUID when available
+          })) ?? [];
+        console.log('ITEMS?', items);
+        dispatch(setRecords(items));
+      } catch (e: any) {
+        console.error(e);
+        setError(e.toString());
+      }
     }
-  }, [data]);
+  }, [dispatch, data]);
 
   if (isLoading) {
     return (
@@ -54,6 +60,10 @@ const BomRecordsView = () => {
         <ProgressSpin size={10} />
       </div>
     );
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return (
@@ -68,26 +78,27 @@ const BomRecordsView = () => {
         setSearch={setSearch}
         selectedRows={selectedRows}
         onRowUpdate={(rowIndex, columnId, value) => {
-          setRecords((old) =>
-            old.map((row, index) => {
-              if (index === rowIndex) {
-                return {
-                  ...old[rowIndex],
-                  [columnId]: value,
-                };
-              }
-              return row;
-            })
-          );
+          const tmp: Record[] = [];
+          records.forEach((record, index) => {
+            if (index === rowIndex) {
+              tmp.push({
+                ...record,
+                [columnId]: value,
+              });
+            } else {
+              tmp.push(record);
+            }
+          });
+          dispatch(setRecords(tmp));
         }}
         onRowDragEnd={(event: DragEndEvent) => {
           const { active, over } = event;
           if (active && over && active.id !== over.id) {
-            setRecords((data) => {
-              const oldIndex = ids.indexOf(String(active.id));
-              const newIndex = ids.indexOf(String(over.id));
-              return arrayMove(data, oldIndex, newIndex);
-            });
+            const tmp: Record[] = [...records];
+            const oldIndex = ids.indexOf(String(active.id));
+            const newIndex = ids.indexOf(String(over.id));
+            const newRecords = arrayMove(tmp, oldIndex, newIndex);
+            dispatch(setRecords(newRecords));
           }
         }}
         actions={<Actions editable={editable} setEditable={setEditable} />}
@@ -98,4 +109,4 @@ const BomRecordsView = () => {
   );
 };
 
-export default BomRecordsView;
+export default RecordsView;
