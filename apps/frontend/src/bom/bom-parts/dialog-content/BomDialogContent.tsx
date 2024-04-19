@@ -16,6 +16,7 @@ import { RootState } from 'apps/frontend/store';
 import { StyledContentWrapper } from './BomStyledDialogContent';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { extractFileNameAndExtension } from '../../../helpers/nameFormatting';
+import { getTransactionId } from '../../../helpers/getTransactionId';
 import { getUrl } from '@orionsuite/api-client';
 import { nanoid } from 'nanoid';
 
@@ -35,7 +36,6 @@ const BomDialogContent = ({
 
   const queryParams = new URLSearchParams(location.search);
   const urlParamId = queryParams.get('id');
-
   const workerRef = useRef<Worker | null>(null);
 
   const handleAddNewDropZone = () => {
@@ -68,33 +68,6 @@ const BomDialogContent = ({
     terminate(index);
   };
 
-  const getIdentifier = (queryId: string | null) => {
-    let id;
-    let fromParam;
-    if (queryId === null) {
-      const initialStringIdElement = document.getElementById(
-        'created-string-id'
-      ) as HTMLElement | null;
-      if (initialStringIdElement) {
-        const dataCreateId =
-          initialStringIdElement.getAttribute('data-create-id');
-        id = dataCreateId;
-      } else {
-        console.warn('Element with ID "created-string-id" not found');
-        id = null;
-      }
-      fromParam = false;
-    } else {
-      id = queryId;
-      fromParam = true;
-    }
-    const idData = {
-      id,
-      fromParam,
-    };
-    return idData;
-  };
-
   const initiateProcess = (action: any, payload: any, defaultData: any) => {
     const script = import.meta.env.VITE_API_DEFAULT_SCRIPT;
     const deploy = import.meta.env.VITE_API_DEFAULT_DEPLOY;
@@ -120,7 +93,6 @@ const BomDialogContent = ({
     );
     defaultPayload.fileId = fileID;
 
-    const { id, fromParam } = getIdentifier(urlParamId);
     const bomImportCreateObj: any = {
       action: 'create',
       custrecord_bom_import_importd_file_url: fileID,
@@ -129,12 +101,14 @@ const BomDialogContent = ({
       scriptID: 290,
       deploymentID: 1,
     };
-    if (fromParam) {
-      console.log('Transaction id grabbed from url:', id);
-      bomImportCreateObj.custrecord_bom_import_transaction = id;
+    const { transactionId, transactionExists } = getTransactionId(urlParamId);
+    if (transactionExists) {
+      console.log('Transaction id grabbed from url:', transactionId);
+      bomImportCreateObj.custrecord_bom_import_transaction = transactionId;
     } else {
-      console.log('Transaction id grabbed from dataset :', id);
-      bomImportCreateObj.custrecord_orion_bom_intialization_ident = id;
+      console.log('Transaction id grabbed from dataset :', transactionId);
+      bomImportCreateObj.custrecord_orion_bom_intialization_ident =
+        transactionId;
     }
     initiateProcess('getBomRecordId', bomImportCreateObj, defaultPayload);
   };

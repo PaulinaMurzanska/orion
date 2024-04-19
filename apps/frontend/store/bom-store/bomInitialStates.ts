@@ -18,6 +18,8 @@ const initialFile: FileObjectType = {
   itemLines: [],
   initialPosition: 1,
   currentPosition: 1,
+  transactionId: null,
+  transactionExist: false,
 };
 
 export { initialFile };

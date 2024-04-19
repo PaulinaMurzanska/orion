@@ -1,8 +1,4 @@
 import {
-  BomCombinedArrayObjectType,
-  setBomImportFiles,
-} from '../../../../store/bom-store/bomImportFilesSlice';
-import {
   CustomTriggerButton,
   StyledCloseIcon,
   StyledContentWrapper,
@@ -22,16 +18,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 
 import BomDialogContent from '../dialog-content/BomDialogContent';
-import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
 import { Icons } from '../../../assets/icons/Icons';
 import { RootState } from 'apps/frontend/store';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
+import { getTransactionId } from '../../../helpers/getTransactionId';
 import { getUrl } from '@orionsuite/api-client';
 import { initialFile } from '../../../../store/bom-store/bomInitialStates';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
+import { setBomImportFiles } from '../../../../store/bom-store/bomImportFilesSlice';
 
 const BomCustomDialog = () => {
   const dispatch = useDispatch();
@@ -43,6 +40,9 @@ const BomCustomDialog = () => {
   const uploadedFilesArr = useSelector(
     (state: RootState) => state.bom.uploadedFilesArr
   );
+
+  const queryParams = new URLSearchParams(location.search);
+  const urlParamId = queryParams.get('id');
 
   const idInitial = nanoid(8);
   const workerRef = useRef<any>(null);
@@ -79,7 +79,15 @@ const BomCustomDialog = () => {
     }
   };
 
-  const createCombinedFilesArr = () => {
+  const getTransactionVal = async (paramId: any) => {
+    console.log(
+      'Make a call to API to get the value, it return just temporary value'
+    );
+    const tempValue = '1304';
+    return tempValue;
+  };
+
+  const createCombinedFilesArr = async () => {
     dispatch(
       updateFilesLoading({
         updates: uploadedFilesArr.map((file) => ({
@@ -95,27 +103,41 @@ const BomCustomDialog = () => {
       .flat();
     setFilesCombined(combinedItemLines);
     dispatch(setBomImportFiles(combinedItemLines));
-    const id = nanoid(5);
-    const combineArrayData = {
-      lines: combinedItemLines,
-      fileName: `Random = ${id}`,
-      scriptID: 292,
-      deploymentID: 1,
-    };
+
+    const { transactionId, transactionExists } = getTransactionId(urlParamId);
+
+    if (!transactionExists) {
+      const transactionVal = await getTransactionVal(3);
+      const payload = {
+        fileId: transactionVal,
+        fileContent: JSON.stringify(combinedItemLines),
+        scriptID: 307,
+        deploymentID: 1,
+      };
+      console.log('payload:', payload);
+    } else {
+      const payload = {
+        fileName: transactionId,
+        fileContent: JSON.stringify(combinedItemLines),
+        scriptID: 292,
+        deploymentID: 1,
+      };
+      console.log('payload:', payload);
+      initiateProcessPromise('', payload, null);
+    }
 
     dispatch(
       updateFilesLoading({
         updates: uploadedFilesArr.map((file) => ({
           id: file.id,
-          fileLoading: true,
-          loaderText: 'Adding file to combined array',
+          fileLoading: false,
+          loaderText: 'files added to array',
         })),
       })
     );
     console.log(
       'The request should be made in this place, temporarily, we are going to save file in global store - not created yet at this point'
     );
-    console.log('payload:', combineArrayData);
   };
 
   const onImportLines = async () => {
@@ -304,6 +326,10 @@ const BomCustomDialog = () => {
             </StyledInnerContent>
             <StyledEmail>
               <Icons.envelope />
+              {/* <span
+                id="created-string-id"
+                data-create-id="ABCD-TEST-XYZ"
+              ></span> */}
               <span>Email yourself or Others When Complete</span>
               {/* <div>
                 <pre>{JSON.stringify(uploadedFilesArr, null, 2)}</pre>

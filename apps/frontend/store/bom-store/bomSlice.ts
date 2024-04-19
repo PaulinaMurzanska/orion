@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { FileObjectType } from '../../src/bom/bom-parts/type';
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { initialFile } from './bomInitialStates';
 import { nanoid } from 'nanoid';
 
@@ -13,22 +12,6 @@ type UpdateLoadingPayload = {
   id: any;
   fileLoading: boolean;
   loaderText: string;
-};
-
-type UpdateFilePayload = {
-  id: string;
-  fileId?: any;
-  file?: any;
-  fileAdded?: boolean;
-  fileLoading?: boolean;
-  fileName?: string;
-  fullFileName?: string;
-  fileNameJson?: string;
-  loaderText?: string;
-  fileExtension?: string;
-  fileContent?: any;
-  bomRecordID?: any;
-  itemLines?: any[];
 };
 
 type BomState = {
@@ -74,7 +57,7 @@ const bomSlice = createSlice({
         }
       });
     },
-    updateFileDetails(state, action: PayloadAction<UpdateFilePayload>) {
+    updateFileDetails(state, action: PayloadAction<FileObjectType>) {
       const { id, ...restOfUpdates } = action.payload;
       const index = state.uploadedFilesArr.findIndex((file) => file.id === id);
       if (index !== -1) {
@@ -95,5 +78,3 @@ export const {
   updateFileDetails,
 } = bomSlice.actions;
 export default bomSlice.reducer;
-
-// Define the asynchronous thunk
