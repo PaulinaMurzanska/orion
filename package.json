@@ -93,6 +93,7 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.4.0",
     "express": "~4.18.1",
+    "framer-motion": "^11.1.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.350.0",
     "mdi-react": "^9.4.0",
@@ -110,6 +111,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "tslib": "^2.3.0",
+    "vite-plugin-require": "^1.1.14",
     "vite-tsconfig-paths": "^4.3.1",
     "yamljs": "^0.3.0",
     "zod": "^3.22.4"

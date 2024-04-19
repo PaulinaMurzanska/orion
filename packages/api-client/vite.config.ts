@@ -1,4 +1,4 @@
-/// <reference types='vitest' />
+/// <reference types.ts='vitest' />
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';

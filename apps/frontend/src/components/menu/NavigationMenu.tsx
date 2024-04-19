@@ -5,6 +5,9 @@ import Logo from './Logo';
 import { Separator } from '@orionsuite/shared-components';
 import { config } from './config';
 import { useMemo } from 'react';
+import { api } from '@orionsuite/api-client';
+import ProgressSpin from '../progress-spin/ProgressSpin';
+import { useDispatch } from 'react-redux';
 
 const Container = styled.div`
   background: #2b2b2e;
@@ -28,20 +31,35 @@ const MenuSection = styled.div`
 `;
 
 const NavigationMenu = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const menuElements = useMemo(() => config({ navigate }), [navigate]);
+  const { data, isLoading } = api.useGetViewsQuery();
+  const [updateRecord] = api.useUpdateRecordMutation();
+
+  const menuElements = useMemo(
+    () =>
+      config({
+        navigate,
+        dispatch,
+        updateRecord,
+        tableViews: data?.tableViews ?? [],
+      }),
+    [data?.tableViews, dispatch, navigate, updateRecord]
+  );
 
   return (
     <Container>
       <MenuSection>
         <Logo />
         <Separator />
-        {menuElements.map((item) => {
-          if (item.separator) {
-            return <Separator />;
-          }
-          return <NavigationMenuItem key={item.name} item={item} />;
-        })}
+        {isLoading && <ProgressSpin size={8} />}
+        {!isLoading &&
+          menuElements.map((item, index) => {
+            if (item.separator) {
+              return <Separator key={index} />;
+            }
+            return <NavigationMenuItem key={index} item={item} />;
+          })}
       </MenuSection>
     </Container>
   );

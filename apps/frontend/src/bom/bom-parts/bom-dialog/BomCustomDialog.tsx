@@ -36,6 +36,8 @@ import { initialFile } from '../../../../store/bom-store/bomInitialStates';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
 import { setBomImportFiles } from '../../../../store/bom-store/bomImportFilesSlice';
+import { ArmchairIcon } from 'lucide-react';
+import { Button } from '@orionsuite/shared-components';
 
 const BomCustomDialog = () => {
   const dispatch = useDispatch();
@@ -388,17 +390,15 @@ const BomCustomDialog = () => {
 
   return (
     <StyledDialog>
-      <CustomTriggerButton
+      <Button
+        className="bg-purple-600 hover:bg-purple-500 flex gap-2"
         type="button"
-        variant="outline"
-        className="uppercase"
+        variant="default"
         onClick={handleClose}
       >
-        <StyledArmchairWrapper>
-          <Icons.armchair />
-        </StyledArmchairWrapper>
+        <ArmchairIcon width="18px" height="18px" />
         BOM Import
-      </CustomTriggerButton>
+      </Button>
       <StyledDialogOpen dialogOpen={dialogOpen}>
         <StyledContentWrapper>
           <DndContext
