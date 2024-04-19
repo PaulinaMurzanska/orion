@@ -44,10 +44,18 @@ const NavigationMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { data, isLoading } = api.useGetViewsQuery();
+  const [updateRecord] = api.useUpdateRecordMutation();
+  //?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=308&deploymentID=1&recordID=3 // get
 
   const menuElements = useMemo(
-    () => config({ navigate, dispatch, tableViews: data?.tableViews ?? [] }),
-    [data?.tableViews, dispatch, navigate]
+    () =>
+      config({
+        navigate,
+        dispatch,
+        updateRecord,
+        tableViews: data?.tableViews ?? [],
+      }),
+    [data?.tableViews, dispatch, navigate, updateRecord]
   );
 
   return (

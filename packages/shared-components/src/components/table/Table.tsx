@@ -164,7 +164,7 @@ const Table = <T extends RowObject>(props: TableProps<T>) => {
                     }}
                     {...{
                       className: header.column.getCanSort()
-                        ? `flex justify-between items-center cursor-pointer select-none gap-2`
+                        ? `flex items-center cursor-pointer select-none gap-2`
                         : '',
                       onClick: header.column.getToggleSortingHandler(),
                     }}

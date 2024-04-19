@@ -20,7 +20,7 @@ interface Props<T> {
   selectedRows?: T[];
   editable?: boolean;
   isLoading?: boolean;
-  header: ReactNode;
+  header?: ReactNode;
   actions?: ReactNode;
   footer?: ReactNode;
   filters?: ReactNode;
@@ -123,7 +123,7 @@ export function CustomTable<T extends RowObject>({
         <Container>
           <div className="flex justify-between mb-4">
             {header && header}
-            {actions && <div className="flex gap-1 justify-end">{actions}</div>}
+            {actions && <div className="w-full flex gap-1 justify-end">{actions}</div>}
           </div>
           {filters && (
             <div className="flex justify-between mb-4">{filters}</div>

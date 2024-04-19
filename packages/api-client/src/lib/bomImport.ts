@@ -25,29 +25,18 @@ export const bomImportApi = api.injectEndpoints({
       providesTags: [],
     }),
 
-    updateRecord: builder.query<UpdateRecordResponse, UpdateRecordDto>({
-      query: (dto) => {
+    updateRecord: builder.mutation<UpdateRecordResponse, any>({
+      query: (dto: any) => {
         return {
           // url: `?script=${dto.script}&deploy=${dto.deploy}`,
           url: `?scriptID=307&deploymentID=${dto.deploy}&script=${dto.script}&deploy=${dto.deploy}&compid=TD2893635&h=2666e10fd32e93612036&fileId=1304`,
           method: 'POST',
           body: {
-            action: dto.action,
-            editID: dto.editID,
-            custrecord_bom_import_importd_file_url:
-              dto.custrecord_bom_import_importd_file_url,
-            custrecord_bom_import_json_importd_file:
-              dto.custrecord_bom_import_json_importd_file,
-            custrecord_bom_import_file_import_order:
-              dto.custrecord_bom_import_file_import_order,
-            custrecord_bom_import_transaction:
-              dto.custrecord_bom_import_transaction,
-            custrecord_orion_bom_intialization_ident:
-              dto.custrecord_orion_bom_intialization_ident,
+            fileContent: dto.fileContent,
+            fileID: dto.fileID,
           },
         };
       },
-      providesTags: [],
     }),
 
     getRecords: builder.query<GetRecordsResponse, GetRecordsDto>({

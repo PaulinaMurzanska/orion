@@ -12,10 +12,12 @@ export const config = ({
   navigate,
   tableViews,
   dispatch,
+  updateRecord,
 }: {
   navigate: NavigateFunction;
   dispatch: (x: any) => void;
   tableViews: any[];
+  updateRecord: any;
 }): MenuElement[] => {
   const elements: MenuElement[] = [];
   const groups = groupBy(
@@ -31,7 +33,7 @@ export const config = ({
 
   sortedGroups.forEach((group, index) => {
     elements.push({
-      route: 'bom',
+      route: 'records',
       id: group[0].id,
       icon: (
         <img
@@ -86,7 +88,7 @@ export const config = ({
     {
       name: 'Save',
       onClick: () => {
-
+        updateRecord({});
       },
       icon: <SaveIcon width="20px" height="20px" />,
     },

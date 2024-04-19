@@ -9,11 +9,6 @@ interface Props {
 const Filters = ({ search, setSearch }: Props) => {
   return (
     <div className="flex gap-2 items-center">
-      <Input
-        placeholder="Search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
       <BomCustomDialog />
     </div>
   );

@@ -7,7 +7,6 @@ import { DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import ProgressSpin from '../../components/progress-spin/ProgressSpin';
 import Footer from './table/Footer';
-import Filters from './table/Filters';
 import Actions from './table/Actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { setRecords } from './recordsSlice';
@@ -19,7 +18,6 @@ const RecordsView = () => {
     script: 220,
     deploy: 1,
   });
-
   const { records, columns } = useSelector(
     (state: RootState) => state.recordsSlice
   );
@@ -41,11 +39,10 @@ const RecordsView = () => {
       try {
         const parsed = JSON.parse(data.content ?? '{}');
         const items =
-          parsed?.map((item: any) => ({
+          parsed?.slice(0, 50).map((item: any) => ({
             ...item,
             // id: `${item.itemid}/${item.line}`, // TODO: Use UUID when available
           })) ?? [];
-        console.log('ITEMS?', items);
         dispatch(setRecords(items));
       } catch (e: any) {
         console.error(e);
@@ -72,7 +69,6 @@ const RecordsView = () => {
         data={records}
         columns={columns}
         onRowSelectionChange={onRowSelectionChange}
-        header={<h1 className="text-3xl font-extrabold">Bom records</h1>}
         editable={editable}
         search={search}
         setSearch={setSearch}
@@ -102,7 +98,6 @@ const RecordsView = () => {
           }
         }}
         actions={<Actions editable={editable} setEditable={setEditable} />}
-        filters={<Filters setSearch={setSearch} search={search} />}
         footer={<Footer records={records} selectedRows={selectedRows} />}
       />
     </div>

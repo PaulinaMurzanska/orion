@@ -22,6 +22,8 @@ import { getUrl } from '@orionsuite/api-client';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
 import { useDispatch } from 'react-redux';
+import { Button } from '@orionsuite/shared-components';
+import { ArmchairIcon } from 'lucide-react';
 
 const fileObjEmpty: FileObjectType = {
   id: '',
@@ -305,15 +307,15 @@ const BomCustomDialog = () => {
 
   return (
     <StyledDialog>
-      <CustomTriggerButton
+      <Button
+        className="bg-purple-600 hover:bg-purple-500 flex gap-2"
         type="button"
-        variant="outline"
-        className="uppercase"
+        variant="default"
         onClick={handleClose}
       >
-        <Icon path={mdiSofaSingle} size={1} />
-        bom import tool
-      </CustomTriggerButton>
+        <ArmchairIcon width="18px" height="18px" />
+        BOM import
+      </Button>
       <StyledDialogOpen dialogOpen={dialogOpen}>
         <StyledContentWrapper>
           <DndContext
