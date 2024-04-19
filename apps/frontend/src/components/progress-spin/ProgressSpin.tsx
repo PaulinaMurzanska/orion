@@ -1,39 +1,36 @@
-import { Icons } from '../../assets/icons/Icons';
-import React from 'react';
-import { cn } from '../../utils/tailwind';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { SpinnerContainer, SpinningIcon } from './StyledProgressSpin';
 
-const spinnerVariants = cva('animate-spin', {
-  variants: {
-    variant: {
-      primary: 'text-blue-500',
-      white: 'text-white',
-      gray: 'text-gray-400',
-    },
-  },
-  defaultVariants: {
-    variant: 'primary',
-  },
-});
+import { colors } from '../../styles/variables';
 
-interface SpinnerProps extends VariantProps<typeof spinnerVariants> {
-  className?: string;
+export interface ProgressSpinProps {
   size?: number;
+  variant?: 'primary' | 'white' | 'gray' | 'orange' | 'pink';
+  className?: string;
+  duration?: string;
+  customColor?: string;
 }
 
-const ProgressSpin = ({ variant, size, className = '' }: SpinnerProps) => {
-  const baseSize = size || 6;
-  const sizeClass = `w-${baseSize} h-${baseSize}`;
+const ProgressSpin = ({
+  size = 24,
+  variant = 'pink',
+  className = '',
+  duration = '2s',
+  customColor = '',
+}: ProgressSpinProps) => {
+  const colorMap = {
+    primary: colors.blue_primary,
+    white: '#fff',
+    gray: colors.grey_400,
+    orange: colors.orange,
+    pink: colors.pink,
+  };
+
+  const color = customColor ? customColor : colorMap[variant];
+
   return (
-    <div>
-      <Icons.spinner
-        className={cn(
-          'animate-spin',
-          spinnerVariants({ variant, className }),
-          sizeClass
-        )}
-      />
-    </div>
+    <SpinnerContainer size={size} color={color} className={className}>
+      <SpinningIcon duration={duration} />
+    </SpinnerContainer>
   );
 };
 

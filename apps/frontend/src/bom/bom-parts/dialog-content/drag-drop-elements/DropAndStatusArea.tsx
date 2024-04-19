@@ -1,28 +1,21 @@
-import { StyledCard, StyledDropArea } from './StyledDragDrop';
-
 import { CSS } from '@dnd-kit/utilities';
 import DragDrop from './DragDrop';
 import { FileObjectType } from '../../type';
 import StatusZone from './StatusZone';
+import { StyledDropArea } from './StyledDragDrop';
 import { useSortable } from '@dnd-kit/sortable';
 
 interface Props {
   fileObjects: FileObjectType[];
   file: FileObjectType;
-  handleDeleteDropZone: (id: string | number) => void;
   onDropFunction: (dropzoneId: string, file: any) => void;
 }
 
-const DropAndStatusArea = ({
-  fileObjects,
-  file,
-  handleDeleteDropZone,
-  onDropFunction,
-}: Props) => {
+const DropAndStatusArea = ({ fileObjects, file, onDropFunction }: Props) => {
   const id = file.id;
 
   const { attributes, listeners, transform, transition, setNodeRef } =
-    useSortable({ id });
+    useSortable({ id, disabled: false });
 
   const style = {
     transition,
@@ -37,12 +30,8 @@ const DropAndStatusArea = ({
       style={style}
       id={id}
     >
-      <StyledCard>
-        <DragDrop fileObj={file} onDropFunction={onDropFunction} />
-      </StyledCard>
-      <StyledCard>
-        <StatusZone fileObj={file} />
-      </StyledCard>
+      <DragDrop fileObj={file} onDropFunction={onDropFunction} />
+      <StatusZone fileObj={file} />
     </StyledDropArea>
   );
 };

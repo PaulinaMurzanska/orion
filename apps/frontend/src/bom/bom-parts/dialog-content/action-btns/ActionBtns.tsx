@@ -9,31 +9,39 @@ import {
 import { mdiArrowRight, mdiPlus } from '@mdi/js';
 
 import Icon from '@mdi/react';
+import { RootState } from 'apps/frontend/store';
+import { useSelector } from 'react-redux';
 
 interface ActionBtnsProps {
   onAddClick: () => void;
   onActionClick: () => void;
-  uploadProgress: boolean;
 }
 
-const ActionBtns = ({
-  onAddClick,
-  onActionClick,
-  uploadProgress,
-}: ActionBtnsProps) => {
+const ActionBtns = ({ onAddClick, onActionClick }: ActionBtnsProps) => {
+  const fileUploadProgress = useSelector(
+    (state: RootState) => state.bom.fileUploadProgress
+  );
+  const disableBeginBtn = useSelector(
+    (state: RootState) => state.bom.disableBeginBtn
+  );
+
   return (
     <StyledActionBts>
       <ActionBtn onClick={onAddClick} type="button">
-        <StyledActionIcon className="bg-green-600">
+        <StyledActionIcon addIcon={true}>
           <Icon path={mdiPlus} className="w-5 h-5" />
         </StyledActionIcon>
         <StyledActionLabel>Add Files</StyledActionLabel>
       </ActionBtn>
-      <ActionBtn onClick={onActionClick} disabled={uploadProgress} type="button">
-        <StyledActionIcon className="bg-pink-600">
+      <ActionBtn
+        onClick={onActionClick}
+        disabled={fileUploadProgress || disableBeginBtn}
+        type="button"
+      >
+        <StyledActionIcon addIcon={false}>
           <Icon path={mdiArrowRight} className="w-5 h-5" />
         </StyledActionIcon>
-        <StyledActionLabel>Import Lines</StyledActionLabel>
+        <StyledActionLabel>Begin Upload</StyledActionLabel>
       </ActionBtn>
     </StyledActionBts>
   );
