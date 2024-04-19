@@ -75,7 +75,7 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
     <>
       <StyledDragDrop
         {...getRootProps({
-          refKey: 'idRef',
+          refKey: 'idref',
         })}
         id={fileObj.id}
         ref={dropzoneRef}

@@ -9,18 +9,19 @@ import {
 import { mdiArrowRight, mdiPlus } from '@mdi/js';
 
 import Icon from '@mdi/react';
+import { RootState } from 'apps/frontend/store';
+import { useSelector } from 'react-redux';
 
 interface ActionBtnsProps {
   onAddClick: () => void;
   onActionClick: () => void;
-  uploadProgress: boolean;
 }
 
-const ActionBtns = ({
-  onAddClick,
-  onActionClick,
-  uploadProgress,
-}: ActionBtnsProps) => {
+const ActionBtns = ({ onAddClick, onActionClick }: ActionBtnsProps) => {
+  const fileUploadProgress = useSelector(
+    (state: RootState) => state.bom.fileUploadProgress
+  );
+
   return (
     <StyledActionBts>
       <ActionBtn onClick={onAddClick} type="button">
@@ -31,7 +32,7 @@ const ActionBtns = ({
       </ActionBtn>
       <ActionBtn
         onClick={onActionClick}
-        disabled={uploadProgress}
+        disabled={fileUploadProgress}
         type="button"
       >
         <StyledActionIcon addIcon={false}>

@@ -8,20 +8,14 @@ import { useSortable } from '@dnd-kit/sortable';
 interface Props {
   fileObjects: FileObjectType[];
   file: FileObjectType;
-  handleDeleteDropZone: (id: string | number) => void;
   onDropFunction: (dropzoneId: string, file: any) => void;
 }
 
-const DropAndStatusArea = ({
-  fileObjects,
-  file,
-  handleDeleteDropZone,
-  onDropFunction,
-}: Props) => {
+const DropAndStatusArea = ({ fileObjects, file, onDropFunction }: Props) => {
   const id = file.id;
 
   const { attributes, listeners, transform, transition, setNodeRef } =
-    useSortable({ id });
+    useSortable({ id, disabled: false });
 
   const style = {
     transition,

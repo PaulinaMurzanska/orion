@@ -1,7 +1,7 @@
 import {
   BomCombinedArrayObjectType,
   setBomImportFiles,
-} from '../../../../store/bomImportFilesSlice';
+} from '../../../../store/bom-store/bomImportFilesSlice';
 import {
   CustomTriggerButton,
   StyledCloseIcon,
@@ -12,110 +12,89 @@ import {
   StyledInnerContent,
 } from './StyledBomDialog';
 import { DndContext, closestCorners } from '@dnd-kit/core';
+import {
+  setFileUploadProgress,
+  setUploadedFilesArr,
+  updateFilePositions,
+  updateFilesLoading,
+} from '../../../../store/bom-store/bomSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
 
 import BomDialogContent from '../dialog-content/BomDialogContent';
 import { FileObjectType } from '../type';
 import Icon from '@mdi/react';
 import { Icons } from '../../../assets/icons/Icons';
+import { RootState } from 'apps/frontend/store';
 import WebWorker from '../../../workers/WebWorker?worker&inline';
 import { arrayMove } from '@dnd-kit/sortable';
 import { getUrl } from '@orionsuite/api-client';
+import { initialFile } from '../../../../store/bom-store/bomInitialStates';
 import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
-import { useDispatch } from 'react-redux';
-
-const fileObjEmpty: FileObjectType = {
-  id: '',
-  fileId: null,
-  fileLoading: false,
-  fileAdded: false,
-  fileName: 'Drag and Drop',
-  fullFileName: '',
-  fileNameJson: '',
-  fileExtension: '',
-  loaderText: '',
-  fileContent: '',
-  bomRecordID: null,
-  bomRecordStatus: 1,
-  fileJSON: {},
-  file: null,
-  itemLines: [],
-  initialPosition: 1,
-  currentPosition: 1,
-};
 
 const BomCustomDialog = () => {
   const dispatch = useDispatch();
 
+  const fileUploadProgress = useSelector(
+    (state: RootState) => state.bom.fileUploadProgress
+  );
+
+  const uploadedFilesArr = useSelector(
+    (state: RootState) => state.bom.uploadedFilesArr
+  );
+
   const idInitial = nanoid(8);
   const workerRef = useRef<any>(null);
 
-  const initialObject = { ...fileObjEmpty };
+  const initialObject = { ...initialFile };
   initialObject.id = idInitial;
-  const [fileObjs, setFileObjs] = useState<FileObjectType[]>([initialObject]);
-  const [uploadProgress, setUploadProgress] = useState<boolean>(false);
+
   const [filesCombined, setFilesCombined] = useState<any[]>([]);
 
-  const setFilesDataArray = (filesArray: FileObjectType[]) => {
-    setFileObjs(filesArray);
-  };
-
-  const handleSaveFilesGlobally = (newFiles: BomCombinedArrayObjectType[]) => {
-    dispatch(setBomImportFiles(newFiles));
-  };
-
   const getFilePosition = (id: any) =>
-    fileObjs.findIndex((task: any) => task.id === id);
+    uploadedFilesArr.findIndex((task) => task.id === id);
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (active.id === over.id) return;
-    const activeObj = fileObjs.find((obj) => obj.id === active.id);
-    const overObj = fileObjs.find((obj) => obj.id === over.id);
+    const activeObj = uploadedFilesArr.find((obj) => obj.id === active.id);
+    const overObj = uploadedFilesArr.find((obj) => obj.id === over.id);
     if (activeObj && overObj) {
       if (activeObj.fileLoading || overObj.fileLoading) {
         alert(
           'File upload is not completed yet, you cannot change the order until the upload is done.'
         );
       } else {
-        setFileObjs((fileObjs) => {
-          const originalPosition = getFilePosition(active.id);
-          const newPosition = getFilePosition(over.id);
-          return arrayMove(fileObjs, originalPosition, newPosition);
-        });
-
-        setFileObjs((currentFileObjs) => {
-          const updatedFileObjs = [...currentFileObjs];
-          for (const [index, file] of updatedFileObjs.entries()) {
-            file.currentPosition = index + 1;
-            updatedFileObjs[index] = {
-              ...updatedFileObjs[index],
-              currentPosition: index + 1,
-            };
-          }
-          return updatedFileObjs;
-        });
+        const originalPosition = getFilePosition(active.id);
+        const newPosition = getFilePosition(over.id);
+        const newFilesArr = arrayMove(
+          uploadedFilesArr,
+          originalPosition,
+          newPosition
+        );
+        dispatch(setUploadedFilesArr(newFilesArr));
+        dispatch(updateFilePositions());
       }
     }
   };
 
   const createCombinedFilesArr = () => {
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      for (const [index, file] of updatedFileObjs.entries()) {
-        updatedFileObjs[index] = {
-          ...updatedFileObjs[index],
+    dispatch(
+      updateFilesLoading({
+        updates: uploadedFilesArr.map((file) => ({
+          id: file.id,
           fileLoading: true,
           loaderText: 'Adding file to combined array',
-        };
-      }
-      return updatedFileObjs;
-    });
+        })),
+      })
+    );
 
-    const combinedItemLines = fileObjs.map((obj) => obj.itemLines).flat();
+    const combinedItemLines = uploadedFilesArr
+      .map((obj) => obj.itemLines)
+      .flat();
     setFilesCombined(combinedItemLines);
-    handleSaveFilesGlobally(combinedItemLines);
+    dispatch(setBomImportFiles(combinedItemLines));
     const id = nanoid(5);
     const combineArrayData = {
       lines: combinedItemLines,
@@ -124,18 +103,15 @@ const BomCustomDialog = () => {
       deploymentID: 1,
     };
 
-    setFileObjs((currentFileObjs) => {
-      const updatedFileObjs = [...currentFileObjs];
-      for (const [index, file] of updatedFileObjs.entries()) {
-        updatedFileObjs[index] = {
-          ...updatedFileObjs[index],
-          fileLoading: false,
-          loaderText:
-            'Item is part of the combined array now - you can close the dialog',
-        };
-      }
-      return updatedFileObjs;
-    });
+    dispatch(
+      updateFilesLoading({
+        updates: uploadedFilesArr.map((file) => ({
+          id: file.id,
+          fileLoading: true,
+          loaderText: 'Adding file to combined array',
+        })),
+      })
+    );
     console.log(
       'The request should be made in this place, temporarily, we are going to save file in global store - not created yet at this point'
     );
@@ -143,48 +119,44 @@ const BomCustomDialog = () => {
   };
 
   const onImportLines = async () => {
-    if (uploadProgress) {
+    if (fileUploadProgress) {
       return;
     } else {
-      const changedRecords = fileObjs.filter(
+      const changedRecords = uploadedFilesArr.filter(
         (file) =>
           file.initialPosition !== file.currentPosition &&
           file.bomRecordID !== null
       );
-
-      setFileObjs((currentFileObjs) => {
-        const updatedFileObjs = [...currentFileObjs];
-        for (const [index, file] of updatedFileObjs.entries()) {
-          file.currentPosition = index + 1;
-          updatedFileObjs[index] = {
-            ...updatedFileObjs[index],
-            currentPosition: index + 1,
+      dispatch(updateFilePositions());
+      dispatch(
+        updateFilesLoading({
+          updates: uploadedFilesArr.map((file) => ({
+            id: file.id,
             fileLoading: true,
-            loaderText: 'Import lines',
-          };
-        }
-        return updatedFileObjs;
-      });
+            loaderText: 'Adding file to combined array',
+          })),
+        })
+      );
 
       if (changedRecords.length === 0) {
         createCombinedFilesArr();
       } else {
-        setFileObjs((currentFileObjs) => {
-          const updatedFileObjs = [...currentFileObjs];
-          for (const [index, file] of updatedFileObjs.entries()) {
-            if (
+        const updates = uploadedFilesArr
+          .filter(
+            (file) =>
               file.initialPosition !== file.currentPosition &&
               file.bomRecordID !== null
-            ) {
-              updatedFileObjs[index] = {
-                ...updatedFileObjs[index],
-                fileLoading: true,
-                loaderText: 'The order of the file changed, updating order',
-              };
-            }
-          }
-          return updatedFileObjs;
-        });
+          )
+          .map((file) => ({
+            id: file.id,
+            fileLoading: true,
+            loaderText: 'The order of the file changed, updating order',
+          }));
+
+        if (updates.length > 0) {
+          dispatch(updateFilesLoading({ updates }));
+        }
+
         const promises = [];
         for (const [index, file] of changedRecords.entries()) {
           const reorderPayload = {
@@ -205,22 +177,21 @@ const BomCustomDialog = () => {
           const responses = await Promise.all(promises);
 
           if (responses) {
-            setFileObjs((currentFileObjs) => {
-              const updatedFileObjs = [...currentFileObjs];
-              for (const [index, file] of updatedFileObjs.entries()) {
-                if (
+            const updates = uploadedFilesArr
+              .filter(
+                (file) =>
                   file.initialPosition !== file.currentPosition &&
                   file.bomRecordID !== null
-                ) {
-                  updatedFileObjs[index] = {
-                    ...updatedFileObjs[index],
-                    fileLoading: false,
-                    loaderText: 'The file was updated',
-                  };
-                }
-              }
-              return updatedFileObjs;
-            });
+              )
+              .map((file) => ({
+                id: file.id,
+                fileLoading: false,
+                loaderText: 'The file was updated',
+              }));
+
+            if (updates.length > 0) {
+              dispatch(updateFilesLoading({ updates }));
+            }
             createCombinedFilesArr();
           }
         } catch (error) {
@@ -240,7 +211,7 @@ const BomCustomDialog = () => {
       if (filesCombined.length > 0) {
         setFilesCombined([]);
         const newArr = [initialObject];
-        setFileObjs(newArr);
+        dispatch(setUploadedFilesArr(newArr));
       }
     }
   };
@@ -301,9 +272,12 @@ const BomCustomDialog = () => {
   }, []);
 
   useEffect(() => {
-    const isDataProcessing = fileObjs.some((file) => file.fileLoading === true);
-    setUploadProgress(isDataProcessing);
-  }, [fileObjs]);
+    const isDataProcessing = uploadedFilesArr.some(
+      (file) => file.fileLoading === true
+    );
+
+    dispatch(setFileUploadProgress(isDataProcessing));
+  }, [uploadedFilesArr]);
 
   return (
     <StyledDialog>
@@ -324,16 +298,16 @@ const BomCustomDialog = () => {
           >
             <StyledInnerContent>
               <BomDialogContent
-                setFilesDataArray={setFilesDataArray}
                 onImportLines={onImportLines}
-                fileObjs={fileObjs}
-                emptyObject={fileObjEmpty}
-                uploadProgress={uploadProgress}
+                emptyObject={initialFile}
               />
             </StyledInnerContent>
             <StyledEmail>
               <Icons.envelope />
               <span>Email yourself or Others When Complete</span>
+              {/* <div>
+                <pre>{JSON.stringify(uploadedFilesArr, null, 2)}</pre>
+              </div> */}
             </StyledEmail>
             <StyledCloseIcon onClick={handleClose} />
           </DndContext>
