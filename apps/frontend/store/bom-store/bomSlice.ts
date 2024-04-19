@@ -8,12 +8,6 @@ const idInitial = nanoid(8);
 const initialObject = { ...initialFile };
 initialObject.id = idInitial;
 
-type UpdateLoadingPayload = {
-  id: any;
-  fileLoading: boolean;
-  loaderText: string;
-};
-
 type BomState = {
   fileUploadProgress: boolean;
   uploadedFilesArr: FileObjectType[];
@@ -45,23 +39,7 @@ const bomSlice = createSlice({
         currentPosition: index + 1,
       }));
     },
-    updateFilesLoading(
-      state,
-      action: PayloadAction<{ updates: UpdateLoadingPayload[] }>
-    ) {
-      action.payload.updates.forEach((update) => {
-        const index = state.uploadedFilesArr.findIndex(
-          (file) => file.id === update.id
-        );
-        if (index !== -1) {
-          state.uploadedFilesArr[index] = {
-            ...state.uploadedFilesArr[index],
-            fileLoading: update.fileLoading,
-            loaderText: update.loaderText,
-          };
-        }
-      });
-    },
+
     updateFileDetails(state, action: PayloadAction<FileObjectType>) {
       const { id, ...restOfUpdates } = action.payload;
       const index = state.uploadedFilesArr.findIndex((file) => file.id === id);
@@ -84,7 +62,6 @@ export const {
   setFileUploadProgress,
   setUploadedFilesArr,
   updateFilePositions,
-  updateFilesLoading,
   updateFileDetails,
   setDisableBeginBtn,
   removeInvalidFiles,

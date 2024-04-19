@@ -15,7 +15,6 @@ import {
   setUploadedFilesArr,
   updateFileDetails,
   updateFilePositions,
-  updateFilesLoading,
 } from '../../../../store/bom-store/bomSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
@@ -158,15 +157,15 @@ const BomCustomDialog = () => {
       );
 
       dispatch(updateFilePositions());
-      dispatch(
-        updateFilesLoading({
-          updates: uploadedFilesArr.map((file) => ({
+      uploadedFilesArr.forEach((file) => {
+        dispatch(
+          updateFileDetails({
             id: file.id,
             fileLoading: true,
             loaderText: 'Adding file to combined array',
-          })),
-        })
-      );
+          })
+        );
+      });
 
       dispatch(removeInvalidFiles());
       if (changedRecords.length === 0) {
