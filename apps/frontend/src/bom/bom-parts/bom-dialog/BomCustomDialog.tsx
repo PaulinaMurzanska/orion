@@ -151,10 +151,6 @@ const BomCustomDialog = () => {
       );
     });
 
-    console.log(
-      'The request should be made in this place, temporarily, we are going to save file in global store - not created yet at this point'
-    );
-    
     console.log('payload:', combineArrayData);
     const summarizedData = summarizeData(combinedItemLines, ['quantity', 'porate', 'rate']);
     console.log('summarizedData:', summarizedData);
