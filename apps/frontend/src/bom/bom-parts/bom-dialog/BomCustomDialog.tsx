@@ -135,6 +135,9 @@ const BomCustomDialog = () => {
     }
 
     const data: any = await initiateProcessPromise('', payload, null, url);
+    const summarizedData = summarizeData(combinedItemLines, ['quantity', 'porate', 'rate']);
+    console.log('summarizedData:', summarizedData);
+    insertSummaryItem(summarizedData);
     finalizeUpload(data.output.fileID);
   };
 
@@ -150,10 +153,6 @@ const BomCustomDialog = () => {
         })
       );
     });
-
-    console.log('payload:', combineArrayData);
-    const summarizedData = summarizeData(combinedItemLines, ['quantity', 'porate', 'rate']);
-    console.log('summarizedData:', summarizedData);
   };
 
   const summarizeData = (combinedDataArr: Array<Object>, summaryProps: Array<string>) => {
@@ -166,6 +165,53 @@ const BomCustomDialog = () => {
     };
 
     return summarizedData;
+  };
+
+  const insertSummaryItem = (summaryData: any) => {
+    require(['N/currentRecord'], (currentRecord: any) => {
+      console.log('currentRecord:', currentRecord)
+      const recordObj = currentRecord.get();
+
+      console.log('recordObj:', recordObj);
+
+      recordObj.selectNewLine({
+        sublistId: 'item'
+      });
+
+      recordObj.setCurrentSublistValue({
+        sublistId: 'item',
+        fieldId: 'item',
+        value: 44
+      });
+
+      recordObj.setCurrentSublistValue({
+        sublistId: 'item',
+        fieldId: 'quantity',
+        value: 1
+      });
+
+      recordObj.setCurrentSublistValue({
+        sublistId: 'item',
+        fieldId: 'description',
+        value: 'Total'
+      });
+
+      recordObj.setCurrentSublistValue({
+        sublistId: 'item',
+        fieldId: 'rate',
+        value: summaryData.rate.toFixed(2)
+      });
+
+      recordObj.setCurrentSublistValue({
+        sublistId: 'item',
+        fieldId: 'porate',
+        value: summaryData.porate.toFixed(2)
+      });
+
+      recordObj.commitLine({
+        sublistId: 'item'
+      });
+    });
   };
 
   const onImportLines = async () => {
