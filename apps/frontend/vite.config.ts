@@ -51,6 +51,7 @@ export default defineConfig({
     outDir: '../../dist/apps/frontend',
     reportCompressedSize: true,
     rollupOptions: {
+      external: ['N/currentRecord'],
       output: {
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,
