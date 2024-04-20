@@ -138,10 +138,7 @@ const BomCustomDialog = () => {
 
     const data: any = await initiateProcessPromise('', payload, null, url);
     const summarizedData = summarizeData(combinedItemLines, ['quantity', 'porate', 'rate']);
-    console.log('summarizedData:', summarizedData);
-    if (process.env.NODE_ENV === 'production') {
-      insertSummaryItem(summarizedData);
-    }
+    insertSummaryItem(summarizedData);
     finalizeUpload(data.output.fileID);
   };
 
@@ -172,87 +169,89 @@ const BomCustomDialog = () => {
   };
 
   const insertSummaryItem = (summaryData: any) => {
-    require(['N/currentRecord'], (currentRecord: { get: () => any; }) => {
+    if (process.env.NODE_ENV === 'production') {
+      require(['N/currentRecord'], (currentRecord: { get: () => any; }) => {
 
-      console.log('currentRecord:', currentRecord);
-      const recordObj = currentRecord.get();
+        console.log('currentRecord:', currentRecord);
+        const recordObj = currentRecord.get();
 
-      console.log('recordObj:', recordObj);
+        console.log('recordObj:', recordObj);
 
-      const lineCount = recordObj.getLineCount({
-        sublistId: 'item',
-      });
+        const lineCount = recordObj.getLineCount({
+          sublistId: 'item',
+        });
 
-      let poRate, rate;
+        let poRate, rate;
 
-      if (lineCount === 1) {
-        const oldRate = recordObj.getSublistValue({
+        if (lineCount === 1) {
+          const oldRate = recordObj.getSublistValue({
+            sublistId: 'item',
+            fieldId: 'rate',
+            line: 0,
+          });
+
+          const oldPORate = recordObj.getSublistValue({
+            sublistId: 'item',
+            fieldId: 'porate',
+            line: 0,
+          });
+
+          rate = Math.abs(summaryData.rate) + Number(oldRate);
+          poRate = Math.abs(summaryData.porate) + Number(oldPORate);
+
+          recordObj.selectLine({
+            sublistId: 'item',
+            line: 0,
+          });
+        } else {
+          recordObj.selectNewLine({
+            sublistId: 'item',
+          });
+
+          rate = Math.abs(summaryData.rate);
+          poRate = Math.abs(summaryData.porate);
+        }
+
+        recordObj.setCurrentSublistValue({
+          sublistId: 'item',
+          fieldId: 'item',
+          value: 44,
+          forceSyncSourcing: true,
+        });
+
+        recordObj.setCurrentSublistValue({
+          sublistId: 'item',
+          fieldId: 'quantity',
+          value: 1,
+          forceSyncSourcing: true,
+        });
+
+        recordObj.setCurrentSublistValue({
+          sublistId: 'item',
+          fieldId: 'description',
+          value: 'Total',
+          forceSyncSourcing: true,
+        });
+
+        recordObj.setCurrentSublistValue({
           sublistId: 'item',
           fieldId: 'rate',
-          line: 0,
+          value: rate.toFixed(2),
+          forceSyncSourcing: true,
         });
 
-        const oldPORate = recordObj.getSublistValue({
+        recordObj.setCurrentSublistValue({
           sublistId: 'item',
           fieldId: 'porate',
-          line: 0,
+          value: poRate.toFixed(2),
+          forceSyncSourcing: true,
         });
 
-        rate = Math.abs(summaryData.rate) + Number(oldRate);
-        poRate = Math.abs(summaryData.porate) + Number(oldPORate);
-
-        recordObj.selectLine({
-          sublistId: 'item',
-          line: 0,
-        });
-      } else {
-        recordObj.selectNewLine({
+        recordObj.commitLine({
           sublistId: 'item',
         });
-
-        rate = Math.abs(summaryData.rate);
-        poRate = Math.abs(summaryData.porate);
-      }
-
-      recordObj.setCurrentSublistValue({
-        sublistId: 'item',
-        fieldId: 'item',
-        value: 44,
-        forceSyncSourcing: true,
       });
-
-      recordObj.setCurrentSublistValue({
-        sublistId: 'item',
-        fieldId: 'quantity',
-        value: 1,
-        forceSyncSourcing: true,
-      });
-
-      recordObj.setCurrentSublistValue({
-        sublistId: 'item',
-        fieldId: 'description',
-        value: 'Total',
-        forceSyncSourcing: true,
-      });
-
-      recordObj.setCurrentSublistValue({
-        sublistId: 'item',
-        fieldId: 'rate',
-        value: rate.toFixed(2),
-        forceSyncSourcing: true,
-      });
-
-      recordObj.setCurrentSublistValue({
-        sublistId: 'item',
-        fieldId: 'porate',
-        value: poRate.toFixed(2),
-        forceSyncSourcing: true,
-      });
-
-      recordObj.commitLine({
-        sublistId: 'item',
-      });
-    });
+    };
   };
 
   const onImportLines = async () => {
