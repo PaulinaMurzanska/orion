@@ -133,8 +133,8 @@ export function CustomTable<T extends RowObject>({
             style={{ position: 'sticky' }}
             animate={{
               width: sidebarOpen
-                ? 'calc(100vw - 575px)'
-                : 'calc(100vw - 175px)',
+                ? 'calc(100vw - 600px)'
+                : 'calc(100vw - 200px)',
               height: 'calc(100vh - 150px)',
             }}
           >
