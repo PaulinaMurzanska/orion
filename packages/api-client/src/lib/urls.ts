@@ -32,8 +32,6 @@ export const getUrl = (
   // @ts-expect-error
   const mode = import.meta.env.MODE;
 
-  console.log('MODEE', mode);
-
   return `${
     mode === 'development' ? baseUrl : 'https://td2893635.app.netsuite.com' + baseUrl
   }?script=${script}&deploy=${deploy}&compid=${compid}&h=${h}${params}`;
