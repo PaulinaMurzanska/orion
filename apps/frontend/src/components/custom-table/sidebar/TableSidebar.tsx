@@ -28,7 +28,7 @@ const RightMenu = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: calc(100vh - 42px);
+  height: calc(90vh - 42px);
   color: white;
   padding: 12px;
   gap: 10px;

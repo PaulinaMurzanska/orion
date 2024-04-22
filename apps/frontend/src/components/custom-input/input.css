@@ -1,0 +1,17 @@
+input.w-full.bg-transparent.hover\:bg-transparent.border-none.disabled\:opacity-100.disabled\:border-none.disabled\:bg-transparent {
+  color: black !important;
+}
+
+input[type='text']:disabled:not([data-widget='TextInput']) {
+  background: transparent !important;
+}
+
+input[type='text']:not([data-widget='TextInput']) {
+  background: transparent !important;
+  border: transparent !important;
+}
+
+input {
+  background: transparent !important;
+  border: transparent !important;
+}

@@ -1,6 +1,7 @@
 import { InputVariants, inputVariants } from './type';
 import React, { ChangeEvent, useState } from 'react';
 import { useConvertDataTypes } from '../../hooks/useConvertDataType';
+import './input.css';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   externalValue: string | number | null;

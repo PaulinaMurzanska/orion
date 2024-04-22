@@ -4,10 +4,8 @@ import {
   GetRecordsResponse,
   ProcessFileDto,
   ProcessFileResponse,
-  UpdateRecordDto,
   UpdateRecordResponse,
 } from '@orionsuite/dtos';
-import { z } from 'zod';
 
 export const bomImportApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -42,6 +40,7 @@ export const bomImportApi = api.injectEndpoints({
           },
         };
       },
+      invalidatesTags: ['Record'],
     }),
 
     getRecords: builder.query<GetRecordsResponse, GetRecordsDto>({
@@ -59,7 +58,7 @@ export const bomImportApi = api.injectEndpoints({
           method: 'GET',
         };
       },
-      providesTags: [],
+      providesTags: ['Record'],
     }),
   }),
 });

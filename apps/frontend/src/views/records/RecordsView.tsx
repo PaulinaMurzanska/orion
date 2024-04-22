@@ -56,7 +56,7 @@ const RecordsView = () => {
   if (isLoading) {
     return (
       <div className="m-10">
-        <ProgressSpin size={10} />
+        <ProgressSpin size={30} variant="primary" />
       </div>
     );
   }

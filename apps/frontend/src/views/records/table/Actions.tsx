@@ -17,7 +17,6 @@ const Actions = ({ editable, setEditable }: Props) => {
   const [updateRecords] = api.useUpdateRecordMutation();
 
   const onCommit = () => {
-    console.log('START COMMIT');
     updateRecords({
       script: 220,
       deploy: 1,
@@ -34,7 +33,6 @@ const Actions = ({ editable, setEditable }: Props) => {
     <>
       <Button
         variant="default"
-        disabled={editable}
         className="bg-blue-600 hover:bg-blue-500 flex gap-2"
         onClick={() => setEditable(!editable)}
       >
