@@ -3,7 +3,7 @@ self.addEventListener('message', async (e) => {
   let endpoint = e.data.endpoint;
 
   try {
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.MODE === 'production') {
       endpoint = `https://td2893635.app.netsuite.com${endpoint}`;
     }
     const response = await fetch(endpoint, {

@@ -34,14 +34,18 @@ export const config = ({
     }
   });
 
-  const groups = groupBy(parsedViews, (view) => view?.json?.view_group);
+  const sortedViews = [
+    ...parsedViews.sort((a, b) => {
+      return (
+        a.custrecord_orion_smarttable_position -
+        b.custrecord_orion_smarttable_position
+      );
+    }),
+  ];
 
-  const sortedGroups = Object.values(groups).sort((a, b) => {
-    return (
-      a[0].custrecord_orion_smarttable_position -
-      b[0].custrecord_orion_smarttable_position
-    );
-  });
+  const groups = Object.values(
+    groupBy(sortedViews, (view) => view?.json?.view_group)
+  );
 
   const onClick = (view: any, group: any, index: number) => {
     const columns = view.json?.columns ?? [];
@@ -57,7 +61,7 @@ export const config = ({
     navigate(`/records/${group[index].scriptid}`);
   };
 
-  sortedGroups.forEach((group, index) => {
+  groups.forEach((group, index) => {
     if (group[index]?.json?.id === DEFAULT_GROUP) {
       group.forEach((view, index) => {
         elements.push({
