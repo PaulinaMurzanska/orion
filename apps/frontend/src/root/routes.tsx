@@ -1,8 +1,8 @@
 import BomImportTool from '../bom/BomImportTool';
 import ComponentsLibrary from '../components-library/ComponentsLibrary';
-import OrdersTable from '../tables/OrdersTable';
 import Root from './Root';
 import { createHashRouter } from 'react-router-dom';
+import RecordsView from '../views/records/RecordsView';
 
 export default createHashRouter([
   {
@@ -10,8 +10,8 @@ export default createHashRouter([
     element: <Root />,
     children: [
       {
-        path: '/orders',
-        element: <OrdersTable />,
+        path: `/records/:id`,
+        element: <RecordsView />,
       },
       {
         path: '/components',

@@ -432,7 +432,7 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
       log.debug(loggerTitle, `str: ${str}`)
       const containsOnlyLetters = /^([^0-9]*)$/.test(str)
       const hasManufactureCode = itemObj[fileDef['manufacturer_code']]
-      const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']].length > 3
+      const manCodeGreaterThanThree = itemObj[fileDef['manufacturer_code']] && itemObj[fileDef['manufacturer_code']].length > 3
       if (containsOnlyLetters && (!hasManufactureCode || manCodeGreaterThanThree)) {
         resultValue = true
       }
@@ -483,14 +483,182 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     }
   }
 
-  const retrieveValueFromDelimitedString = (stringValue, splitterValue, indexToReturn) => {
+  /**
+   * Retrieves a value from a delimited string to calculate discount - Originally developed by Joe Keller
+   *
+   * @param {string} stringValue - The delimited string.
+   * @param {string} splitterValue - The delimiter used to split the string.
+   * @param {number} indexToReturn - The index of the value to retrieve.
+   * @returns {void}
+   */
+  const retrieveValueFromDelimitedString = (stringValue, splitterValue) => {
     const loggerTitle = 'retrieveValueFromDelimitedString'
 
     try {
-      const splitArray = stringValue.split(splitterValue)
-      return splitArray[indexToReturn]
+      const ppercent = stringValue
+
+      let discountpercent = 0
+
+      let tiers = ppercent.split(splitterValue)
+
+      log.audit(loggerTitle, `tiers: ${JSON.stringify(tiers)}`)
+      if (tiers.length) {
+        if (tiers.length === 4) {
+          // if there are 4 tiers the first is the actual numeric discount, and you can ignore the rest – go figure
+          discountpercent = parseFloat(tiers[0]).toFixed(4)
+          log.audit(loggerTitle, `discountpercent: ${discountpercent}`)
+        } else {
+          // tiered discounts: could be 1, 2 or 3 tiers. example: 40|40|40 or 40|15
+          // 1st is percent off list: 40 in this example. cost will be 60% of list so far. The basis is now 100-40=60.
+          // A 2nd tier of 40 again would add (basis * tier2/100), example: (60 * .4 = 24). Now the total discount so far is 64, and basis is now 36.
+          // A 3rd tier of 40 again would add (basis * tier3/100), example (36 * .4 = 14.4) to end up with a total discount of 78.4
+
+          let basis = 0
+
+          if (tiers[0] && tiers[0] > 0) {
+            discountpercent = Number(tiers[0])
+
+            basis = 100 - discountpercent
+
+            if (tiers[1] && tiers[1] > 0) {
+              discountpercent += basis * (Number(tiers[1]) / 100)
+
+              basis = 100 - discountpercent
+
+              if (tiers[2] && tiers[2] > 0) {
+                discountpercent += basis * (Number(tiers[2]) / 100)
+              }
+            }
+          }
+        }
+      }
+      return discountpercent
     } catch (e) {
       log.error(loggerTitle, e)
+    }
+  }
+
+  /**
+   * Generates a random string of the specified length.
+   *
+   * @param {number} length - The length of the random string to generate.
+   * @returns {string} The randomly generated string.
+   */
+  const generateRandomString = (length) => {
+    loggerTitle = 'generateRandomString'
+
+    try {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = ''
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length)
+        result += characters.charAt(randomIndex)
+      }
+      return result
+    } catch (e) {
+      log.error(loggerTitle, `Error: ${e}`)
+    }
+
+    return null
+  }
+
+  /**
+   * Adds a UUID to each item line in the given array.
+   *
+   * @param {Array} itemLines - The array of item lines to add UUIDs to.
+   * @returns {void}
+   */
+  const addUUIDToItemLines = (itemLines) => {
+    const loggerTitle = 'addUUIDToItemLines'
+
+    try {
+      for (let itemLine of itemLines) {
+        itemLine.custcol_uuid = `${Date.now()}-${generateRandomString(10)}`
+      }
+    } catch (e) {
+      log.error(loggerTitle, e)
+    }
+  }
+
+  /**
+   * Calculates the discount percentage based on the given line item.
+   *
+   * @param {number} lineItem - The line item to calculate the discount for.
+   * @returns {number} The calculated discount percentage.
+   */
+  const calculateDiscount = (lineItem) => {
+    let discountpercent = 0
+
+    let tiers = ppercent.split("|")
+
+    if (tiers.length) {
+      if (tiers.length == 4) {
+        // if there are 4 tiers the first is the actual numeric discount, and you can ignore the rest – go figure
+        ppercent = parseFloat(tiers[0]).toFixed(4)
+      } else {
+        // tiered discounts: could be 1, 2 or 3 tiers. example: 40|40|40 or 40|15
+        // 1st is percent off list: 40 in this example. cost will be 60% of list so far. The basis is now 100-40=60.
+        // A 2nd tier of 40 again would add (basis * tier2/100), example: (60 * .4 = 24). Now the total discount so far is 64, and basis is now 36.
+        // A 3rd tier of 40 again would add (basis * tier3/100), example (36 * .4 = 14.4) to end up with a total discount of 78.4
+
+        let basis = 0
+
+        if (tiers[0] && tiers[0] > 0) {
+          discountpercent = tiers[0]
+
+          basis = 100 - discountpercent
+
+          if (tiers[1] && tiers[1] > 0) {
+            discountpercent += basis * (tiers[1] / 100)
+
+            basis = 100 - discountpercent
+
+            if (tiers[2] && tiers[2] > 0) {
+              discountpercent += basis * (tiers[2] / 100)
+            }
+          }
+        }
+      }
+    }
+
+    return discountpercent
+  }
+
+  /**
+   * Calculates the dealer cost for a given line item.
+   *
+   * @param {Object} lineItem - The line item object.
+   * @returns {number} The calculated dealer cost.
+   */
+  const dealerCostCalculate = (lineItem) => {
+    if (lineItem.porate) {
+      return lineItem.porate
+    } else {
+      if (lineItem.custcol_ori_discount_dealer && lineItem.custcol_ori_discount_dealer.toString().indexOf('|') > -1) {
+        let discount = calculateDiscount(Number(lineItem.custcol_ori_discount_dealer))
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - discount) / 100))
+      } else {
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_dealer)) / 100))
+      }
+    }
+  }
+
+  /**
+   * Calculates the cost for a customer based on the line item.
+   *
+   * @param {Object} lineItem - The line item object.
+   * @returns {number} - The calculated cost for the customer.
+   */
+  const customerCostCalculator = (lineItem) => {
+    if (lineItem.rate) {
+      return lineItem.rate
+    } else {
+      if (lineItem.custcol_ori_discount_customer && lineItem.custcol_ori_discount_customer.toString().indexOf('|') > -1) {
+        let discount = calculateDiscount(Number(lineItem.custcol_ori_discount_customer))
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - discount) / 100))
+      } else {
+        return lineItem.custcol_ori_list_price - (lineItem.custcol_ori_list_price * ((100 - Number(lineItem.custcol_ori_discount_customer)) / 100))
+      }
     }
   }
 
@@ -501,7 +669,11 @@ define(['N/log', 'N/query', 'N/xml', 'N/file'], function (log, query, xml, file)
     buildObjectFromString: buildObjectFromString,
     loadDefinition: loadDefinition,
     retrieveFromResults: retrieveFromResults,
-    retrieveValueFromDelimitedString: retrieveValueFromDelimitedString
+    retrieveValueFromDelimitedString: retrieveValueFromDelimitedString,
+    addUUIDToItemLines: addUUIDToItemLines,
+    calculateDiscount: calculateDiscount,
+    dealerCostCalculate: dealerCostCalculate,
+    customerCostCalculator: customerCostCalculator
   }
 
 })

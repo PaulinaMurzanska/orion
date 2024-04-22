@@ -5,8 +5,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@orionsuite/shared-components';
+} from '../dropdown/Dropdown';
 import {
+  ChevronDownIcon,
   CrossCircledIcon,
   DrawingPinFilledIcon,
   DrawingPinIcon,
@@ -22,7 +23,9 @@ interface Props<T> {
 const ColumnMenu = <T extends object>({ column }: Props<T>) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>...</DropdownMenuTrigger>
+      <DropdownMenuTrigger>
+        <ChevronDownIcon />
+      </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Column Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />

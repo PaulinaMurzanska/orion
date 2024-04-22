@@ -1,8 +1,12 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 import NavigationMenu from '../components/menu/NavigationMenu';
 import styled from 'styled-components';
-import { useCallback, useState } from 'react';
+import { api } from '@orionsuite/api-client';
+import { useEffect } from 'react';
+import { setColumns } from '../views/records/recordsSlice';
+import { useDispatch } from 'react-redux';
+import { DEFAULT_GROUP } from '../components/menu/config';
 
 const Container = styled.div`
   display: grid;
@@ -11,35 +15,38 @@ const Container = styled.div`
   position: relative;
 `;
 
-const HiddenOptionsDiv = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 15px;
-  height: 15px;
-`;
-
 const Root = () => {
-  const showMenuStorage = localStorage.getItem('orionsuite.options.showMenu');
-  const [showMenu, setShowMenu] = useState(
-    JSON.parse(showMenuStorage ?? 'false')
-  );
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { data, isLoading } = api.useGetViewsQuery();
 
-  const onHiddenOptionsClick = useCallback(() => {
-    if (showMenu) {
-      setShowMenu(false);
-      localStorage.setItem('orionsuite.options.showMenu', 'false');
-    } else {
-      setShowMenu(true);
-      localStorage.setItem('orionsuite.options.showMenu', 'true');
+  useEffect(() => {
+    if (!isLoading && data) {
+      data.tableViews.forEach((view) => {
+        const json = JSON.parse(view.custrecord_orion_view_json);
+
+        if (json?.id === DEFAULT_GROUP) {
+          const columns = json?.columns ?? [];
+
+          dispatch(
+            setColumns(
+              columns.map((col: any) => ({
+                ...col,
+                header: col.label,
+              }))
+            )
+          );
+          navigate(`/records/${view.scriptid}`);
+          return;
+        }
+      });
     }
-  }, [showMenu]);
+  }, [data, dispatch, isLoading, navigate]);
 
   return (
     <Container>
-      {showMenu && <NavigationMenu />}
-      <Outlet />
-      <HiddenOptionsDiv onClick={onHiddenOptionsClick} />
+      <NavigationMenu data={data} loading={isLoading} />
+      {!isLoading && <Outlet />}
     </Container>
   );
 };

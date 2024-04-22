@@ -1,16 +1,22 @@
-import { DashboardIcon, GearIcon, PersonIcon } from '@radix-ui/react-icons';
-
-import { MenuElement } from './types';
 import NavigationMenuItem from './NavigationMenuItem';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Logo from './Logo';
+import { Separator } from '@orionsuite/shared-components';
+import { config } from './config';
+import { useEffect, useMemo } from 'react';
+import { api } from '@orionsuite/api-client';
+import ProgressSpin from '../progress-spin/ProgressSpin';
+import { useDispatch } from 'react-redux';
+import { setColumns } from '../../views/records/recordsSlice';
 
 const Container = styled.div`
-  height: 100vh;
-
-  background: #e0e0e0;
-  padding: 20px 30px;
+  background: #2b2b2e;
+  height: calc(90vh - 25px);
+  padding: 20px 20px;
   position: sticky;
+  border-radius: 12px;
+  margin: 10px 0 10px 10px;
 
   display: flex;
   flex-direction: column;
@@ -20,58 +26,44 @@ const Container = styled.div`
 const MenuSection = styled.div`
   display: flex;
   flex-direction: column;
-
+  align-items: center;
   gap: 15px;
 `;
 
-const NavigationMenu = () => {
+interface Props {
+  loading: boolean;
+  data: any;
+}
+
+const NavigationMenu = ({ data, loading }: Props) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [updateRecord] = api.useUpdateRecordMutation();
 
-  const topConfig = [
-    {
-      name: 'Orders',
-      onClick: () => {
-        navigate('/orders');
-      },
-      icon: <PersonIcon width="18px" height="18px" />,
-    },
-    {
-      name: 'Components Library',
-      onClick: () => {
-        navigate('/components');
-      },
-      icon: <DashboardIcon width="18px" height="18px" />,
-    },
-    {
-      name: 'BOM Tool',
-      onClick: () => {
-        navigate('/bom-import');
-      },
-      icon: <DashboardIcon width="18px" height="18px" />,
-    },
-  ] as MenuElement[];
-
-  const bottomConfig = [
-    {
-      name: 'Settings',
-      onClick: () => {
-        navigate('/');
-      },
-      icon: <GearIcon width="18px" height="18px" />,
-    },
-  ] as MenuElement[];
+  const menuElements = useMemo(
+    () =>
+      config({
+        navigate,
+        dispatch,
+        updateRecord,
+        tableViews: data?.tableViews ?? [],
+      }),
+    [data?.tableViews, dispatch, navigate, updateRecord]
+  );
 
   return (
     <Container>
       <MenuSection>
-        {topConfig.map((item) => (
-          <NavigationMenuItem key={item.name} item={item} />
-        ))}
-      </MenuSection>
-      <MenuSection style={{ justifyContent: 'flex-end' }}>
-        {bottomConfig.map((item) => (
-          <NavigationMenuItem key={item.name} item={item} />
-        ))}
+        <Logo />
+        <Separator />
+        {loading && <ProgressSpin variant="primary" size={20} />}
+        {!loading &&
+          menuElements.map((item, index) => {
+            if (item.separator) {
+              return <Separator key={index} />;
+            }
+            return <NavigationMenuItem key={index} item={item} />;
+          })}
       </MenuSection>
     </Container>
   );

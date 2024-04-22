@@ -1,9 +1,8 @@
+import Unfonts from 'unplugin-fonts/vite';
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import Unfonts from 'unplugin-fonts/vite';
-
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   root: __dirname,
@@ -12,6 +11,20 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+    proxy: {
+      '/assets': {
+        target:
+          'https://td2893635.app.netsuite.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/assets/, ''),
+      },
+      '/netsuite': {
+        target:
+          'https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/netsuite/, ''),
+      },
+    },
   },
 
   preview: {
@@ -30,18 +43,19 @@ export default defineConfig({
   ],
 
   // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
+  worker: {
+    plugins: [nxViteTsPaths()],
+  },
 
   build: {
     outDir: '../../dist/apps/frontend',
     reportCompressedSize: true,
     rollupOptions: {
+      external: ['N/currentRecord'],
       output: {
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        assetFileNames: `assets/[name].[ext]`,
       },
     },
     commonjsOptions: {

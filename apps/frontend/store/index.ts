@@ -1,25 +1,32 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   FLUSH,
-  PERSIST,
   PAUSE,
-  REHYDRATE,
-  REGISTER,
+  PERSIST,
   PURGE,
-  persistStore,
+  REGISTER,
+  REHYDRATE,
   persistReducer,
+  persistStore,
 } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+
 import { api } from '@orionsuite/api-client';
+import bomImportFilesReducer from './bom-store/bomImportFilesSlice';
+import bomReducer from './bom-store/bomSlice';
+import storage from 'redux-persist/lib/storage';
+import recordsSlice from '../src/views/records/recordsSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [],
+  whitelist: ['bomImportFiles'],
 };
 
 const rootReducer = combineReducers({
   [api.reducerPath]: api.reducer,
+  bomImportFiles: bomImportFilesReducer,
+  recordsSlice: recordsSlice,
+  bom: bomReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

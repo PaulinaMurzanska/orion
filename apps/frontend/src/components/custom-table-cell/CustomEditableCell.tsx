@@ -1,6 +1,7 @@
 import CustomInput from '../custom-input/CustomInput';
 import { InputVariants } from '../custom-input/type';
 import { Table } from '@tanstack/table-core/src/types';
+import { useCallback } from 'react';
 
 interface Props<T> {
   externalValue: string;
@@ -29,18 +30,21 @@ const CustomEditableCell = <T extends object>({
   cellVariant,
   disabled,
 }: Props<T>) => {
-  const triggerOnRowUpdate = (val: any) => {
-    if (table.options.meta?.updateData) {
-      table.options.meta?.updateData(rowIndex, columnId, val);
-    }
-  };
+  const triggerOnRowUpdate = useCallback(
+    (val: any) => {
+      if (table.options.meta?.updateData) {
+        table.options.meta?.updateData(rowIndex, columnId, val);
+      }
+    },
+    [columnId, rowIndex, table.options.meta]
+  );
 
   return (
     <CustomInput
       externalValue={externalValue}
       grabInputValue={triggerOnRowUpdate}
       variant={cellVariant}
-      className="w-full bg-transparent hover:bg-transparent border-none"
+      className="w-full"
       disabled={!editable || disabled}
     />
   );
