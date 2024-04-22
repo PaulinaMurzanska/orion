@@ -1,5 +1,4 @@
 import Unfonts from 'unplugin-fonts/vite';
-import vitePluginRequire from "vite-plugin-require";
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
@@ -35,7 +34,6 @@ export default defineConfig({
 
   plugins: [
     react(),
-    vitePluginRequire(),
     nxViteTsPaths(),
     Unfonts({
       google: {
@@ -53,6 +51,7 @@ export default defineConfig({
     outDir: '../../dist/apps/frontend',
     reportCompressedSize: true,
     rollupOptions: {
+      external: ['N/currentRecord'],
       output: {
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,
