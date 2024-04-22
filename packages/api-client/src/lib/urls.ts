@@ -28,21 +28,25 @@ export const getUrl = (
   // @ts-expect-error
   const h = import.meta.env.VITE_API_H;
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const mode = import.meta.env.MODE;
-
-  return `${
-    mode === 'development' ? baseUrl : 'https://td2893635.app.netsuite.com' + baseUrl
-  }?script=${script}&deploy=${deploy}&compid=${compid}&h=${h}${params}`;
+  return `${baseUrl}?script=${script}&deploy=${deploy}&compid=${compid}&h=${h}${params}`;
 };
 
 export const getExistingTransactionValueUrl = (transactionId: any) => {
-  const url = `https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=308&deploymentID=1&recordID=${transactionId}`;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const mode = import.meta.env.MODE;
+  const url = `${
+    mode === 'development' ? 'https://corsproxy.io/?https://td2893635.extforms.netsuite.com' : ''
+  }/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=308&deploymentID=1&recordID=${transactionId}`;
   return url;
 };
 
 export const getUpdateExistingTransactionUrl = () => {
-  const url = `https://corsproxy.io/?https://td2893635.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=307&deploymentID=1`;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const mode = import.meta.env.MODE;
+  const url = `${
+    mode === 'development' ? 'https://corsproxy.io/?https://td2893635.extforms.netsuite.com' : ''
+  }/app/site/hosting/scriptlet.nl?script=220&deploy=1&compid=TD2893635&h=2666e10fd32e93612036&scriptID=307&deploymentID=1`;
   return url;
 };
