@@ -1,8 +1,10 @@
 import { CSS } from '@dnd-kit/utilities';
 import DragDrop from './DragDrop';
 import { FileObjectType } from '../../type';
+import { RootState } from 'apps/frontend/store';
 import StatusZone from './StatusZone';
 import { StyledDropArea } from './StyledDragDrop';
+import { useSelector } from 'react-redux';
 import { useSortable } from '@dnd-kit/sortable';
 
 interface Props {
@@ -12,10 +14,13 @@ interface Props {
 }
 
 const DropAndStatusArea = ({ fileObjects, file, onDropFunction }: Props) => {
-  const id = file.id;
+  const disableDragDrop = useSelector(
+    (state: RootState) => state.bom.disableDragDrop
+  );
 
+  const id = file.id;
   const { attributes, listeners, transform, transition, setNodeRef } =
-    useSortable({ id, disabled: false });
+    useSortable({ id, disabled: disableDragDrop });
 
   const style = {
     transition,
