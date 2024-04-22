@@ -25,8 +25,6 @@ const Actions = ({ editable, setEditable }: Props) => {
       fileID: 1304,
     })
       .then((res) => {
-        console.log('RESPONSE', res);
-        console.log('RECORDs', records);
         NetsuiteService.insertSummaryIntoNetsuite(records, true);
       })
       .catch((e) => console.log('ERR', e));
