@@ -27,7 +27,7 @@ const StatusInfo = ({ fileObj }: StatusZoneProps) => {
     },
     {
       name: 'Imported lines',
-      value: fileObj.itemLines.length,
+      value: fileObj.itemLines?.length,
     },
     {
       name: 'Current Position',
@@ -60,7 +60,7 @@ const StatusInfo = ({ fileObj }: StatusZoneProps) => {
       </StyledListWrapper>
       <StyledRow listFooter={true}>
         <p>Imported Lines</p>
-        <p>{fileObj.itemLines.length}</p>
+        <p>{fileObj.itemLines?.length}</p>
       </StyledRow>
     </StyledStatusCard>
   );

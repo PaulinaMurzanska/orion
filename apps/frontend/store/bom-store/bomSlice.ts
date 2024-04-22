@@ -12,12 +12,14 @@ type BomState = {
   fileUploadProgress: boolean;
   uploadedFilesArr: FileObjectType[];
   disableBeginBtn: boolean;
+  disableDragDrop: boolean;
 };
 
 const initialState: BomState = {
   fileUploadProgress: false,
   uploadedFilesArr: [{ ...initialObject }],
   disableBeginBtn: false,
+  disableDragDrop: true,
 };
 
 const bomSlice = createSlice({
@@ -29,6 +31,9 @@ const bomSlice = createSlice({
     },
     setDisableBeginBtn(state, action: PayloadAction<boolean>) {
       state.disableBeginBtn = action.payload;
+    },
+    setDisableDragDrop(state, action: PayloadAction<boolean>) {
+      state.disableDragDrop = action.payload;
     },
     setUploadedFilesArr(state, action: PayloadAction<FileObjectType[]>) {
       state.uploadedFilesArr = action.payload;
@@ -65,5 +70,6 @@ export const {
   updateFileDetails,
   setDisableBeginBtn,
   removeInvalidFiles,
+  setDisableDragDrop,
 } = bomSlice.actions;
 export default bomSlice.reducer;

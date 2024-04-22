@@ -89,7 +89,7 @@ const StyledStatusZoneTextNormal = styled.p`
   white-space: pre;
   text-wrap: wrap;
   text-align: center;
-  margin: 18px auto 0;
+  margin: 18px auto 0 !important;
   width: 80%;
 `;
 
@@ -153,6 +153,7 @@ const StyledRow = styled.div<DragDropProps>`
         ? colors.grey_090
         : 'none'};
   p {
+    margin: 0 !important;
     color: #000;
     line-height: 1.4;
     font-size: 13px;

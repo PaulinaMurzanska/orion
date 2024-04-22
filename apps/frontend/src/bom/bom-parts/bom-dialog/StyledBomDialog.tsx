@@ -107,11 +107,11 @@ const StyledEmail = styled.div`
 
 const StyledCloseIcon = styled(Icons.closeX)`
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 10px;
+  right: 10px;
   color: ${colors.dark_blue};
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
   transition: ${transitions.bezier_hover};
   &:hover {

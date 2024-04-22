@@ -21,7 +21,6 @@ const StatusZone = ({ fileObj }: StatusZoneProps) => {
           Files Are Not Selected
           <StyledPackageIcon />
         </StyledStatusZoneTextNormal>
-        // <StatusInfo fileObj={fileObj} />
       )}
 
       {fileLoading && (

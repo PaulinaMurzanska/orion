@@ -12,6 +12,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { FileObjectType } from '../../type';
 import { mdiAttachment } from '@mdi/js';
+import { setDisableDragDrop } from '../../../../../store/bom-store/bomSlice';
+import { useDispatch } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
 
 interface DragProps {
@@ -22,7 +24,7 @@ interface DragProps {
 const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
   const [rejected, setRejected] = useState<any>([]);
   const dropzoneRef = useRef<HTMLDivElement | null>(null);
-
+  const dispatch = useDispatch();
   const onDrop = useCallback((acceptedFiles: any, rejectedFiles: any) => {
     if (acceptedFiles?.length) {
       const curFile = acceptedFiles[0];
@@ -66,10 +68,34 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
     return null;
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
+    noClick: true,
     validator: fileTypeValidator,
   });
+
+  const handleButtonEnter = (e: any) => {
+    e.stopPropagation();
+    const type = e.currentTarget.getAttribute('data-type');
+    if (type === 'button') {
+      dispatch(setDisableDragDrop(true));
+      console.log('handleButtonEnter');
+    }
+  };
+  const handleButtonLeave = (e: any) => {
+    e.stopPropagation();
+    const type = e.currentTarget.getAttribute('data-type');
+    if (type === 'button') {
+      dispatch(setDisableDragDrop(false));
+    }
+  };
+  const handleButtonClick = (e: any) => {
+    e.stopPropagation();
+    const type = e.currentTarget.getAttribute('data-type');
+    if (type === 'button') {
+      open();
+    }
+  };
 
   return (
     <>
@@ -79,6 +105,7 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
         })}
         id={fileObj.id}
         ref={dropzoneRef}
+        data-type="drop"
       >
         <StyledContentCentered className="justify-center">
           <input {...getInputProps()} />
@@ -99,7 +126,13 @@ const DragDrop = ({ fileObj, onDropFunction }: DragProps) => {
           <StyledDragTextSmall>
             {fileObj.fileAdded ? '' : 'or'}
           </StyledDragTextSmall>
-          <StyledDropButton type="button">
+          <StyledDropButton
+            type="button"
+            onClick={handleButtonClick}
+            onMouseEnter={handleButtonEnter}
+            onMouseLeave={handleButtonLeave}
+            data-type="button"
+          >
             {fileObj.fileAdded ? 'Change File' : 'Search for File on PC'}
           </StyledDropButton>
         </StyledContentCentered>
