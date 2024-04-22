@@ -5,17 +5,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@orionsuite/shared-components';
+} from '../dropdown/Dropdown';
 import {
   ChevronDownIcon,
   CrossCircledIcon,
   DrawingPinFilledIcon,
   DrawingPinIcon,
   PinBottomIcon,
-  PinTopIcon
+  PinTopIcon,
 } from '@radix-ui/react-icons';
 import { Column } from '@tanstack/react-table';
-import ChevronDownUpIcon from 'mdi-react/ChevronDownUpIcon';
 
 interface Props<T> {
   column: Column<T, unknown>;
@@ -23,7 +22,7 @@ interface Props<T> {
 
 const ColumnMenu = <T extends object>({ column }: Props<T>) => {
   return (
-    <DropdownMenu >
+    <DropdownMenu>
       <DropdownMenuTrigger>
         <ChevronDownIcon />
       </DropdownMenuTrigger>

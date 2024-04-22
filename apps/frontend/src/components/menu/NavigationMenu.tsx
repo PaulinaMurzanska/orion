@@ -12,8 +12,7 @@ import { setColumns } from '../../views/records/recordsSlice';
 
 const Container = styled.div`
   background: #2b2b2e;
-
-  height: calc(100vh - 20px);
+  height: calc(90vh - 25px);
   padding: 20px 20px;
   position: sticky;
   border-radius: 12px;
@@ -31,10 +30,14 @@ const MenuSection = styled.div`
   gap: 15px;
 `;
 
-const NavigationMenu = () => {
+interface Props {
+  loading: boolean;
+  data: any;
+}
+
+const NavigationMenu = ({ data, loading }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data, isLoading } = api.useGetViewsQuery();
   const [updateRecord] = api.useUpdateRecordMutation();
 
   const menuElements = useMemo(
@@ -47,33 +50,14 @@ const NavigationMenu = () => {
       }),
     [data?.tableViews, dispatch, navigate, updateRecord]
   );
-  //
-  // useEffect(() => {
-  //   if (data && data.tableViews) {
-  //     const firstView = data?.tableViews[0];
-  //     console.log('FIRST VIEW', firstView, data);
-  //     const columns =
-  //       JSON.parse(firstView?.custrecord_orion_view_json ?? '{}')?.columns ??
-  //       [];
-  //     dispatch(
-  //       setColumns(
-  //         columns.map((col: any) => ({
-  //           ...col,
-  //           header: col.label,
-  //         }))
-  //       )
-  //     );
-  //     navigate(`/records/${firstView?.scriptid}`);
-  //   }
-  // }, [data, dispatch, navigate]);
 
   return (
     <Container>
       <MenuSection>
         <Logo />
         <Separator />
-        {isLoading && <ProgressSpin size={8} />}
-        {!isLoading &&
+        {loading && <ProgressSpin variant="primary" size={20} />}
+        {!loading &&
           menuElements.map((item, index) => {
             if (item.separator) {
               return <Separator key={index} />;

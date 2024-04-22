@@ -8,6 +8,8 @@ import { NavigateFunction } from 'react-router-dom';
 import { groupBy } from 'lodash';
 import { setColumns } from '../../views/records/recordsSlice';
 
+export const DEFAULT_GROUP = '_default';
+
 export const config = ({
   navigate,
   tableViews,
@@ -20,10 +22,20 @@ export const config = ({
   updateRecord: any;
 }): MenuElement[] => {
   const elements: MenuElement[] = [];
-  const groups = groupBy(
-    tableViews,
-    (view) => JSON.parse(view.custrecord_orion_view_json)?.view_group
-  );
+
+  const parsedViews = tableViews.map((view) => {
+    try {
+      return {
+        ...view,
+        json: JSON.parse(view.custrecord_orion_view_json),
+      };
+    } catch (e: any) {
+      throw new Error(`Error parsing view: ${e.toString()}`);
+    }
+  });
+
+  const groups = groupBy(parsedViews, (view) => view?.json?.view_group);
+
   const sortedGroups = Object.values(groups).sort((a, b) => {
     return (
       a[0].custrecord_orion_smarttable_position -
@@ -31,44 +43,60 @@ export const config = ({
     );
   });
 
-  sortedGroups.forEach((group, index) => {
-    elements.push({
-      route: 'records',
-      id: group[0].id,
-      icon: (
-        <img
-          src={`${import.meta.env.VITE_API_ASSETS_URL}/${
-            group[0].custrecord_orion_smarttable_icon_url
-          }`}
-          alt=""
-        />
-      ),
-      dropdown: {
-        header:
-          JSON.parse(group[0].custrecord_orion_view_json)?.view_group ??
-          'Uncategorized',
-        columns: [],
-        items: group.map((view) => ({
-          name: view.custrecord_orion_smarttable_view_title,
-          id: view.id,
-          onClick: () => {
-            console.log('JSON', JSON.parse(view.custrecord_orion_view_json));
-            const columns =
-              JSON.parse(view.custrecord_orion_view_json)?.columns ?? [];
+  const onClick = (view: any, group: any, index: number) => {
+    const columns = view.json?.columns ?? [];
 
-            dispatch(
-              setColumns(
-                columns.map((col: any) => ({
-                  ...col,
-                  header: col.label,
-                }))
-              )
-            );
-            navigate(`/records/${group[0].scriptid}`);
-          },
-        })),
-      },
-    });
+    dispatch(
+      setColumns(
+        columns.map((col: any) => ({
+          ...col,
+          header: col.label,
+        }))
+      )
+    );
+    navigate(`/records/${group[index].scriptid}`);
+  };
+
+  sortedGroups.forEach((group, index) => {
+    if (group[index]?.json?.id === DEFAULT_GROUP) {
+      group.forEach((view, index) => {
+        elements.push({
+          route: `/records/${group[index].scriptid}`,
+          id: group[index].id,
+          onClick: () => onClick(view, group, index),
+          icon: (
+            <img
+              src={`${import.meta.env.VITE_API_ASSETS_URL}/${
+                group[index].custrecord_orion_smarttable_icon_url
+              }`}
+              alt=""
+            />
+          ),
+        });
+      });
+    } else {
+      elements.push({
+        route: `/records/${group[0].scriptid}`,
+        id: group[0].id,
+        icon: (
+          <img
+            src={`${import.meta.env.VITE_API_ASSETS_URL}/${
+              group[0].custrecord_orion_smarttable_icon_url
+            }`}
+            alt=""
+          />
+        ),
+        dropdown: {
+          header: group[0].json?.view_group ?? 'Uncategorized',
+          columns: [],
+          items: group.map((view) => ({
+            name: view.custrecord_orion_smarttable_view_title,
+            id: view.id,
+            onClick: () => onClick(view, group, 0),
+          })),
+        },
+      });
+    }
     elements.push({ separator: true });
   });
 

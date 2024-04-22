@@ -11,6 +11,16 @@ const recordsViewSlice = createSlice({
   name: 'recordsViewSlice',
   initialState,
   reducers: {
+    updateRecord: (state, action: PayloadAction<any>) => {
+      state.records = state.records.map((record) =>
+        record.id === action.payload.id ? action.payload : record
+      );
+    },
+    removeRecordById: (state, action: PayloadAction<string>) => {
+      state.records = state.records.filter(
+        (record) => record.id !== action.payload
+      );
+    },
     setRecords: (state, action: PayloadAction<any[]>) => {
       state.records = action.payload;
     },
@@ -20,5 +30,6 @@ const recordsViewSlice = createSlice({
   },
 });
 
-export const { setRecords, setColumns } = recordsViewSlice.actions;
+export const { setRecords, setColumns, updateRecord, removeRecordById } =
+  recordsViewSlice.actions;
 export default recordsViewSlice.reducer;

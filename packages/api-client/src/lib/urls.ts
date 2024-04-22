@@ -28,7 +28,15 @@ export const getUrl = (
   // @ts-expect-error
   const h = import.meta.env.VITE_API_H;
 
-  return `${baseUrl}/app/site/hosting/scriptlet.nl?script=${script}&deploy=${deploy}&compid=${compid}&h=${h}${params}`;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const mode = import.meta.env.MODE;
+
+  console.log('MODEE', mode);
+
+  return `${
+    mode === 'development' ? baseUrl : 'https://td2893635.app.netsuite.com' + baseUrl
+  }?script=${script}&deploy=${deploy}&compid=${compid}&h=${h}${params}`;
 };
 
 export const getExistingTransactionValueUrl = (transactionId: any) => {
