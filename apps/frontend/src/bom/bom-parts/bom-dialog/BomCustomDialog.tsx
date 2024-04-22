@@ -40,6 +40,7 @@ import { mdiSofaSingle } from '@mdi/js';
 import { nanoid } from 'nanoid';
 import { set } from 'lodash';
 import { setBomImportFiles } from '../../../../store/bom-store/bomImportFilesSlice';
+import NetsuiteService from '../../../netsuite/netsuiteService';
 
 const BomCustomDialog = () => {
   const dispatch = useDispatch();
@@ -139,12 +140,7 @@ const BomCustomDialog = () => {
     }
 
     const data: any = await initiateProcessPromise('', payload, null, url);
-    const summarizedData = summarizeData(combinedItemLines, [
-      'quantity',
-      'porate',
-      'rate',
-    ]);
-    insertSummaryItem(summarizedData);
+    NetsuiteService.insertSummaryIntoNetsuite(data);
     finalizeUpload(data.output.fileID);
   };
 
@@ -160,90 +156,6 @@ const BomCustomDialog = () => {
         })
       );
     });
-  };
-
-  const summarizeData = (
-    combinedDataArr: Array<Object>,
-    summaryProps: Array<string>
-  ) => {
-    let summarizedData: { [key: string]: any } = {};
-    for (const data of combinedDataArr) {
-      for (const prop of summaryProps) {
-        summarizedData[prop] = (summarizedData[prop] || 0) + Number(data[prop]);
-      }
-    }
-    return summarizedData;
-  };
-
-  const insertSummaryItem = (summaryData: any) => {
-    if (process.env.NODE_ENV === 'production') {
-      require(['N/currentRecord'], (currentRecord: { get: () => any }) => {
-        console.log('currentRecord:', currentRecord);
-        const recordObj = currentRecord.get();
-        console.log('recordObj:', recordObj);
-        const lineCount = recordObj.getLineCount({
-          sublistId: 'item',
-        });
-        let poRate, rate;
-        if (lineCount === 1) {
-          const oldRate = recordObj.getSublistValue({
-            sublistId: 'item',
-            fieldId: 'rate',
-            line: 0,
-          });
-          const oldPORate = recordObj.getSublistValue({
-            sublistId: 'item',
-            fieldId: 'porate',
-            line: 0,
-          });
-          rate = Math.abs(summaryData.rate) + Number(oldRate);
-          poRate = Math.abs(summaryData.porate) + Number(oldPORate);
-          recordObj.selectLine({
-            sublistId: 'item',
-            line: 0,
-          });
-        } else {
-          recordObj.selectNewLine({
-            sublistId: 'item',
-          });
-          rate = Math.abs(summaryData.rate);
-          poRate = Math.abs(summaryData.porate);
-        }
-        recordObj.setCurrentSublistValue({
-          sublistId: 'item',
-          fieldId: 'item',
-          value: 44,
-          forceSyncSourcing: true,
-        });
-        recordObj.setCurrentSublistValue({
-          sublistId: 'item',
-          fieldId: 'quantity',
-          value: 1,
-          forceSyncSourcing: true,
-        });
-        recordObj.setCurrentSublistValue({
-          sublistId: 'item',
-          fieldId: 'description',
-          value: 'Total',
-          forceSyncSourcing: true,
-        });
-        recordObj.setCurrentSublistValue({
-          sublistId: 'item',
-          fieldId: 'rate',
-          value: rate.toFixed(2),
-          forceSyncSourcing: true,
-        });
-        recordObj.setCurrentSublistValue({
-          sublistId: 'item',
-          fieldId: 'porate',
-          value: poRate.toFixed(2),
-          forceSyncSourcing: true,
-        });
-        recordObj.commitLine({
-          sublistId: 'item',
-        });
-      });
-    }
   };
 
   const onImportLines = async () => {

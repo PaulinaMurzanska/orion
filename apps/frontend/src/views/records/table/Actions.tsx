@@ -5,6 +5,7 @@ import { ChevronDownIcon } from '@radix-ui/react-icons';
 import { useSelector } from 'react-redux';
 import { RootState } from 'apps/frontend/store';
 import { api } from '@orionsuite/api-client';
+import NetsuiteService from '../../../netsuite/netsuiteService';
 
 interface Props {
   editable?: boolean;
@@ -25,6 +26,8 @@ const Actions = ({ editable, setEditable }: Props) => {
     })
       .then((res) => {
         console.log('RESPONSE', res);
+        console.log('RECORDs', records);
+        NetsuiteService.insertSummaryIntoNetsuite(records, true);
       })
       .catch((e) => console.log('ERR', e));
   };
@@ -32,6 +35,7 @@ const Actions = ({ editable, setEditable }: Props) => {
   return (
     <>
       <Button
+        disabled={editable}
         variant="default"
         className="bg-blue-600 hover:bg-blue-500 flex gap-2"
         onClick={() => setEditable(!editable)}
