@@ -1,7 +1,9 @@
 self.addEventListener('message', async (e) => {
-  const { action, payload, defaultData, endpoint, method } = e.data;
+  const { action, payload, defaultData, method } = e.data;
+  let endpoint = e.data.endpoint;
 
   try {
+    endpoint = `https://td2893635.app.netsuite.com${endpoint}`;
     const response = await fetch(endpoint, {
       method: method || 'POST',
       headers: {
